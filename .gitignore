@@ -36,3 +36,6 @@ pom.xml.next
 *.tmp
 *.swp
 *.swo
+/target/classes
+/target/classes
+/target
