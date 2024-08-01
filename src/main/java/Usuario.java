@@ -7,18 +7,19 @@
  */
 public class Usuario {
 
-    //Atributos
+    // Atributos
     private String nombreUsuario;
     private String contrasenia;
-    //private String tipo; @todo para identificar si es docente, adminstrativo o estudiante.
+    private String tipo;
 
-    //Constructor comun
-    public Usuario(String nombreUsuario, String contrasenia) {
+    // Constructor comun
+    public Usuario(String nombreUsuario, String contrasenia, String tipo) {
         this.nombreUsuario = nombreUsuario;
         this.contrasenia = contrasenia;
+        this.tipo = tipo;
     }
 
-    //Getters
+    // Getters
     public String getNombreUsuario() {
         return nombreUsuario;
     }
@@ -27,12 +28,20 @@ public class Usuario {
         return contrasenia;
     }
 
-    //Setters
+    public String getTipoDeUsuario() {
+        return tipo;
+    }
+
+    // Setters
     public void setNombreUsuario(String nombreUsuario) {
         this.nombreUsuario = nombreUsuario;
     }
 
     public void setContrasenia(String contrasenia) {
         this.contrasenia = contrasenia;
+    }
+
+    public void setTipoDeUsuario(String tipo) {
+        this.tipo = tipo;
     }
 }

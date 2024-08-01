@@ -13,21 +13,21 @@ import java.util.Scanner;
  */
 public class Usuarios {
 
-    //Atributos
+    // Atributos
     private HashMap<String, Usuario> hashUsuarios;
 
-    //Constructor vacio
+    // Constructor vacio
     public Usuarios() {
         this.hashUsuarios = new HashMap<String, Usuario>();
         cargarUsuarios();
     }
 
-    //Getter
+    // Getter
     public HashMap<String, Usuario> getListaUsuarios() {
         return hashUsuarios;
     }
 
-    //Setter
+    // Setter
     public void setListaUsuarios(HashMap<String, Usuario> hashUsuarios) {
         this.hashUsuarios = hashUsuarios;
     }
@@ -73,7 +73,8 @@ public class Usuarios {
      * nombre y password. Se utiliza para el login.
      */
     public boolean existeUsuarioLogin(String nombreUsuario, String password) {
-        return getListaUsuarios().containsKey(nombreUsuario) && getListaUsuarios().get(nombreUsuario).getContrasenia().equals(password);
+        return getListaUsuarios().containsKey(nombreUsuario)
+                && getListaUsuarios().get(nombreUsuario).getContrasenia().equals(password);
     }
 
     /**
@@ -87,7 +88,7 @@ public class Usuarios {
                 String linea = s.nextLine();
                 String[] usuario = linea.split(";"); // de momento dos posiciones. Podria haber un tercer
                 // atributo que identifique tipo de usuario.
-                this.agregarUsuario(new Usuario(usuario[0], usuario[1]));
+                this.agregarUsuario(new Usuario(usuario[0], usuario[1], usuario[2]));
             }
             s.close();
         } catch (IOException e) {
@@ -115,12 +116,14 @@ public class Usuarios {
     private void perisistirUsuarios() {
         try {
             FileWriter fw = new FileWriter("passwords.txt");
-            for (Map.Entry<String, Usuario> entry : hashUsuarios.entrySet()) { //CODIFICACION SUGERIDA EN LA DOCUMENTACION OFICIAL DE JAVA.
-                fw.write(entry.getKey() + ";" + entry.getValue().getContrasenia() + "\n");
+            for (Map.Entry<String, Usuario> entry : hashUsuarios.entrySet()) { // CODIFICACION SUGERIDA EN LA
+                                                                               // DOCUMENTACION OFICIAL DE JAVA.
+                fw.write(entry.getKey() + ";" + entry.getValue().getContrasenia() + ";"
+                        + entry.getValue().getTipoDeUsuario() + "\n");
             }
             fw.close();
         } catch (IOException e) {
-            e.printStackTrace(); //@todo, despues tenemos que redirigir estos errores a un log.
+            e.printStackTrace(); // @todo, despues tenemos que redirigir estos errores a un log.
         }
     }
 }

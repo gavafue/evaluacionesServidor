@@ -5,8 +5,10 @@
 
 /**
  * Clase Switch para procesar mensajes y derivar operaciones a diferentes clases
- * según el contenido del mensaje, la clase de destino y la operación especificada.
- * Se espera que el mensaje tenga la estructura: [contenidoMensaje,;,ClaseDestino,;,Operacion].
+ * según el contenido del mensaje, la clase de destino y la operación
+ * especificada.
+ * Se espera que el mensaje tenga la estructura:
+ * [contenidoMensaje,;,ClaseDestino,;,Operacion].
  * 
  * Esta clase incluye métodos para validar los mensajes y derivar operaciones.
  * 
@@ -19,11 +21,12 @@ public class Switch {
     private String operacion; // Operación que se debe realizar
 
     /**
-     * Constructor para inicializar la clase Switch con los parámetros proporcionados.
+     * Constructor para inicializar la clase Switch con los parámetros
+     * proporcionados.
      * 
-     * @param mensaje       El contenido del mensaje.
-     * @param claseDestino  La clase de destino.
-     * @param operacion     La operación a realizar.
+     * @param mensaje      El contenido del mensaje.
+     * @param claseDestino La clase de destino.
+     * @param operacion    La operación a realizar.
      */
     public Switch(String mensaje, String claseDestino, String operacion) {
         this.mensaje = mensaje;
@@ -125,7 +128,8 @@ public class Switch {
     }
 
     /**
-     * Deriva la operación a la clase correspondiente según el contenido del mensaje,
+     * Deriva la operación a la clase correspondiente según el contenido del
+     * mensaje,
      * la clase de destino y la operación.
      * 
      * @return El resultado de la derivación.
@@ -197,7 +201,8 @@ public class Switch {
 
             // Validar la existencia del usuario y la contraseña
             if (listaUsuarios.existeUsuarioLogin(usuario, contrasenia)) {
-                retorno = "Login exitoso,;,200";
+                String tipoDeUsuario = listaUsuarios.obtenerUsuario(usuario).getTipoDeUsuario().trim();
+                retorno = tipoDeUsuario + ",;,200";
             } else {
                 retorno = "Usuario y/o contraseña incorrectos,;,404";
             }
