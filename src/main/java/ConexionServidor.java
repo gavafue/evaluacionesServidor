@@ -1,4 +1,3 @@
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -8,7 +7,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Clase para manejar la conexión del servidor
+ * Clase para manejar la conexión del servidor.
+ * Este servidor escucha en un puerto específico y procesa mensajes de los clientes.
  */
 public class ConexionServidor {
 
@@ -18,6 +18,11 @@ public class ConexionServidor {
     private DataInputStream in; // Flujo de datos de entrada
     private DataOutputStream out; // Flujo de datos de salida
 
+    /**
+     * Inicia el servidor y escucha las conexiones entrantes.
+     * Se espera que los mensajes de los clientes tengan la estructura:
+     * [contenidoMensaje,;,ClaseDestino,;,Operacion]
+     */
     public void iniciar() {
         try {
             servidor = new ServerSocket(puerto);
@@ -35,20 +40,25 @@ public class ConexionServidor {
                     out = new DataOutputStream(soc.getOutputStream());
 
                     String mensaje = in.readUTF(); // Se guarda la entrada en un String
-                    String[] tokens = mensaje.split(",");
+                    String[] tokens = mensaje.split(",;,");
+                    String contenidoMensaje = tokens[0].trim();
+                    String claseDestino = tokens[1].trim();
+                    String operacion = tokens[2].trim();
+                    System.out.println("contenido: " + contenidoMensaje);
+                    System.out.println("clase: " + claseDestino);
+                    System.out.println("operacion: " + operacion);
 
                     if (tokens.length < 3) {
                         out.writeUTF("Formato de mensaje incorrecto");
                         continue; // Continúa con la siguiente iteración del bucle
                     }
 
-                    System.out.println("Mensaje recibido: " + mensaje);
-                    Switch derivador = new Switch(tokens[0], tokens[1], tokens[2]);
+                    Switch derivador = new Switch(contenidoMensaje, claseDestino, operacion);
 
-                    if (derivador.validarMensaje() && derivador.validarTipoMensaje()) {
-                        out.writeUTF(derivador.obtenerMensajeEvaluacion());
+                    if (derivador.validarMensaje() && derivador.validarClaseFinal()) {
+                        out.writeUTF(derivador.derivadorDeClases());
                     } else {
-                        out.writeUTF("No exite dicha operacion");
+                        out.writeUTF("No existe dicha operación");
                     }
 
                     if (mensaje.equals("desconectar")) {
@@ -57,7 +67,8 @@ public class ConexionServidor {
                     }
 
                 } catch (IOException ex) {
-                    Logger.getLogger(ConexionServidor.class.getName()).log(Level.SEVERE, "Error de E/S: " + ex.getMessage(), ex);
+                    Logger.getLogger(ConexionServidor.class.getName()).log(Level.SEVERE,
+                            "Error de E/S: " + ex.getMessage(), ex);
                 } finally {
                     try {
                         if (in != null) {
@@ -71,12 +82,14 @@ public class ConexionServidor {
                             System.out.println("Cliente desconectado");
                         }
                     } catch (IOException ex) {
-                        Logger.getLogger(ConexionServidor.class.getName()).log(Level.SEVERE, "Error al cerrar el socket: " + ex.getMessage(), ex);
+                        Logger.getLogger(ConexionServidor.class.getName()).log(Level.SEVERE,
+                                "Error al cerrar el socket: " + ex.getMessage(), ex);
                     }
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(ConexionServidor.class.getName()).log(Level.SEVERE, "Error al iniciar el servidor: " + ex.getMessage(), ex);
+            Logger.getLogger(ConexionServidor.class.getName()).log(Level.SEVERE,
+                    "Error al iniciar el servidor: " + ex.getMessage(), ex);
         }
     }
 }

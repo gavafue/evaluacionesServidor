@@ -4,56 +4,207 @@
  */
 
 /**
- *
- * @author Gabriel
+ * Clase Switch para procesar mensajes y derivar operaciones a diferentes clases
+ * según el contenido del mensaje, la clase de destino y la operación especificada.
+ * Se espera que el mensaje tenga la estructura: [contenidoMensaje,;,ClaseDestino,;,Operacion].
+ * 
+ * Esta clase incluye métodos para validar los mensajes y derivar operaciones.
+ * 
+ * Autor: Gabriel
  */
 public class Switch {
 
-    private String mensaje;
-    private String tipoMensaje;
-    private String operacion;
+    private String mensaje; // Contenido del mensaje
+    private String claseDestino; // Clase de destino a la cual se debe derivar la operación
+    private String operacion; // Operación que se debe realizar
 
-    public Switch(String mensaje, String tipoMensaje, String operacion) {
+    /**
+     * Constructor para inicializar la clase Switch con los parámetros proporcionados.
+     * 
+     * @param mensaje       El contenido del mensaje.
+     * @param claseDestino  La clase de destino.
+     * @param operacion     La operación a realizar.
+     */
+    public Switch(String mensaje, String claseDestino, String operacion) {
         this.mensaje = mensaje;
-        this.tipoMensaje = tipoMensaje;
+        this.claseDestino = claseDestino;
         this.operacion = operacion;
     }
 
+    /**
+     * Obtiene la operación.
+     * 
+     * @return La operación.
+     */
+    public String getOperacion() {
+        return operacion;
+    }
+
+    /**
+     * Establece el contenido del mensaje.
+     * 
+     * @param mensaje El nuevo contenido del mensaje.
+     */
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
     }
 
-    public void setTipoMensaje(String tipoMensaje) {
-        this.tipoMensaje = tipoMensaje;
+    /**
+     * Establece la operación.
+     * 
+     * @param operacion La nueva operación.
+     */
+    public void setOperacion(String operacion) {
+        this.operacion = operacion;
     }
 
+    /**
+     * Establece la clase de destino.
+     * 
+     * @param claseDestino La nueva clase de destino.
+     */
+    public void setClaseDestino(String claseDestino) {
+        this.claseDestino = claseDestino;
+    }
+
+    /**
+     * Obtiene el contenido del mensaje.
+     * 
+     * @return El contenido del mensaje.
+     */
     public String getMensaje() {
         return mensaje;
     }
 
-    public String getTipoMensaje() {
-        return tipoMensaje;
+    /**
+     * Obtiene la clase de destino.
+     * 
+     * @return La clase de destino.
+     */
+    public String getClaseDestino() {
+        return claseDestino;
     }
 
+    /**
+     * Valida si el contenido del mensaje no está vacío.
+     * 
+     * @return true si el mensaje no está vacío, false de lo contrario.
+     */
     public Boolean validarMensaje() {
         Boolean valido = false;
-        if (!this.getMensaje().isEmpty()) { // Usar isEmpty() en lugar de comparar con una cadena vacía
+        if (!this.getMensaje().isEmpty()) { // Verifica que el mensaje no esté vacío
             valido = true;
         }
         return valido;
     }
 
-    public Boolean validarTipoMensaje() {
+    /**
+     * Valida si la clase de destino no está vacía.
+     * 
+     * @return true si la clase de destino no está vacía, false de lo contrario.
+     */
+    public Boolean validarClaseFinal() {
         Boolean valido = false;
-        if ("evaluacion".equals(this.tipoMensaje)) { // Usar equals() para comparar el contenido de las cadenas
+        if (!this.getClaseDestino().isEmpty()) { // Verifica que la clase de destino no esté vacía
             valido = true;
         }
         return valido;
     }
 
-    public String obtenerMensajeEvaluacion() {
-        Evaluacion ev = new Evaluacion();
-        return ev.getMensaje();
+    /**
+     * Valida si la operación no está vacía.
+     * 
+     * @return true si la operación no está vacía, false de lo contrario.
+     */
+    public Boolean validarOperacion() {
+        Boolean valido = false;
+        if (!this.getOperacion().isEmpty()) { // Verifica que la operación no esté vacía
+            valido = true;
+        }
+        return valido;
     }
 
+    /**
+     * Deriva la operación a la clase correspondiente según el contenido del mensaje,
+     * la clase de destino y la operación.
+     * 
+     * @return El resultado de la derivación.
+     */
+    public String derivadorDeClases() {
+        String claseDestino = this.getClaseDestino();
+        String retorno;
+
+        // Verificación de que claseDestino no es nulo o vacío
+        if (claseDestino == null || claseDestino.isEmpty()) {
+            retorno = "Error: claseDestino no puede estar vacío.";
+            System.err.println(retorno);
+            return retorno;
+        }
+
+        try {
+            switch (claseDestino) {
+                case "Usuarios":
+                    retorno = derivarLogin(); // Deriva la operación a la función derivarLogin()
+                    break;
+                default:
+                    retorno = "Error: claseDestino desconocido.";
+                    System.err.println(retorno);
+                    break;
+            }
+        } catch (Exception e) {
+            retorno = "Error al derivar a " + claseDestino + ": " + e.getMessage();
+            System.err.println(retorno);
+        }
+
+        return retorno;
+    }
+
+    /**
+     * Deriva la operación de login para los usuarios.
+     * 
+     * @return El resultado de la operación de login.
+     */
+    public String derivarLogin() {
+        String retorno = "";
+        try {
+            String mensaje = this.getMensaje();
+
+            // Validar que el mensaje no esté vacío
+            if (mensaje == null || mensaje.isEmpty()) {
+                retorno = "Mensaje vacío,;,400";
+                return retorno;
+            }
+
+            String[] tokens = mensaje.split(";;;"); // Divide el mensaje en tokens usando ";;;" como delimitador
+
+            // Validar que el mensaje contenga los dos tokens necesarios
+            if (tokens.length != 2) {
+                retorno = "Formato de mensaje incorrecto,;,400";
+                return retorno;
+            }
+
+            String usuario = tokens[0];
+            String contrasenia = tokens[1];
+
+            // Validar que el usuario y la contraseña no estén vacíos
+            if (usuario.isEmpty() || contrasenia.isEmpty()) {
+                retorno = "Usuario y/o contraseña vacíos,;,400";
+                return retorno;
+            }
+
+            Usuarios listaUsuarios = new Usuarios();
+            listaUsuarios.cargarUsuarios(); // Carga la lista de usuarios desde una fuente de datos
+
+            // Validar la existencia del usuario y la contraseña
+            if (listaUsuarios.existeUsuarioLogin(usuario, contrasenia)) {
+                retorno = "Login exitoso,;,200";
+            } else {
+                retorno = "Usuario y/o contraseña incorrectos,;,404";
+            }
+        } catch (Exception e) {
+            // Manejar cualquier excepción no controlada
+            retorno = "Error del servidor: " + e.getMessage() + ",;,500";
+        }
+        return retorno;
+    }
 }
