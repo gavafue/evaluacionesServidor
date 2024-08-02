@@ -1,8 +1,6 @@
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -113,17 +111,8 @@ public class Usuarios {
      * @todo, en un futuro solo persistir solo el modificado.
      *
      */
-    private void perisistirUsuarios() {
-        try {
-            FileWriter fw = new FileWriter("passwords.txt");
-            for (Map.Entry<String, Usuario> entry : hashUsuarios.entrySet()) { // CODIFICACION SUGERIDA EN LA
-                                                                               // DOCUMENTACION OFICIAL DE JAVA.
-                fw.write(entry.getKey() + ";" + entry.getValue().getContrasenia() + ";"
-                        + entry.getValue().getTipoDeUsuario() + "\n");
-            }
-            fw.close();
-        } catch (IOException e) {
-            e.printStackTrace(); // @todo, despues tenemos que redirigir estos errores a un log.
-        }
+    public void perisistirUsuarios() {
+        Persistencia persistir = new Persistencia();
+        persistir.persistirListaDeUsuariosEnArchivo(hashUsuarios);
     }
 }

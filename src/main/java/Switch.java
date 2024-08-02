@@ -3,6 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
+import java.io.IOException;
+
 /**
  * Clase Switch para procesar mensajes y derivar operaciones a diferentes clases
  * según el contenido del mensaje, la clase de destino y la operación
@@ -135,31 +137,50 @@ public class Switch {
      * @return El resultado de la derivación.
      */
     public String derivadorDeClases() {
+        // Obtiene el nombre de la clase de destino
         String claseDestino = this.getClaseDestino();
+        String operacion = this.getOperacion();
         String retorno;
 
         // Verificación de que claseDestino no es nulo o vacío
         if (claseDestino == null || claseDestino.isEmpty()) {
             retorno = "Error: claseDestino no puede estar vacío.";
+            // Imprime el error en la consola
             System.err.println(retorno);
             return retorno;
         }
 
         try {
+            // Selección de la clase de destino
             switch (claseDestino) {
                 case "Usuarios":
-                    retorno = derivarLogin(); // Deriva la operación a la función derivarLogin()
+                    // Selección de la operación para la clase Usuarios
+                    switch (operacion) {
+                        case "Alta":
+                            retorno = derivarCrearUsuario();
+                            break;
+                        case "Login":
+                            retorno = derivarLogin();
+                            break;
+                        default:
+                            // Error para operación desconocida
+                            retorno = "Error: Operación desconocida.,;,404";
+                            break;
+                    }
                     break;
                 default:
-                    retorno = "Error: claseDestino desconocido.";
+                    // Error para clase de destino desconocida
+                    retorno = "Error: claseDestino desconocido.,;,404";
                     System.err.println(retorno);
                     break;
             }
         } catch (Exception e) {
+            // Manejo de excepciones durante la derivación
             retorno = "Error al derivar a " + claseDestino + ": " + e.getMessage();
             System.err.println(retorno);
         }
 
+        // Devuelve el resultado de la derivación
         return retorno;
     }
 
@@ -208,6 +229,61 @@ public class Switch {
             }
         } catch (Exception e) {
             // Manejar cualquier excepción no controlada
+            retorno = "Error del servidor: " + e.getMessage() + ",;,500";
+        }
+        return retorno;
+    }
+
+    /**
+     * Método para derivar la creación de un usuario.
+     * 
+     * @return Una cadena con el resultado de la operación y el código de estado
+     *         HTTP correspondiente.
+     */
+    public String derivarCrearUsuario() {
+        String retorno = "";
+        try {
+            String mensaje = this.getMensaje();
+
+            // Validar que el mensaje no esté vacío
+            if (mensaje == null || mensaje.isEmpty()) {
+                retorno = "Mensaje vacío,;,400";
+                return retorno;
+            }
+
+            // Divide el mensaje en tokens usando ";;;" como delimitador
+            String[] tokens = mensaje.split(";;;");
+
+            // Validar que el mensaje contenga los dos tokens necesarios
+            if (tokens.length != 2) {
+                retorno = "Formato de mensaje incorrecto,;,400";
+                return retorno;
+            }
+
+            String usuario = tokens[0];
+            String contrasenia = tokens[1];
+
+            // Validar que el usuario y la contraseña no estén vacíos
+            if (usuario.isEmpty() || contrasenia.isEmpty()) {
+                retorno = "Usuario y/o contraseña vacíos,;,400";
+                return retorno;
+            }
+
+            Usuarios listaUsuarios = new Usuarios();// Carga la lista de usuarios desde un archivo
+
+            // Validar la existencia del usuario
+            if (listaUsuarios.existeUsuario(usuario)) {
+                String tipoDeUsuario = listaUsuarios.obtenerUsuario(usuario).getTipoDeUsuario().trim();
+                retorno = "El documento ya tiene un usuario registrado de tipo " + tipoDeUsuario + ",;,409";
+            } else {
+                // Intentar agregar un nuevo usuario
+                Usuario nuevoUsuario = new Usuario(usuario, contrasenia, "estudiante");
+                listaUsuarios.agregarUsuario(nuevoUsuario);
+                listaUsuarios.perisistirUsuarios();
+                retorno = "Usuario creado con éxito,;,200";
+            }
+        } catch (Exception e) {
+            // Manejar cualquier otra excepción no controlada
             retorno = "Error del servidor: " + e.getMessage() + ",;,500";
         }
         return retorno;
