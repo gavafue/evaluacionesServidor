@@ -70,4 +70,47 @@ public class Historiales {
             e.printStackTrace();
         }
     }  
+    
+        /**
+     * Metodo que retorna el Historial dado su posicion en la lista. Asume que el
+     * numero de indice es valido.
+     *
+     * @param indice
+     * @return Historial
+     */
+    public Historial obtenerHistorial(int indice) {
+        return this.getListaHistorial().get(indice);
+    }
+
+    /**
+     * Metodo que retorna el HIstorial dado su título.
+     *
+     * @param titulo del Historial a buscar.
+     * @return el Historial encontrado en la coleccion.
+     */
+    public Historial obtenerHistorial(String nombre) { 
+        Historial encontrado = null;
+        for (Historial h : this.getListaHistorial()) {
+            if (h.getTituloEvaluacion().equals(nombre)) {
+                encontrado = h;
+            }
+        }
+        return encontrado; //Puede haber mas de una con el mismo titulo?
+    }
+    
+        /**
+     * Metodo que determina si existe un Historial a partir de un titulo.
+     *
+     * @param nombre del Historial
+     * @return si existe el Historial
+     */
+    public boolean existeHistorial(String titulo) {
+        boolean existe = false;
+        for (Historial actual : this.getListaHistorial()) {
+            if (actual.getTituloEvaluacion().equals(titulo)) {
+                existe = true;
+            }
+        }
+        return existe;
+    }
 }

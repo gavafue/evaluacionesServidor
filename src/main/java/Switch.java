@@ -3,17 +3,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Clase Switch para procesar mensajes y derivar operaciones a diferentes clases
  * según el contenido del mensaje, la clase de destino y la operación
- * especificada.
- * Se espera que el mensaje tenga la estructura:
+ * especificada. Se espera que el mensaje tenga la estructura:
  * [contenidoMensaje,;,ClaseDestino,;,Operacion].
- * 
+ *
  * Esta clase incluye métodos para validar los mensajes y derivar operaciones.
- * 
+ *
  * Autor: Gabriel
  */
 public class Switch {
@@ -25,10 +26,10 @@ public class Switch {
     /**
      * Constructor para inicializar la clase Switch con los parámetros
      * proporcionados.
-     * 
-     * @param mensaje      El contenido del mensaje.
+     *
+     * @param mensaje El contenido del mensaje.
      * @param claseDestino La clase de destino.
-     * @param operacion    La operación a realizar.
+     * @param operacion La operación a realizar.
      */
     public Switch(String mensaje, String claseDestino, String operacion) {
         this.mensaje = mensaje;
@@ -38,7 +39,7 @@ public class Switch {
 
     /**
      * Obtiene la operación.
-     * 
+     *
      * @return La operación.
      */
     public String getOperacion() {
@@ -47,7 +48,7 @@ public class Switch {
 
     /**
      * Establece el contenido del mensaje.
-     * 
+     *
      * @param mensaje El nuevo contenido del mensaje.
      */
     public void setMensaje(String mensaje) {
@@ -56,7 +57,7 @@ public class Switch {
 
     /**
      * Establece la operación.
-     * 
+     *
      * @param operacion La nueva operación.
      */
     public void setOperacion(String operacion) {
@@ -65,7 +66,7 @@ public class Switch {
 
     /**
      * Establece la clase de destino.
-     * 
+     *
      * @param claseDestino La nueva clase de destino.
      */
     public void setClaseDestino(String claseDestino) {
@@ -74,7 +75,7 @@ public class Switch {
 
     /**
      * Obtiene el contenido del mensaje.
-     * 
+     *
      * @return El contenido del mensaje.
      */
     public String getMensaje() {
@@ -83,7 +84,7 @@ public class Switch {
 
     /**
      * Obtiene la clase de destino.
-     * 
+     *
      * @return La clase de destino.
      */
     public String getClaseDestino() {
@@ -92,7 +93,7 @@ public class Switch {
 
     /**
      * Valida si el contenido del mensaje no está vacío.
-     * 
+     *
      * @return true si el mensaje no está vacío, false de lo contrario.
      */
     public Boolean validarMensaje() {
@@ -105,7 +106,7 @@ public class Switch {
 
     /**
      * Valida si la clase de destino no está vacía.
-     * 
+     *
      * @return true si la clase de destino no está vacía, false de lo contrario.
      */
     public Boolean validarClaseFinal() {
@@ -118,7 +119,7 @@ public class Switch {
 
     /**
      * Valida si la operación no está vacía.
-     * 
+     *
      * @return true si la operación no está vacía, false de lo contrario.
      */
     public Boolean validarOperacion() {
@@ -131,19 +132,18 @@ public class Switch {
 
     /**
      * Deriva la operación a la clase correspondiente según el contenido del
-     * mensaje,
-     * la clase de destino y la operación.
-     * 
+     * mensaje, la clase de destino y la operación.
+     *
      * @return El resultado de la derivación.
      */
     public String derivadorDeClases() {
         // Obtiene el nombre de la clase de destino
         String claseDestino = this.getClaseDestino();
         String operacion = this.getOperacion();
-        String retorno;
+        String retorno = "";
 
         // Verificación de que claseDestino no es nulo o vacío
-        if (claseDestino == null || claseDestino.isEmpty()) {
+        if (claseDestino == null || claseDestino.isEmpty()) { // PODRIA SER .isBlank para contemplar espacios vacios. ############################################
             retorno = "Error: claseDestino no puede estar vacío.";
             // Imprime el error en la consola
             System.err.println(retorno);
@@ -168,6 +168,12 @@ public class Switch {
                             break;
                     }
                     break;
+                case "Evaluaciones":
+                    retorno = derivarEvaluaciones(operacion);
+                    break;
+                case "Historiales":
+                    retorno = derivarHistoriales(operacion);
+                    break;
                 default:
                     // Error para clase de destino desconocida
                     retorno = "Error: claseDestino desconocido.,;,404";
@@ -186,7 +192,7 @@ public class Switch {
 
     /**
      * Deriva la operación de login para los usuarios.
-     * 
+     *
      * @return El resultado de la operación de login.
      */
     public String derivarLogin() {
@@ -200,7 +206,7 @@ public class Switch {
                 return retorno;
             }
 
-            String[] tokens = mensaje.split(";;;"); // Divide el mensaje en tokens usando ";;;" como delimitador
+            String[] tokens = mensaje.split(";;;"); // Divide el mensaje en tokens usando ";;;" como delimitador --Juan: ¿No debería ser ",;,"?
 
             // Validar que el mensaje contenga los dos tokens necesarios
             if (tokens.length != 2) {
@@ -236,9 +242,9 @@ public class Switch {
 
     /**
      * Método para derivar la creación de un usuario.
-     * 
+     *
      * @return Una cadena con el resultado de la operación y el código de estado
-     *         HTTP correspondiente.
+     * HTTP correspondiente.
      */
     public String derivarCrearUsuario() {
         String retorno = "";
@@ -286,6 +292,75 @@ public class Switch {
             // Manejar cualquier otra excepción no controlada
             retorno = "Error del servidor: " + e.getMessage() + ",;,500";
         }
+        return retorno;
+    }
+
+    /**
+     * Método para derivar las operaciones sobre Evaluaciones.
+     *
+     * @return Una cadena con el resultado de la operación y el código de estado
+     * HTTP correspondiente.
+     */
+    public String derivarEvaluaciones(String operacion) {
+        Evaluaciones e = new Evaluaciones();
+        String retorno = null;
+
+        switch (operacion) {
+
+            case "Eliminar":
+                if (e.existeEvaluacion(mensaje)) {
+
+                    try {
+                        e.eliminarEvaluacion(mensaje);
+                        retorno = "Evaluacion eliminada,;,200";
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                } else {
+                    retorno = "Evaluacion NO existe,;,500";
+                }
+                break;
+            case "Existencia":
+
+                if (e.existeEvaluacion(mensaje)) {
+                    retorno = "Evaluacion existe,;,200";
+                } else {
+                    retorno = "Evaluacion NO existe,;,500";
+
+                }
+                break;
+
+        }
+        return retorno;
+
+    }
+
+    /**
+     * Método para derivar las operaciones sobre Historiales.
+     *
+     * @return Una cadena con el resultado de la operación y el código de estado
+     * HTTP correspondiente.
+     */
+    public String derivarHistoriales(String operacion) {
+        String retorno = null;
+        Historiales h = new Historiales();
+        switch (operacion) {
+            case "Ver":
+                if (h.existeHistorial(mensaje)) {
+
+                    Historial hl = h.obtenerHistorial(mensaje);
+                    retorno = hl.getCiEstudiante() + ",,," + hl.getPuntaje(); // el pdf "comunicaciones servidor" habla de estudianteN... puede haber mas de uno por historial?
+                    retorno += ",:,200";
+
+                } else {
+                    retorno = "Evaluacion NO existe,;,500";
+                }
+
+                break;
+
+        }
+
         return retorno;
     }
 }
