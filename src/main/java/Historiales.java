@@ -1,3 +1,4 @@
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -11,6 +12,7 @@ import java.util.Scanner;
  * @author anaju
  */
 public class Historiales {
+
     //Atributos
     private LinkedList<Historial> listaHistorial;
 
@@ -28,20 +30,20 @@ public class Historiales {
     public void setListaHistorial(LinkedList<Historial> listaHistorial) {
         this.listaHistorial = listaHistorial;
     }
-    
+
     /**
      * Metodo que agrega un historial a la lista de historiales.
-     * @param historial 
+     *
+     * @param historial
      */
-    public void agregarHistorial(Historial historial){
+    public void agregarHistorial(Historial historial) {
         this.listaHistorial.add(historial);
         persistirHistoriales();
     }
-    
-    
-     /**
-     * Metodo que permite cargar al sistema los resultados de las evaluaciones extraidos de un
-     * archivo de texto.
+
+    /**
+     * Metodo que permite cargar al sistema los resultados de las evaluaciones
+     * extraidos de un archivo de texto.
      */
     public void cargarHistorial() {
         try {
@@ -49,7 +51,7 @@ public class Historiales {
             while (s.hasNextLine()) {
                 String linea = s.nextLine();
                 String[] historial = linea.split(";");
-                this.agregarHistorial(new Historial(historial[0],historial[1],parseInt(historial[2])));
+                this.agregarHistorial(new Historial(historial[0], historial[1], parseInt(historial[2])));
             }
             s.close();
         } catch (IOException e) {
@@ -58,22 +60,23 @@ public class Historiales {
     }
 
     /**
-     * Metodo que persiste el puntaje obtenido por cada estudiante al realizar una evaluacion.
+     * Metodo que persiste el puntaje obtenido por cada estudiante al realizar
+     * una evaluacion.
      */
     private void persistirHistoriales() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("historiales.txt"))) {
             for (Historial historial : listaHistorial) {
-                writer.write(historial.getTituloEvaluacion()+";"+historial.getCiEstudiante()+";"+historial.getPuntaje());
+                writer.write(historial.getTituloEvaluacion() + ";" + historial.getCiEstudiante() + ";" + historial.getPuntaje());
                 writer.newLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }  
-    
-        /**
-     * Metodo que retorna el Historial dado su posicion en la lista. Asume que el
-     * numero de indice es valido.
+    }
+
+    /**
+     * Metodo que retorna el Historial dado su posicion en la lista. Asume que
+     * el numero de indice es valido.
      *
      * @param indice
      * @return Historial
@@ -88,18 +91,35 @@ public class Historiales {
      * @param titulo del Historial a buscar.
      * @return el Historial encontrado en la coleccion.
      */
-    public Historial obtenerHistorial(String nombre) { 
+    public Historial obtenerHistorial(String titulo) {
         Historial encontrado = null;
         for (Historial h : this.getListaHistorial()) {
-            if (h.getTituloEvaluacion().equals(nombre)) {
+            if (h.getTituloEvaluacion().equals(titulo)) {
                 encontrado = h;
             }
         }
         return encontrado; //Puede haber mas de una con el mismo titulo?
     }
-    
-        /**
-     * Metodo que determina si existe un Historial a partir de un titulo.
+
+    /**
+     * Metodo que permite obtener todos los historiales de igual titulo.
+     *
+     * @param titulo del Historial a buscar.
+     * @return las coincidencias de Historial encontrado en la coleccion.
+     */
+    public LinkedList<Historial> obtenerHistoriales(String titulo) {
+        LinkedList<Historial> encontrados = null;
+        for (Historial h : this.getListaHistorial()) {
+            if (h.getTituloEvaluacion().equals(titulo)) {
+                encontrados.add(h);
+            }
+        }
+        return encontrados;
+    }
+
+    /**
+     * Metodo que determina si existe al menos un Historial a partir de un
+     * titulo.
      *
      * @param nombre del Historial
      * @return si existe el Historial

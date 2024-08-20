@@ -4,6 +4,7 @@
  */
 
 import java.io.FileNotFoundException;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -344,13 +345,16 @@ public class Switch {
      */
     public String derivarHistoriales(String operacion) {
         String retorno = null;
-        Historiales h = new Historiales();
+        Historiales hs = new Historiales();
         switch (operacion) {
             case "Ver":
-                if (h.existeHistorial(mensaje)) {
+                if (hs.existeHistorial(mensaje)) {
 
-                    Historial hl = h.obtenerHistorial(mensaje);
-                    retorno = hl.getCiEstudiante() + ",,," + hl.getPuntaje(); // el pdf "comunicaciones servidor" habla de estudianteN... puede haber mas de uno por historial?
+                    LinkedList<Historial> hls = hs.obtenerHistoriales(mensaje);
+                    for (Historial h : hls) {
+
+                        retorno = h.getCiEstudiante() + ",,," + h.getPuntaje() + ";;;";
+                    }
                     retorno += ",:,200";
 
                 } else {
