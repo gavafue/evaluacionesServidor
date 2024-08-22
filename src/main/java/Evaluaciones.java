@@ -1,7 +1,7 @@
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  * Clase que permite crear una lista de evaluaciones.
@@ -9,7 +9,7 @@ import java.util.List;
 public class Evaluaciones {
 
     //Atributos
-    private List<Evaluacion> listaEvaluaciones;
+    private ArrayList<Evaluacion> listaEvaluaciones; //Siguiendo la recomendacion de evitar polimorfismo: cambio de List a ArrayList la declaracion.
 
     //Constructor vacio
     public Evaluaciones() {
@@ -17,20 +17,22 @@ public class Evaluaciones {
     }
 
     //Getter
-    public List<Evaluacion> getEvaluaciones() {
+    public ArrayList<Evaluacion> getEvaluaciones() {
         return listaEvaluaciones;
     }
 
     //Setter
-    public void setListaEvaluaciones(List<Evaluacion> listaEvaluaciones) {
+    public void setListaEvaluaciones(ArrayList<Evaluacion> listaEvaluaciones) {
         this.listaEvaluaciones = listaEvaluaciones;
     }
 
     /**
      * Metodo que permite agregar un evaluacion a la lista de evaluaciones.
-     * Asume que no ingresara una evaluacion con un titulo ya existente.
+     * Asume que no ingresara una evaluacion con un titulo ya existente. 
+     * TODO:AGREGAR VALIDACIÓN/RESTRICCIÓN ACÁ MISMO.
      *
      * @param evaluacion
+     * @throws java.io.FileNotFoundException
      */
     public void agregarEvaluacion(Evaluacion evaluacion) throws FileNotFoundException {
         listaEvaluaciones.add(evaluacion);
@@ -51,7 +53,7 @@ public class Evaluaciones {
     }
 
     /**
-     * Metodo que determina si existe una evaluacion o no dado su titulo.
+     * Metodo que determina si existe al menos una evaluacion dado su título.
      *
      * @param titulo
      * @return
@@ -107,7 +109,7 @@ public class Evaluaciones {
     public void cargarEvaluaciones() throws FileNotFoundException {
         FileInputStream file = new FileInputStream("evaluaciones.txt");
         try (ObjectInputStream ois = new ObjectInputStream(file)) {
-            listaEvaluaciones = (List<Evaluacion>) ois.readObject();
+            listaEvaluaciones = (ArrayList<Evaluacion>) ois.readObject();
             ois.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

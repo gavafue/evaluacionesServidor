@@ -183,7 +183,7 @@ public class Switch {
             }
         } catch (Exception e) {
             // Manejo de excepciones durante la derivación
-            retorno = "Error al derivar a " + claseDestino + ": " + e.getMessage();
+            retorno = "Error al derivar a " + claseDestino + ": " + e.getMessage(); //ESTO HAY QUE PASARLO A CODIGO 500
             System.err.println(retorno);
         }
 
@@ -303,16 +303,16 @@ public class Switch {
      * HTTP correspondiente.
      */
     public String derivarEvaluaciones(String operacion) {
-        Evaluaciones e = new Evaluaciones();
+        Evaluaciones es = new Evaluaciones();
         String retorno = null;
 
         switch (operacion) {
 
             case "Eliminar":
-                if (e.existeEvaluacion(mensaje)) {
+                if (es.existeEvaluacion(mensaje)) {
 
                     try {
-                        e.eliminarEvaluacion(mensaje);
+                        es.eliminarEvaluacion(mensaje);
                         retorno = "Evaluacion eliminada,;,200";
                     } catch (FileNotFoundException ex) {
                         Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
@@ -324,11 +324,64 @@ public class Switch {
                 break;
             case "Existencia":
 
-                if (e.existeEvaluacion(mensaje)) {
+                if (es.existeEvaluacion(mensaje)) {
                     retorno = "Evaluacion existe,;,200";
                 } else {
                     retorno = "Evaluacion NO existe,;,500";
 
+                }
+                break;
+            case "Listar":
+                if (!es.getEvaluaciones().isEmpty()) {
+                    for (Evaluacion ev : es.getEvaluaciones()) {
+                        retorno += ev.getTitulo() + ";;;";
+                    }
+                    retorno += ",;,200";
+                } else {
+                    retorno = "NO existen Evaluciaciones guardadas,;,400";
+                }
+                break;
+            case "Alta":
+                String[] mensajeTokenizado = mensaje.split(";;;"); // segundo nivel
+
+                if (!es.existeEvaluacion(mensajeTokenizado[0])) {
+                    //CREAR EVALUACION
+                    Evaluacion ev = null; // Crear constructor en Evaluacion que admita como parametro las preguntas.
+                    Preguntas ps = new Preguntas();
+                    Pregunta p = null;
+
+                    for (int i = 1; i < mensajeTokenizado.length - 2; i++) { //recorro todas las preguntas. i= 0 titulo evaluacion y en i=length-1 esta el total de preguntas
+                        // la cantidad debe coincidir con el ultimo token. Suma de verificacion
+
+                        String[] preguntaActual = mensajeTokenizado[i].split(",,,"); //tercer nivel
+                        if (preguntaActual[1].equals("Completar")) {
+                            p = new CompletarEspacio(preguntaActual[0], Integer.parseInt(preguntaActual[2]), preguntaActual[3].split(" "));
+
+                        } else if (preguntaActual[1].equals("MultipleOpcion")) {
+
+                            String[] opciones = {preguntaActual[3], preguntaActual[4], preguntaActual[5], preguntaActual[6]};
+                            p = new MultipleOpcion(preguntaActual[0], Integer.parseInt(preguntaActual[2]), opciones, false, preguntaActual[7]);
+                        } else if (preguntaActual[1].equals("VerdaderoFalso")) {
+
+                            String[] opciones = {"", ""}; //Cuales son las 2 opciones? v y f? En que orden?
+                            p = new MultipleOpcion(preguntaActual[0], Integer.parseInt(preguntaActual[2]), opciones, true, preguntaActual[3]);
+
+                        }
+                        
+                        
+                        ps.agregarPregunta(p);
+
+                    }
+                    try {
+                        //agregar evaluacion
+                        ev = new Evaluacion(mensajeTokenizado[0],ps);
+                        es.agregarEvaluacion(ev);
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    retorno = "Evaluacion creada,;,200";
+                } else {
+                    retorno = "ya existe evaluacion con es titulo,;,400";
                 }
                 break;
 
@@ -353,7 +406,7 @@ public class Switch {
                     LinkedList<Historial> hls = hs.obtenerHistoriales(mensaje);
                     for (Historial h : hls) {
 
-                        retorno = h.getCiEstudiante() + ",,," + h.getPuntaje() + ";;;";
+                        retorno += h.getCiEstudiante() + ",,," + h.getPuntaje() + ";;;";
                     }
                     retorno += ",:,200";
 

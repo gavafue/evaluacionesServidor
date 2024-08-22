@@ -19,7 +19,13 @@ public class CompletarEspacio extends Pregunta {
     //Atributos
     private String[] respuestasCorrectas;
 
-    //Constructor comun
+    /**
+     * Constructor comun.
+     * 
+     * @param enunciado
+     * @param puntaje
+     * @param respuestasCorrectas
+     */
     public CompletarEspacio(String enunciado, int puntaje, String[] respuestasCorrectas) {
         super(enunciado, puntaje);
         this.respuestasCorrectas = respuestasCorrectas;

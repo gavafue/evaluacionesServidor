@@ -1,3 +1,4 @@
+
 import java.io.Serializable;
 import javax.swing.JPanel;
 
@@ -7,10 +8,9 @@ import javax.swing.JPanel;
 public class Evaluacion implements Serializable {
 
     /**
-     * Agrego el ID fijo para evitar problemas de compatibilidad
-     * al realizar cambios en la clase después de serializar objetos.
-     * Por defecto se genera un id automatico que cambia al modificar algun metodo
-     * de la clase
+     * Agrego el ID fijo para evitar problemas de compatibilidad al realizar
+     * cambios en la clase después de serializar objetos. Por defecto se genera
+     * un id automatico que cambia al modificar algun metodo de la clase
      */
     private static final long serialVersionUID = 903578866662717088L;
 
@@ -22,6 +22,17 @@ public class Evaluacion implements Serializable {
     public Evaluacion(String titulo) {
         this.titulo = titulo;
         this.listaPreguntas = new Preguntas();
+
+    }
+    
+    /**
+     * Constructor
+     * @param titulo
+     * @param listaPreguntas
+     */
+    public Evaluacion(String titulo, Preguntas listaPreguntas) {
+        this.titulo = titulo;
+        this.listaPreguntas = listaPreguntas;
 
     }
 
@@ -50,7 +61,6 @@ public class Evaluacion implements Serializable {
 // JPanel multiple;
 // JPanel espacios;
 // FramePregunta pregunta;
-
 // pregunta=new FramePregunta(null,this);
 // pregunta.setLocationRelativeTo(null);
 // multiple=pregunta.getPanelMultiple();
@@ -60,12 +70,9 @@ public class Evaluacion implements Serializable {
 // pregunta
 // pregunta.setVisible(true);
 // Pregunta aMostrar = listaPreguntas.obtenerPregunta(posicion);
-
 // if (aMostrar instanceof MultipleOpcion){
-
 // if (!((MultipleOpcion) aMostrar).getEsVerdaderoOFalso()) {
 // String[] opciones = ((MultipleOpcion) aMostrar).getOpciones();
-
 // pregunta.getLblEnunciadoMultiple().setText(aMostrar.getEnunciado());//Se
 // carga el enunciado en Label
 // pregunta.getTxtRespuesta().setVisible(true);
@@ -80,15 +87,12 @@ public class Evaluacion implements Serializable {
 // pregunta.getTxtOpc2().setText(opciones[1]);
 // pregunta.getTxtOpc3().setText(opciones[2]);
 // pregunta.getTxtOpc4().setText(opciones[3]);
-
 // pregunta.getTxtOpc1().setEnabled(false);
 // pregunta.getTxtOpc2().setEnabled(false);
 // pregunta.getTxtOpc3().setEnabled(false);
 // pregunta.getTxtOpc4().setEnabled(false);
 // pregunta.getBtnFinalizarMultiple().setText("Siguiente");
-
 // }else { //Es una pregunta VF
-
 // pregunta.getTxtEnunciadoVF().setText(aMostrar.getEnunciado());//Se carga el
 // enunciado en el txtArea
 // espacios.setVisible(true);
@@ -100,11 +104,8 @@ public class Evaluacion implements Serializable {
 // pregunta.getspnPuntaje().setEnabled(false);
 // pregunta.getspnPuntaje().setValue(aMostrar.getPuntaje());
 // pregunta.getBtnFinalizar().setText("Siguiente");
-
 // }
-
 // } else { //Es una pregunta de completar
-
 // pregunta.getTxtEnunciadoVF().setText(aMostrar.getEnunciado());//Se carga el
 // enunciado en el txtArea
 // pregunta.getCboxVerdaderoOFalso().setVisible(false);
@@ -115,11 +116,8 @@ public class Evaluacion implements Serializable {
 // pregunta.getspnPuntaje().setValue(aMostrar.getPuntaje());
 // pregunta.getLblTipo().setText("Respuesta/s");
 // pregunta.getBtnFinalizar().setText("Siguiente");
-
 // }
-
 // }
-
 // }
 
 /*
