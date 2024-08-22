@@ -5,6 +5,7 @@
 
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,9 +29,9 @@ public class Switch {
      * Constructor para inicializar la clase Switch con los parámetros
      * proporcionados.
      *
-     * @param mensaje El contenido del mensaje.
+     * @param mensaje      El contenido del mensaje.
      * @param claseDestino La clase de destino.
-     * @param operacion La operación a realizar.
+     * @param operacion    La operación a realizar.
      */
     public Switch(String mensaje, String claseDestino, String operacion) {
         this.mensaje = mensaje;
@@ -140,11 +141,11 @@ public class Switch {
     public String derivadorDeClases() {
         // Obtiene el nombre de la clase de destino
         String claseDestino = this.getClaseDestino();
-        String operacion = this.getOperacion();
         String retorno = "";
 
         // Verificación de que claseDestino no es nulo o vacío
-        if (claseDestino == null || claseDestino.isEmpty()) { // PODRIA SER .isBlank para contemplar espacios vacios. ############################################
+        if (claseDestino == null || claseDestino.isEmpty()) { // PODRIA SER .isBlank para contemplar espacios vacios.
+                                                              // ############################################
             retorno = "Error: claseDestino no puede estar vacío.";
             // Imprime el error en la consola
             System.err.println(retorno);
@@ -155,19 +156,7 @@ public class Switch {
             // Selección de la clase de destino
             switch (claseDestino) {
                 case "Usuarios":
-                    // Selección de la operación para la clase Usuarios
-                    switch (operacion) {
-                        case "Alta":
-                            retorno = derivarCrearUsuario();
-                            break;
-                        case "Login":
-                            retorno = derivarLogin();
-                            break;
-                        default:
-                            // Error para operación desconocida
-                            retorno = "Error: Operación desconocida.,;,404";
-                            break;
-                    }
+                    retorno = derivarUsuarios();
                     break;
                 case "Evaluaciones":
                     retorno = derivarEvaluaciones(operacion);
@@ -183,12 +172,31 @@ public class Switch {
             }
         } catch (Exception e) {
             // Manejo de excepciones durante la derivación
-            retorno = "Error al derivar a " + claseDestino + ": " + e.getMessage(); //ESTO HAY QUE PASARLO A CODIGO 500
+            retorno = "Error al derivar a " + claseDestino + ": " + e.getMessage(); // ESTO HAY QUE PASARLO A CODIGO 500
             System.err.println(retorno);
         }
 
         // Devuelve el resultado de la derivación
         return retorno;
+    }
+
+    public String derivarUsuarios() {
+        String operacion = this.getOperacion();
+        String retorno = "";
+        switch (operacion) {
+            case "Alta":
+                retorno = derivarCrearUsuario();
+                break;
+            case "Login":
+                retorno = derivarLogin();
+                break;
+            default:
+                // Error para operación desconocida
+                retorno = "Error: Operación desconocida.,;,404";
+                break;
+        }
+        return retorno;
+
     }
 
     /**
@@ -207,7 +215,8 @@ public class Switch {
                 return retorno;
             }
 
-            String[] tokens = mensaje.split(";;;"); // Divide el mensaje en tokens usando ";;;" como delimitador --Juan: ¿No debería ser ",;,"?
+            String[] tokens = mensaje.split(";;;"); // Divide el mensaje en tokens usando ";;;" como delimitador --Juan:
+                                                    // ¿No debería ser ",;,"?
 
             // Validar que el mensaje contenga los dos tokens necesarios
             if (tokens.length != 2) {
@@ -245,7 +254,7 @@ public class Switch {
      * Método para derivar la creación de un usuario.
      *
      * @return Una cadena con el resultado de la operación y el código de estado
-     * HTTP correspondiente.
+     *         HTTP correspondiente.
      */
     public String derivarCrearUsuario() {
         String retorno = "";
@@ -300,101 +309,107 @@ public class Switch {
      * Método para derivar las operaciones sobre Evaluaciones.
      *
      * @return Una cadena con el resultado de la operación y el código de estado
-     * HTTP correspondiente.
+     *         HTTP correspondiente.
      */
     public String derivarEvaluaciones(String operacion) {
         Evaluaciones es = new Evaluaciones();
-        String retorno = null;
+        String retorno = "";
 
-        switch (operacion) {
+        try {
+            switch (operacion) {
 
-            case "Eliminar":
-                if (es.existeEvaluacion(mensaje)) {
-
-                    try {
+                case "Eliminar":
+                    if (es.existeEvaluacion(mensaje)) {
                         es.eliminarEvaluacion(mensaje);
                         retorno = "Evaluacion eliminada,;,200";
-                    } catch (FileNotFoundException ex) {
-                        Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
+                    } else {
+                        retorno = "Evaluacion NO existe,;,500";
                     }
+                    break;
 
-                } else {
-                    retorno = "Evaluacion NO existe,;,500";
-                }
-                break;
-            case "Existencia":
-
-                if (es.existeEvaluacion(mensaje)) {
-                    retorno = "Evaluacion existe,;,200";
-                } else {
-                    retorno = "Evaluacion NO existe,;,500";
-
-                }
-                break;
-            case "Listar":
-                if (!es.getEvaluaciones().isEmpty()) {
-                    for (Evaluacion ev : es.getEvaluaciones()) {
-                        retorno += ev.getTitulo() + ";;;";
+                case "Existencia":
+                    if (es.existeEvaluacion(mensaje)) {
+                        retorno = "Evaluacion existe,;,200";
+                    } else {
+                        retorno = "Evaluacion NO existe,;,500";
                     }
-                    retorno += ",;,200";
-                } else {
-                    retorno = "NO existen Evaluciaciones guardadas,;,400";
-                }
-                break;
-            case "Alta":
-                String[] mensajeTokenizado = mensaje.split(";;;"); // segundo nivel
+                    break;
 
-                if (!es.existeEvaluacion(mensajeTokenizado[0])) {
-                    //CREAR EVALUACION
-                    Evaluacion ev = null; // Crear constructor en Evaluacion que admita como parametro las preguntas.
-                    Preguntas ps = new Preguntas();
-                    Pregunta p = null;
-
-                    for (int i = 1; i < mensajeTokenizado.length - 2; i++) { //recorro todas las preguntas. i= 0 titulo evaluacion y en i=length-1 esta el total de preguntas
-                        // la cantidad debe coincidir con el ultimo token. Suma de verificacion
-
-                        String[] preguntaActual = mensajeTokenizado[i].split(",,,"); //tercer nivel
-                        if (preguntaActual[1].equals("Completar")) {
-                            p = new CompletarEspacio(preguntaActual[0], Integer.parseInt(preguntaActual[2]), preguntaActual[3].split(" "));
-
-                        } else if (preguntaActual[1].equals("MultipleOpcion")) {
-
-                            String[] opciones = {preguntaActual[3], preguntaActual[4], preguntaActual[5], preguntaActual[6]};
-                            p = new MultipleOpcion(preguntaActual[0], Integer.parseInt(preguntaActual[2]), opciones, false, preguntaActual[7]);
-                        } else if (preguntaActual[1].equals("VerdaderoFalso")) {
-
-                            String[] opciones = {"", ""}; //Cuales son las 2 opciones? v y f? En que orden?
-                            p = new MultipleOpcion(preguntaActual[0], Integer.parseInt(preguntaActual[2]), opciones, true, preguntaActual[3]);
-
+                case "Listar":
+                    if (!es.getEvaluaciones().isEmpty()) {
+                        for (Evaluacion ev : es.getEvaluaciones()) {
+                            retorno += ev.getTitulo() + ";;;";
                         }
-                        
-                        
-                        ps.agregarPregunta(p);
-
+                        retorno += ",;,200";
+                    } else {
+                        retorno = "NO existen Evaluaciones guardadas,;,400";
                     }
-                    try {
-                        //agregar evaluacion
-                        ev = new Evaluacion(mensajeTokenizado[0],ps);
-                        es.agregarEvaluacion(ev);
-                    } catch (FileNotFoundException ex) {
-                        Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    retorno = "Evaluacion creada,;,200";
-                } else {
-                    retorno = "ya existe evaluacion con es titulo,;,400";
-                }
-                break;
+                    break;
 
+                case "Alta":
+                    String[] mensajeTokenizado = mensaje.split(";;;");
+
+                    if (!es.existeEvaluacion(mensajeTokenizado[0])) {
+                        // CREAR EVALUACION
+                        Evaluacion ev;
+                        Preguntas ps = new Preguntas();
+
+                        for (int i = 1; i < mensajeTokenizado.length - 2; i++) {
+                            String[] preguntaActual = mensajeTokenizado[i].split(",,,");
+                            Pregunta p = null;
+
+                            if (preguntaActual[1].equals("Completar")) {
+                                p = new CompletarEspacio(preguntaActual[0], Integer.parseInt(preguntaActual[2]),
+                                        preguntaActual[3].split(" "));
+
+                            } else if (preguntaActual[1].equals("MultipleOpcion")) {
+                                String[] opciones = { preguntaActual[3], preguntaActual[4], preguntaActual[5],
+                                        preguntaActual[6] };
+                                p = new MultipleOpcion(preguntaActual[0], Integer.parseInt(preguntaActual[2]), opciones,
+                                        false, preguntaActual[7]);
+
+                            } else if (preguntaActual[1].equals("VerdaderoFalso")) {
+                                String[] opciones = { "", "" }; // Verifica si estas opciones son correctas
+                                p = new MultipleOpcion(preguntaActual[0], Integer.parseInt(preguntaActual[2]), opciones,
+                                        true, preguntaActual[3]);
+                            }
+
+                            if (p != null) {
+                                ps.agregarPregunta(p);
+                            } else {
+                                retorno = "Error al crear la pregunta,;,400";
+                                break;
+                            }
+                        }
+
+                        if (!retorno.contains("Error")) {
+                            ev = new Evaluacion(mensajeTokenizado[0], ps);
+                            es.agregarEvaluacion(ev);
+                            retorno = "Evaluacion creada,;,200";
+                        }
+
+                    } else {
+                        retorno = "Ya existe evaluacion con ese titulo,;,400";
+                    }
+                    break;
+
+                default:
+                    retorno = "Operacion no reconocida,;,400";
+                    break;
+            }
+        } catch (FileNotFoundException ex) {
+            retorno = "Error al realizar la operación,;,500";
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
         }
-        return retorno;
 
+        return retorno;
     }
 
     /**
      * Método para derivar las operaciones sobre Historiales.
      *
      * @return Una cadena con el resultado de la operación y el código de estado
-     * HTTP correspondiente.
+     *         HTTP correspondiente.
      */
     public String derivarHistoriales(String operacion) {
         String retorno = null;
@@ -420,4 +435,42 @@ public class Switch {
 
         return retorno;
     }
+public String realizarEvaluacion(String evaluacionTitulo, int preguntaIndex, String respuestaCliente) {
+    Evaluaciones es = new Evaluaciones();
+    String retorno = "";
+
+    if (es.existeEvaluacion(evaluacionTitulo)) {
+        Evaluacion evaluacion = es.obtenerEvaluacion(evaluacionTitulo);
+        List<Pregunta> preguntas = evaluacion.getListaPreguntas().getPreguntas();
+        
+        if (preguntaIndex < preguntas.size()) {
+            Pregunta preguntaActual = preguntas.get(preguntaIndex);
+            
+            if (respuestaCliente == null) {  // Enviar la pregunta al cliente
+                retorno = preguntaActual.getEnunciado() + ";;;,;,200";
+            } else {  // Recibir la respuesta del cliente y validar
+                boolean resultadoCorrecto = preguntaActual.esCorrecta(respuestaCliente);
+                
+                if (resultadoCorrecto) {
+                    retorno = "Respuesta correcta,;;;,;,200";
+                } else {
+                    retorno = "Respuesta incorrecta,;;;,;,500";
+                }
+
+                if (preguntaIndex + 1 < preguntas.size()) {
+                    retorno += ";;Siguiente pregunta";
+                } else {
+                    retorno += ";;Evaluacion completada";
+                }
+            }
+        } else {
+            retorno = "Indice de pregunta fuera de rango,;,400";
+        }
+    } else {
+        retorno = "Evaluacion NO existe,;,500";
+    }
+
+    return retorno;
+}
+
 }
