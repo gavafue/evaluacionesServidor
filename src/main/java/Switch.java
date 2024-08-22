@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  */
 public class Switch {
 
-    private String mensaje; // Contenido del mensaje
+    private String mensaje; // Contenido del msj
     private String claseDestino; // Clase de destino a la cual se debe derivar la operación
     private String operacion; // Operación que se debe realizar
 
@@ -28,7 +28,7 @@ public class Switch {
      * Constructor para inicializar la clase Switch con los parámetros
      * proporcionados.
      *
-     * @param mensaje El contenido del mensaje.
+     * @param mensaje El contenido del msj.
      * @param claseDestino La clase de destino.
      * @param operacion La operación a realizar.
      */
@@ -48,9 +48,9 @@ public class Switch {
     }
 
     /**
-     * Establece el contenido del mensaje.
+     * Establece el contenido del msj.
      *
-     * @param mensaje El nuevo contenido del mensaje.
+     * @param mensaje El nuevo contenido del msj.
      */
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
@@ -75,9 +75,9 @@ public class Switch {
     }
 
     /**
-     * Obtiene el contenido del mensaje.
+     * Obtiene el contenido del msj.
      *
-     * @return El contenido del mensaje.
+     * @return El contenido del msj.
      */
     public String getMensaje() {
         return mensaje;
@@ -93,13 +93,13 @@ public class Switch {
     }
 
     /**
-     * Valida si el contenido del mensaje no está vacío.
+     * Valida si el contenido del msj no está vacío.
      *
-     * @return true si el mensaje no está vacío, false de lo contrario.
+     * @return true si el msj no está vacío, false de lo contrario.
      */
     public Boolean validarMensaje() {
         Boolean valido = false;
-        if (!this.getMensaje().isEmpty()) { // Verifica que el mensaje no esté vacío
+        if (!this.getMensaje().isEmpty()) { // Verifica que el msj no esté vacío
             valido = true;
         }
         return valido;
@@ -133,7 +133,7 @@ public class Switch {
 
     /**
      * Deriva la operación a la clase correspondiente según el contenido del
-     * mensaje, la clase de destino y la operación.
+ msj, la clase de destino y la operación.
      *
      * @return El resultado de la derivación.
      */
@@ -175,9 +175,16 @@ public class Switch {
                 case "Historiales":
                     retorno = derivarHistoriales(operacion);
                     break;
+
+                case "Prueba":
+                    if (operacion.equals("Conexion")) {
+                        retorno = "# Pureba de conexión: ok.,;,200 #";
+
+                    }
+                    break;
                 default:
                     // Error para clase de destino desconocida
-                    retorno = "Error: claseDestino desconocido.,;,404";
+                    retorno = "Error: claseDestino [" + operacion + "] desconocido.,;,404";
                     System.err.println(retorno);
                     break;
             }
@@ -197,19 +204,19 @@ public class Switch {
      * @return El resultado de la operación de login.
      */
     public String derivarLogin() {
-        String retorno = "";
+        String retorno = null;
         try {
-            String mensaje = this.getMensaje();
+            String msj = this.getMensaje();
 
-            // Validar que el mensaje no esté vacío
-            if (mensaje == null || mensaje.isEmpty()) {
+            // Validar que el msj no esté vacío
+            if (msj == null || msj.isEmpty()) {
                 retorno = "Mensaje vacío,;,400";
                 return retorno;
             }
 
-            String[] tokens = mensaje.split(";;;"); // Divide el mensaje en tokens usando ";;;" como delimitador --Juan: ¿No debería ser ",;,"?
+            String[] tokens = msj.split(";;;"); // Divide el msj en tokens usando ";;;" como delimitador --Juan: ¿No debería ser ",;,"?
 
-            // Validar que el mensaje contenga los dos tokens necesarios
+            // Validar que el msj contenga los dos tokens necesarios
             if (tokens.length != 2) {
                 retorno = "Formato de mensaje incorrecto,;,400";
                 return retorno;
@@ -252,16 +259,16 @@ public class Switch {
         try {
             String mensaje = this.getMensaje();
 
-            // Validar que el mensaje no esté vacío
+            // Validar que el msj no esté vacío
             if (mensaje == null || mensaje.isEmpty()) {
                 retorno = "Mensaje vacío,;,400";
                 return retorno;
             }
 
-            // Divide el mensaje en tokens usando ";;;" como delimitador
+            // Divide el msj en tokens usando ";;;" como delimitador
             String[] tokens = mensaje.split(";;;");
 
-            // Validar que el mensaje contenga los dos tokens necesarios
+            // Validar que el msj contenga los dos tokens necesarios
             if (tokens.length != 2) {
                 retorno = "Formato de mensaje incorrecto,;,400";
                 return retorno;
@@ -367,14 +374,13 @@ public class Switch {
                             p = new MultipleOpcion(preguntaActual[0], Integer.parseInt(preguntaActual[2]), opciones, true, preguntaActual[3]);
 
                         }
-                        
-                        
+
                         ps.agregarPregunta(p);
 
                     }
                     try {
                         //agregar evaluacion
-                        ev = new Evaluacion(mensajeTokenizado[0],ps);
+                        ev = new Evaluacion(mensajeTokenizado[0], ps);
                         es.agregarEvaluacion(ev);
                     } catch (FileNotFoundException ex) {
                         Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);

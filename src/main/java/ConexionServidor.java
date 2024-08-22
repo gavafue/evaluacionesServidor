@@ -26,7 +26,7 @@ public class ConexionServidor {
     public void iniciar() {
         try {
             servidor = new ServerSocket(puerto);
-            System.out.println("Servidor iniciado");
+            System.out.println(" # Servidor iniciado #");
 
             boolean continuar = true;
 
