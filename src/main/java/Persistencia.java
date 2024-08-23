@@ -42,9 +42,17 @@ public class Persistencia {
      * @throws java.io.FileNotFoundException
      */
     public void persistirEvaluacionesEnArchivo(List<Evaluacion> listaEvaluaciones) {
-        try {
-            FileWriter fw = new FileWriter("evaluaciones.txt");
-            for (Evaluacion evaluacion : listaEvaluaciones) {
+    List<String> titulosExistentes = new ArrayList<>();
+    try {
+        titulosExistentes = obtenerTitulosDeEvaluacionesDesdeArchivo();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    
+    try {
+        FileWriter fw = new FileWriter("evaluaciones.txt", true); 
+        for (Evaluacion evaluacion : listaEvaluaciones) {
+            if (!titulosExistentes.contains(evaluacion.getTitulo())) {
                 fw.write(evaluacion.getTitulo() + ";");
                 LinkedList<Pregunta> listaPreguntas = evaluacion.getListaPreguntas().getPreguntas();
                 for (Pregunta pregunta : listaPreguntas) {
@@ -64,11 +72,12 @@ public class Persistencia {
                 }
                 fw.write("\n");
             }
-            fw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+        fw.close();
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+}
 
     public List<String> obtenerTitulosDeEvaluacionesDesdeArchivo() throws IOException {
         List<String> resultados = new ArrayList<String>();
