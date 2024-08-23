@@ -1,1 +1,3 @@
-Evaluacion 1;Pregunta 1,0,CompletarEspacio,[Respuesta, 1];Pregunta 2,0,CompletarEspacio,[Respuesta, 2];Pregunta 2,0,CompletarEspacio,[Respuesta, 2];Pregunta 2,0,CompletarEspacio,[Respuesta, 2];Pregunta 2,0,CompletarEspacio,[Respuesta, 2];
+Evaluacion 6;
+Evaluacion 7;
+Evaluacion 8;pregunta 8.1,20,Completar,respuesta 8.1.1,null;Pregunta 8.2,0,Multiple,8.2.1,8.2.2,8.2.3,8.2.4,Opción 2;
