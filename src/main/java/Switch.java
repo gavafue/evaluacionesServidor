@@ -31,9 +31,9 @@ public class Switch {
      * Constructor para inicializar la clase Switch con los parámetros
      * proporcionados.
      *
-     * @param mensaje      El contenido del mensaje.
+     * @param mensaje El contenido del mensaje.
      * @param claseDestino La clase de destino.
-     * @param operacion    La operación a realizar.
+     * @param operacion La operación a realizar.
      */
     public Switch(String mensaje, String claseDestino, String operacion) {
         this.mensaje = mensaje;
@@ -147,7 +147,7 @@ public class Switch {
 
         // Verificación de que claseDestino no es nulo o vacío
         if (claseDestino == null || claseDestino.isEmpty()) { // PODRIA SER .isBlank para contemplar espacios vacios.
-                                                              // ############################################
+            // ############################################
             retorno = "Error: claseDestino no puede estar vacío.";
             // Imprime el error en la consola
             System.err.println(retorno);
@@ -225,7 +225,7 @@ public class Switch {
             }
 
             String[] tokens = mensaje.split(";;;"); // Divide el mensaje en tokens usando ";;;" como delimitador --Juan:
-                                                    // ¿No debería ser ",;,"?
+            // ¿No debería ser ",;,"?
 
             // Validar que el msj contenga los dos tokens necesarios
             if (tokens.length != 2) {
@@ -263,7 +263,7 @@ public class Switch {
      * Método para derivar la creación de un usuario.
      *
      * @return Una cadena con el resultado de la operación y el código de estado
-     *         HTTP correspondiente.
+     * HTTP correspondiente.
      */
     public String derivarCrearUsuario() {
         String retorno = "";
@@ -318,7 +318,7 @@ public class Switch {
      * Método para derivar las operaciones sobre Evaluaciones.
      *
      * @return Una cadena con el resultado de la operación y el código de estado
-     *         HTTP correspondiente.
+     * HTTP correspondiente.
      */
     public String derivarEvaluaciones(String operacion) {
         Persistencia persistencia = new Persistencia();
@@ -370,12 +370,14 @@ public class Switch {
             case "Alta":
                 /**
                  * Procesa un mensaje de alta de evaluación desde el cliente.
-                 * 
-                 * @param mensaje El mensaje recibido desde el cliente con el formato:
-                 *                "Evaluacion1;;;Pregunta1,,,Completar,,,0,,,Respuesta1;;;Pregunta2,,,Multiple,,,0,,,Respuesta2.1,,,Respuesta2.2,,,Respuesta3.3,,,Respuesta4.4,,,Opción
-                 *                2;;;Pregunta3,,,VF,,,0,,,Verdadero;;;Pregunta4,,,Completar,,,0,,,Respuesta4;;;Pregunta5,,,Multiple,,,0,,,Respuesta5.1,,,Respuesta5.2,,,Respuesta5.3,,,Respuesta5.4,,,Opción
-                 *                4;;;Pregunta6,,,VF,,,3,,,Verdadero;;;6"
-                 * @return Retorna un mensaje indicando el estado de la operación.
+                 *
+                 * @param mensaje El mensaje recibido desde el cliente con el
+                 * formato:
+                 * "Evaluacion1;;;Pregunta1,,,Completar,,,0,,,Respuesta1;;;Pregunta2,,,Multiple,,,0,,,Respuesta2.1,,,Respuesta2.2,,,Respuesta3.3,,,Respuesta4.4,,,Opción
+                 * 2;;;Pregunta3,,,VF,,,0,,,Verdadero;;;Pregunta4,,,Completar,,,0,,,Respuesta4;;;Pregunta5,,,Multiple,,,0,,,Respuesta5.1,,,Respuesta5.2,,,Respuesta5.3,,,Respuesta5.4,,,Opción
+                 * 4;;;Pregunta6,,,VF,,,3,,,Verdadero;;;6"
+                 * @return Retorna un mensaje indicando el estado de la
+                 * operación.
                  */
                 // Divide el mensaje en partes usando el delimitador ';;;'
                 String[] mensajeTokenizado = mensaje.split(";;;");
@@ -407,14 +409,14 @@ public class Switch {
                                 break;
                             case "Multiple":
                                 // Extrae las opciones para preguntas de tipo "Multiple"
-                                String[] opciones = { preguntaActual[3], preguntaActual[4], preguntaActual[5],
-                                        preguntaActual[6] };
+                                String[] opciones = {preguntaActual[3], preguntaActual[4], preguntaActual[5],
+                                    preguntaActual[6]};
                                 p = new MultipleOpcion(enunciadoPregunta, puntajePregunta, opciones, false,
                                         preguntaActual[7]);
                                 break;
                             case "VF":
                                 // Opciones fijas para preguntas de tipo "VF"
-                                String[] opcionesVF = { "Verdadero", "Falso" }; // Opciones para VF
+                                String[] opcionesVF = {"Verdadero", "Falso"}; // Opciones para VF
                                 p = new MultipleOpcion(enunciadoPregunta, puntajePregunta, opcionesVF, true,
                                         preguntaActual[3]);
                                 break;
@@ -444,6 +446,14 @@ public class Switch {
                     retorno = "Ya existe evaluación con ese título,;,400";
                 }
                 break;
+            case "Realizar":
+                String[] msjTokenizado = mensaje.split(";;;");
+                String evaluacionTitulo = msjTokenizado[0];
+                int preguntaIndex = Integer.parseInt(msjTokenizado[1]);
+                String respuestaCliente = msjTokenizado.length > 2 ? msjTokenizado[2] : null;
+
+                retorno = realizarEvaluacion(evaluacionTitulo, preguntaIndex, respuestaCliente);
+                break;
 
         }
         return retorno;
@@ -453,7 +463,7 @@ public class Switch {
      * Método para derivar las operaciones sobre Historiales.
      *
      * @return Una cadena con el resultado de la operación y el código de estado
-     *         HTTP correspondiente.
+     * HTTP correspondiente.
      */
     public String derivarHistoriales(String operacion) {
         String retorno = null;
