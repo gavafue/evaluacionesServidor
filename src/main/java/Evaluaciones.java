@@ -10,7 +10,7 @@ public class Evaluaciones {
 
     // Atributos
     private ArrayList<Evaluacion> listaEvaluaciones; // Siguiendo la recomendacion de evitar polimorfismo: cambio de
-                                                     // List a ArrayList la declaracion.
+    // List a ArrayList la declaracion.
 
     // Constructor vacio
     public Evaluaciones() {
@@ -49,7 +49,24 @@ public class Evaluaciones {
     public void eliminarEvaluacion(String titulo) throws FileNotFoundException {
         if (existeEvaluacion(titulo)) {
             listaEvaluaciones.remove(obtenerEvaluacion(titulo));
-            persistirEvaluaciones(listaEvaluaciones);
+            // Eliminar la evaluación del archivo "evaluaciones.txt"
+            try (BufferedReader br = new BufferedReader(new FileReader("evaluaciones.txt"))) {
+                List<String> lineas = new ArrayList<>();
+                String linea;
+                while ((linea = br.readLine()) != null) {
+                    if (!linea.startsWith(titulo + ";")) {
+                        lineas.add(linea);
+                    }
+                }
+                try (BufferedWriter bw = new BufferedWriter(new FileWriter("evaluaciones.txt"))) {
+                    for (String linea2 : lineas) {
+                        bw.write(linea2);
+                        bw.newLine();
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -116,14 +133,12 @@ public class Evaluaciones {
     // e.printStackTrace();
     // }
     // }
-
     public void persistirEvaluaciones(ArrayList<Evaluacion> listaEvaluaciones) {
         Persistencia persistir = new Persistencia();
         persistir.persistirEvaluacionesEnArchivo(listaEvaluaciones);
     }
 
     // ----------------- en texto plano ------------------
-
     /**
      * Metodo que permite cargar al sistema las evaluaciones extraidas de un
      * archivo de texto.
@@ -143,7 +158,6 @@ public class Evaluaciones {
      * }
      * }
      */
-
     /**
      * Metodo que persiste las evaluaciones del sistema en su totalidad.
      *
@@ -162,7 +176,6 @@ public class Evaluaciones {
      * }
      * 
      */
-
     // ....................
     public void listarEvaluaciones() {
         for (int i = 0; i < listaEvaluaciones.size(); i++) {
@@ -199,5 +212,4 @@ public class Evaluaciones {
      * agregarEvaluacion(evaluacion2);
      * }
      */
-
 }

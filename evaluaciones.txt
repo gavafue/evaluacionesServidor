@@ -1,3 +1,4 @@
-Evaluacion 6;
 Evaluacion 7;
 Evaluacion 8;pregunta 8.1,20,Completar,respuesta 8.1.1,null;Pregunta 8.2,0,Multiple,8.2.1,8.2.2,8.2.3,8.2.4,Opción 2;
+Evaluación jodida;Hola!,0,Completar,Hola;Hola,0,Completar,Hola;Hola,0,Completar,Hola;
+DonPepito;Respondé hola,30,Multiple,hola,chau,cómo estás,bien,Opción 1;respondé hola,0,Completar,hola;es verdadero,30,VF,Verdadero;

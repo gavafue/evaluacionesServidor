@@ -21,11 +21,12 @@ import java.util.Scanner;
  * @author Gabriel
  */
 public class Persistencia {
+
     public void persistirListaDeUsuariosEnArchivo(HashMap<String, Usuario> hashUsuarios) {
         try {
             FileWriter fw = new FileWriter("passwords.txt");
             for (Map.Entry<String, Usuario> entry : hashUsuarios.entrySet()) { // CODIFICACION SUGERIDA EN LA
-                                                                               // DOCUMENTACION OFICIAL DE JAVA.
+                // DOCUMENTACION OFICIAL DE JAVA.
                 fw.write(entry.getKey() + ";" + entry.getValue().getContrasenia() + ";"
                         + entry.getValue().getTipoDeUsuario() + "\n");
             }
@@ -42,27 +43,36 @@ public class Persistencia {
      * @throws java.io.FileNotFoundException
      */
     public void persistirEvaluacionesEnArchivo(List<Evaluacion> listaEvaluaciones) {
+        List<String> titulosExistentes = new ArrayList<>();
         try {
-            FileWriter fw = new FileWriter("evaluaciones.txt");
+            titulosExistentes = obtenerTitulosDeEvaluacionesDesdeArchivo();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            FileWriter fw = new FileWriter("evaluaciones.txt", true);
             for (Evaluacion evaluacion : listaEvaluaciones) {
-                fw.write(evaluacion.getTitulo() + ";");
-                LinkedList<Pregunta> listaPreguntas = evaluacion.getListaPreguntas().getPreguntas();
-                for (Pregunta pregunta : listaPreguntas) {
-                    fw.write(pregunta.getEnunciado() + "," + pregunta.getPuntaje() + ",");
-                    if (pregunta instanceof CompletarEspacio) {
-                        CompletarEspacio ce = (CompletarEspacio) pregunta;
-                        fw.write("Completar," + String.join(",", ce.getRespuestasCorrectas()) + ";");
-                    } else if (pregunta instanceof MultipleOpcion) {
-                        MultipleOpcion mo = (MultipleOpcion) pregunta;
-                        if (mo.getEsVerdaderoOFalso()) {
-                            fw.write("VF," + mo.getRespuestaCorrecta() + ";");
-                        } else {
-                            fw.write("Multiple," + String.join(",", mo.getOpciones()) + ","
-                                    + mo.getRespuestaCorrecta() + ";");
+                if (!titulosExistentes.contains(evaluacion.getTitulo())) {
+                    fw.write(evaluacion.getTitulo() + ";");
+                    LinkedList<Pregunta> listaPreguntas = evaluacion.getListaPreguntas().getPreguntas();
+                    for (Pregunta pregunta : listaPreguntas) {
+                        fw.write(pregunta.getEnunciado() + "," + pregunta.getPuntaje() + ",");
+                        if (pregunta instanceof CompletarEspacio) {
+                            CompletarEspacio ce = (CompletarEspacio) pregunta;
+                            fw.write("Completar," + String.join(",", ce.getRespuestasCorrectas()) + ";");
+                        } else if (pregunta instanceof MultipleOpcion) {
+                            MultipleOpcion mo = (MultipleOpcion) pregunta;
+                            if (mo.getEsVerdaderoOFalso()) {
+                                fw.write("VF," + mo.getRespuestaCorrecta() + ";");
+                            } else {
+                                fw.write("Multiple," + String.join(",", mo.getOpciones()) + ","
+                                        + mo.getRespuestaCorrecta() + ";");
+                            }
                         }
                     }
+                    fw.write("\n");
                 }
-                fw.write("\n");
             }
             fw.close();
         } catch (IOException e) {
@@ -132,10 +142,10 @@ public class Persistencia {
                                             "Faltan opciones en la pregunta de tipo Multiple.");
                                 }
                                 String[] respuestas1 = {
-                                        datosPregunta[3].trim(),
-                                        datosPregunta[4].trim(),
-                                        datosPregunta[5].trim(),
-                                        datosPregunta[6].trim()
+                                    datosPregunta[3].trim(),
+                                    datosPregunta[4].trim(),
+                                    datosPregunta[5].trim(),
+                                    datosPregunta[6].trim()
                                 };
                                 pregunta = new MultipleOpcion(enunciado, puntaje, respuestas1, false,
                                         respuestaCorrecta);
@@ -145,7 +155,7 @@ public class Persistencia {
                                     throw new IllegalArgumentException(
                                             "Respuesta incorrecta para pregunta de tipo VF.");
                                 }
-                                String[] respuestas2 = { "Verdadero", "Falso" };
+                                String[] respuestas2 = {"Verdadero", "Falso"};
                                 pregunta = new MultipleOpcion(enunciado, puntaje, respuestas2, true, respuestaCorrecta);
                                 break;
                             default:
