@@ -134,7 +134,7 @@ public class Switch {
 
     /**
      * Deriva la operación a la clase correspondiente según el contenido del
- msj, la clase de destino y la operación.
+     * msj, la clase de destino y la operación.
      *
      * @return El resultado de la derivación.
      */
@@ -320,95 +320,93 @@ public class Switch {
      */
     public String derivarEvaluaciones(String operacion) {
         Evaluaciones es = new Evaluaciones();
-        String retorno = "";
+        String retorno = null;
 
-        try {
-            switch (operacion) {
+        switch (operacion) {
 
-                case "Eliminar":
-                    if (es.existeEvaluacion(mensaje)) {
+            case "Eliminar":
+                if (es.existeEvaluacion(mensaje)) {
+
+                    try {
                         es.eliminarEvaluacion(mensaje);
                         retorno = "Evaluacion eliminada,;,200";
-                    } else {
-                        retorno = "Evaluacion NO existe,;,500";
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    break;
 
-                case "Existencia":
-                    if (es.existeEvaluacion(mensaje)) {
-                        retorno = "Evaluacion existe,;,200";
-                    } else {
-                        retorno = "Evaluacion NO existe,;,500";
+                } else {
+                    retorno = "Evaluacion NO existe,;,500";
+                }
+                break;
+            case "Existencia":
+
+                if (es.existeEvaluacion(mensaje)) {
+                    retorno = "Evaluacion existe,;,200";
+                } else {
+                    retorno = "Evaluacion NO existe,;,500";
+
+                }
+                break;
+            case "Listar":
+                if (!es.getEvaluaciones().isEmpty()) {
+                    for (Evaluacion ev : es.getEvaluaciones()) {
+                        retorno += ev.getTitulo() + ";;;";
                     }
-                    break;
+                    retorno += ",;,200";
+                } else {
+                    retorno = "NO existen Evaluciaciones guardadas,;,400";
+                }
+                break;
+            case "Alta":
+                String[] mensajeTokenizado = mensaje.split(";;;"); // segundo nivel
 
-                case "Listar":
-                    if (!es.getEvaluaciones().isEmpty()) {
-                        for (Evaluacion ev : es.getEvaluaciones()) {
-                            retorno += ev.getTitulo() + ";;;";
-                        }
-                        retorno += ",;,200";
-                    } else {
-                        retorno = "NO existen Evaluaciones guardadas,;,400";
-                    }
-                    break;
+                if (!es.existeEvaluacion(mensajeTokenizado[0])) {
+                    // CREAR EVALUACION
+                    Evaluacion ev = null; // Crear constructor en Evaluacion que admita como parametro las preguntas.
+                    Preguntas ps = new Preguntas();
+                    Pregunta p = null;
 
-                case "Alta":
-                    String[] mensajeTokenizado = mensaje.split(";;;");
+                    for (int i = 1; i < mensajeTokenizado.length - 2; i++) { // recorro todas las preguntas. i= 0 titulo
+                                                                             // evaluacion y en i=length-1 esta el total
+                                                                             // de preguntas
+                        // la cantidad debe coincidir con el ultimo token. Suma de verificacion
 
-                    if (!es.existeEvaluacion(mensajeTokenizado[0])) {
-                        // CREAR EVALUACION
-                        Evaluacion ev;
-                        Preguntas ps = new Preguntas();
+                        String[] preguntaActual = mensajeTokenizado[i].split(",,,"); // tercer nivel
+                        if (preguntaActual[1].equals("Completar")) {
+                            p = new CompletarEspacio(preguntaActual[0], Integer.parseInt(preguntaActual[2]),
+                                    preguntaActual[3].split(" "));
 
-                        for (int i = 1; i < mensajeTokenizado.length - 2; i++) {
-                            String[] preguntaActual = mensajeTokenizado[i].split(",,,");
-                            Pregunta p = null;
+                        } else if (preguntaActual[1].equals("MultipleOpcion")) {
 
-                            if (preguntaActual[1].equals("Completar")) {
-                                p = new CompletarEspacio(preguntaActual[0], Integer.parseInt(preguntaActual[2]),
-                                        preguntaActual[3].split(" "));
+                            String[] opciones = { preguntaActual[3], preguntaActual[4], preguntaActual[5],
+                                    preguntaActual[6] };
+                            p = new MultipleOpcion(preguntaActual[0], Integer.parseInt(preguntaActual[2]), opciones,
+                                    false, preguntaActual[7]);
+                        } else if (preguntaActual[1].equals("VerdaderoFalso")) {
 
-                            } else if (preguntaActual[1].equals("MultipleOpcion")) {
-                                String[] opciones = { preguntaActual[3], preguntaActual[4], preguntaActual[5],
-                                        preguntaActual[6] };
-                                p = new MultipleOpcion(preguntaActual[0], Integer.parseInt(preguntaActual[2]), opciones,
-                                        false, preguntaActual[7]);
+                            String[] opciones = { "", "" }; // Cuales son las 2 opciones? v y f? En que orden?
+                            p = new MultipleOpcion(preguntaActual[0], Integer.parseInt(preguntaActual[2]), opciones,
+                                    true, preguntaActual[3]);
 
-                            } else if (preguntaActual[1].equals("VerdaderoFalso")) {
-                                String[] opciones = { "", "" }; // Verifica si estas opciones son correctas
-                                p = new MultipleOpcion(preguntaActual[0], Integer.parseInt(preguntaActual[2]), opciones,
-                                        true, preguntaActual[3]);
-                            }
-
-                            if (p != null) {
-                                ps.agregarPregunta(p);
-                            } else {
-                                retorno = "Error al crear la pregunta,;,400";
-                                break;
-                            }
-                        }
-
-                        if (!retorno.contains("Error")) {
-                            ev = new Evaluacion(mensajeTokenizado[0], ps);
-                            es.agregarEvaluacion(ev);
-                            retorno = "Evaluacion creada,;,200";
                         }
 
-                    } else {
-                        retorno = "Ya existe evaluacion con ese titulo,;,400";
-                    }
-                    break;
+                        ps.agregarPregunta(p);
 
-                default:
-                    retorno = "Operacion no reconocida,;,400";
-                    break;
-            }
-        } catch (FileNotFoundException ex) {
-            retorno = "Error al realizar la operación,;,500";
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+                    }
+                    try {
+                        // agregar evaluacion
+                        ev = new Evaluacion(mensajeTokenizado[0], ps);
+                        es.agregarEvaluacion(ev);
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    retorno = "Evaluacion creada,;,200";
+                } else {
+                    retorno = "Ya existe evaluacion con ese titulo,;,400";
+                }
+                break;
+
         }
-
         return retorno;
     }
 
@@ -442,42 +440,43 @@ public class Switch {
 
         return retorno;
     }
-public String realizarEvaluacion(String evaluacionTitulo, int preguntaIndex, String respuestaCliente) {
-    Evaluaciones es = new Evaluaciones();
-    String retorno = "";
 
-    if (es.existeEvaluacion(evaluacionTitulo)) {
-        Evaluacion evaluacion = es.obtenerEvaluacion(evaluacionTitulo);
-        List<Pregunta> preguntas = evaluacion.getListaPreguntas().getPreguntas();
-        
-        if (preguntaIndex < preguntas.size()) {
-            Pregunta preguntaActual = preguntas.get(preguntaIndex);
-            
-            if (respuestaCliente == null) {  // Enviar la pregunta al cliente
-                retorno = preguntaActual.getEnunciado() + ";;;,;,200";
-            } else {  // Recibir la respuesta del cliente y validar
-                boolean resultadoCorrecto = preguntaActual.esCorrecta(respuestaCliente);
-                
-                if (resultadoCorrecto) {
-                    retorno = "Respuesta correcta,;;;,;,200";
-                } else {
-                    retorno = "Respuesta incorrecta,;;;,;,500";
-                }
+    public String realizarEvaluacion(String evaluacionTitulo, int preguntaIndex, String respuestaCliente) {
+        Evaluaciones es = new Evaluaciones();
+        String retorno = "";
 
-                if (preguntaIndex + 1 < preguntas.size()) {
-                    retorno += ";;Siguiente pregunta";
-                } else {
-                    retorno += ";;Evaluacion completada";
+        if (es.existeEvaluacion(evaluacionTitulo)) {
+            Evaluacion evaluacion = es.obtenerEvaluacion(evaluacionTitulo);
+            List<Pregunta> preguntas = evaluacion.getListaPreguntas().getPreguntas();
+
+            if (preguntaIndex < preguntas.size()) {
+                Pregunta preguntaActual = preguntas.get(preguntaIndex);
+
+                if (respuestaCliente == null) { // Enviar la pregunta al cliente
+                    retorno = preguntaActual.getEnunciado() + ";;;,;,200";
+                } else { // Recibir la respuesta del cliente y validar
+                    boolean resultadoCorrecto = preguntaActual.esCorrecta(respuestaCliente);
+
+                    if (resultadoCorrecto) {
+                        retorno = "Respuesta correcta,;;;,;,200";
+                    } else {
+                        retorno = "Respuesta incorrecta,;;;,;,500";
+                    }
+
+                    if (preguntaIndex + 1 < preguntas.size()) {
+                        retorno += ";;Siguiente pregunta";
+                    } else {
+                        retorno += ";;Evaluacion completada";
+                    }
                 }
+            } else {
+                retorno = "Indice de pregunta fuera de rango,;,400";
             }
         } else {
-            retorno = "Indice de pregunta fuera de rango,;,400";
+            retorno = "Evaluacion NO existe,;,500";
         }
-    } else {
-        retorno = "Evaluacion NO existe,;,500";
-    }
 
-    return retorno;
-}
+        return retorno;
+    }
 
 }

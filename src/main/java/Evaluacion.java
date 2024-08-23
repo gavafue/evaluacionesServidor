@@ -17,6 +17,7 @@ public class Evaluacion implements Serializable {
     // Atributos
     private String titulo;
     private Preguntas listaPreguntas;
+    private int cantidadDePreguntas;
 
     // Constructor comun
     public Evaluacion(String titulo) {
@@ -24,9 +25,10 @@ public class Evaluacion implements Serializable {
         this.listaPreguntas = new Preguntas();
 
     }
-    
+
     /**
      * Constructor
+     * 
      * @param titulo
      * @param listaPreguntas
      */
@@ -45,7 +47,15 @@ public class Evaluacion implements Serializable {
         return listaPreguntas;
     }
 
+    public int getCantidadDePreguntas() {
+        return cantidadDePreguntas;
+    }
+
     // Setters
+    public void setCantidadDePreguntas(int cantidadDePreguntas) {
+        this.cantidadDePreguntas = cantidadDePreguntas;
+    }
+
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
