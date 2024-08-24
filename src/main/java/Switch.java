@@ -26,6 +26,7 @@ public class Switch {
     private String mensaje; // Contenido del msj
     private String claseDestino; // Clase de destino a la cual se debe derivar la operación
     private String operacion; // Operación que se debe realizar
+    Evaluaciones es;
 
     /**
      * Constructor para inicializar la clase Switch con los parámetros
@@ -39,6 +40,7 @@ public class Switch {
         this.mensaje = mensaje;
         this.claseDestino = claseDestino;
         this.operacion = operacion;
+        this.es = new Evaluaciones();
     }
 
     /**
@@ -102,7 +104,7 @@ public class Switch {
      */
     public Boolean validarMensaje() {
         Boolean valido = false;
-        if (!this.getMensaje().isEmpty()) { // Verifica que el msj no esté vacío
+        if (!this.getMensaje().isBlank()) { // Verifica que el msj no esté vacío ni sean solo espacios en blanco.
             valido = true;
         }
         return valido;
@@ -115,7 +117,7 @@ public class Switch {
      */
     public Boolean validarClaseFinal() {
         Boolean valido = false;
-        if (!this.getClaseDestino().isEmpty()) { // Verifica que la clase de destino no esté vacía
+        if (!this.getClaseDestino().isBlank()) { // Verifica que la clase no esté vacía ni sean solo espacios en blanco.
             valido = true;
         }
         return valido;
@@ -128,7 +130,7 @@ public class Switch {
      */
     public Boolean validarOperacion() {
         Boolean valido = false;
-        if (!this.getOperacion().isEmpty()) { // Verifica que la operación no esté vacía
+        if (!this.getOperacion().isBlank()) { // Verifica que la operacion no esté vacía ni sean solo espacios en blanco.
             valido = true;
         }
         return valido;
@@ -169,7 +171,7 @@ public class Switch {
 
                 case "Prueba":
                     if (operacion.equals("Conexion")) {
-                        retorno = "# Pureba de conexión: ok.,;,200 #";
+                        retorno = "# Pureba de conexión: ok.,;,200";
 
                     }
                     break;
@@ -317,6 +319,7 @@ public class Switch {
     /**
      * Método para derivar las operaciones sobre Evaluaciones.
      *
+     * @param operacion
      * @return Una cadena con el resultado de la operación y el código de estado
      * HTTP correspondiente.
      */
@@ -388,7 +391,7 @@ public class Switch {
                     Preguntas ps = new Preguntas();
 
                     // Itera sobre todas las preguntas, excluyendo el último token que es el total
-                    for (int i = 1; i < mensajeTokenizado.length - 1; i++) { // Excluyendo el total
+                    for (int i = 1; i < mensajeTokenizado.length - 2; i++) { // Excluyendo el total
                         // Divide la información de cada pregunta en partes usando el delimitador ',,,'
                         String[] preguntaActual = mensajeTokenizado[i].split(",,,"); // tercer nivel
                         Pregunta p = null;
