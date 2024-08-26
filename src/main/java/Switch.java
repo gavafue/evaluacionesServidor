@@ -201,6 +201,9 @@ public class Switch {
             case "Login":
                 retorno = derivarLogin();
                 break;
+            case "CambioPassword":
+                retorno = derivarCambioPassword();
+                break;
             default:
                 // Error para operación desconocida
                 retorno = "Error: Operación desconocida.,;,404";
@@ -210,6 +213,23 @@ public class Switch {
 
     }
 
+    public String derivarCambioPassword(){
+        Usuarios usuarios = new Usuarios();
+        usuarios.cargarUsuarios();
+        String retorno = "";
+        String[] tokens = mensaje.split(";;;");
+        String usuario = tokens[0];
+        String nuevaContrasenia = tokens[1];
+        if(usuarios.existeUsuario(usuario)){
+            usuarios.obtenerUsuario(usuario).setContrasenia(nuevaContrasenia);
+            usuarios.perisistirUsuarios();
+            retorno = "cambio con exito,;,200";
+        }else{
+            retorno = "NO existe usuario,;,500";
+        }
+        return retorno;
+    }
+    
     /**
      * Deriva la operación de login para los usuarios.
      *
@@ -271,7 +291,7 @@ public class Switch {
         String retorno = "";
         try {
             String mensaje = this.getMensaje();
-
+ 
             // Validar que el msj no esté vacío
             if (mensaje == null || mensaje.isEmpty()) {
                 retorno = "Mensaje vacío,;,400";
@@ -469,27 +489,25 @@ public class Switch {
      * HTTP correspondiente.
      */
     public String derivarHistoriales(String operacion) {
-        String retorno = null;
+        String retorno = "";
         Historiales hs = new Historiales();
+        Persistencia persistencia = new Persistencia();
+        hs.setListaHistorial(persistencia.cargarHistorialesDesdeArchivo().getListaHistorial());
         switch (operacion) {
             case "Ver":
                 if (hs.existeHistorial(mensaje)) {
-
                     LinkedList<Historial> hls = hs.obtenerHistoriales(mensaje);
-                    for (Historial h : hls) {
-
-                        retorno += h.getCiEstudiante() + ",,," + h.getPuntaje() + ";;;";
+                    for (int i=0; i<hls.size(); i++) {
+                        Historial historial = hls.get(i);
+                        retorno += historial.getCiEstudiante() + ",,," + historial.getPuntaje() + ";;;";
                     }
-                    retorno += ",:,200";
-
+                    retorno = retorno.substring(0, retorno.length() - 3);
+                    retorno += ",;,200";
                 } else {
-                    retorno = "Evaluacion NO existe,;,500";
+                    retorno = "NO existen historiales,;,500";
                 }
-
                 break;
-
         }
-
         return retorno;
     }
 

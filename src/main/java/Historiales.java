@@ -42,36 +42,12 @@ public class Historiales {
     }
 
     /**
-     * Metodo que permite cargar al sistema los resultados de las evaluaciones
-     * extraidos de un archivo de texto.
-     */
-    public void cargarHistorial() {
-        try {
-            Scanner s = new Scanner(new File("historiales.txt"));
-            while (s.hasNextLine()) {
-                String linea = s.nextLine();
-                String[] historial = linea.split(";");
-                this.agregarHistorial(new Historial(historial[0], historial[1], parseInt(historial[2])));
-            }
-            s.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Metodo que persiste el puntaje obtenido por cada estudiante al realizar
      * una evaluacion.
      */
     private void persistirHistoriales() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("historiales.txt"))) {
-            for (Historial historial : listaHistorial) {
-                writer.write(historial.getTituloEvaluacion() + ";" + historial.getCiEstudiante() + ";" + historial.getPuntaje());
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Persistencia persistir = new Persistencia();
+        persistir.persistirHistorialesEnArchivo(listaHistorial);
     }
 
     /**
@@ -108,7 +84,7 @@ public class Historiales {
      * @return las coincidencias de Historial encontrado en la coleccion.
      */
     public LinkedList<Historial> obtenerHistoriales(String titulo) {
-        LinkedList<Historial> encontrados = null;
+        LinkedList<Historial> encontrados = new LinkedList<Historial>();
         for (Historial h : this.getListaHistorial()) {
             if (h.getTituloEvaluacion().equals(titulo)) {
                 encontrados.add(h);
@@ -121,7 +97,7 @@ public class Historiales {
      * Metodo que determina si existe al menos un Historial a partir de un
      * titulo.
      *
-     * @param nombre del Historial
+     * @param titulo
      * @return si existe el Historial
      */
     public boolean existeHistorial(String titulo) {
