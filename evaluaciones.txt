@@ -1,3 +1,7 @@
-Evaluacion 7;
-Evaluación jodida;Hola!,0,Completar,Hola;Hola,0,Completar,Hola;Hola,0,Completar,Hola;
-DonPepito;Respondé hola,30,Multiple,hola,chau,cómo estás,bien,Opción 1;respondé hola,0,Completar,hola;es verdadero,30,VF,Verdadero;
+Evaluacion 1;Preg 1,10,VF,Verdadero;Preg 2,0,Completar,hola,como;
+evaluacion 2;Pregunta 1,20,VF,Falso;Pregunta 2,200,Multiple,2.1,2.2,2.3,2.4,Opción 2;
+Evaluacion final;Pregunta 1,300,Completar,jjj,lll;Pregunta 2,300,Multiple,2.1,2.2,2.3,2.4,Opción 3;Pregunta 3,300,VF,Verdadero;
+Evaluacion 8;Preg 1,0,Completar,hola,como;Preg 2,110,Multiple,2.1,2.2,2.3,2.4,Opción 3;Pregunta 3,110,VF,Verdadero;
+Evaluacion 9;Preg 1,110,Completar,1,2;Preg 2,110,VF,Verdadero;Preg 3,110,Multiple,3.1,3.2,3.3,3.4,Opción 3;
+evl 9;prg1,220,Completar,pr1,pr2;prgt2,220,VF,Verdadero;prgt,220,Multiple,rsp1,rsp2,rsp3,rsp4,Opción 3;
+evl10;preg1,550,Multiple,rsp1,rsp2,rsp3,rsp4,Opción 3;prgt2,330,VF,Verdadero;prgt3,330,Completar,hola,chau;;3

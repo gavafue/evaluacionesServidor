@@ -37,7 +37,6 @@ public class Evaluaciones {
      */
     public void agregarEvaluacion(Evaluacion evaluacion) throws FileNotFoundException {
         listaEvaluaciones.add(evaluacion);
-        persistirEvaluaciones(listaEvaluaciones);
     }
 
     /**
@@ -133,9 +132,9 @@ public class Evaluaciones {
     // e.printStackTrace();
     // }
     // }
-    public void persistirEvaluaciones(ArrayList<Evaluacion> listaEvaluaciones) {
+    public void persistirEvaluaciones(ArrayList<Evaluacion> listaEvaluaciones, String cantidadDePreguntas) {
         Persistencia persistir = new Persistencia();
-        persistir.persistirEvaluacionesEnArchivo(listaEvaluaciones);
+        persistir.persistirEvaluacionesEnArchivo(listaEvaluaciones, cantidadDePreguntas);
     }
 
     // ----------------- en texto plano ------------------

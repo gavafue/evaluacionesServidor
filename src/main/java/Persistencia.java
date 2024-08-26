@@ -44,7 +44,7 @@ public class Persistencia {
      *
      * @throws java.io.FileNotFoundException
      */
-    public void persistirEvaluacionesEnArchivo(List<Evaluacion> listaEvaluaciones) {
+    public void persistirEvaluacionesEnArchivo(List<Evaluacion> listaEvaluaciones, String cantidadDePreguntas) {
         List<String> titulosExistentes = new ArrayList<>();
         try {
             titulosExistentes = obtenerTitulosDeEvaluacionesDesdeArchivo();
@@ -73,6 +73,7 @@ public class Persistencia {
                             }
                         }
                     }
+                    fw.write(cantidadDePreguntas);
                     fw.write("\n");
                 }
             }
@@ -144,10 +145,10 @@ public class Persistencia {
                                             "Faltan opciones en la pregunta de tipo Multiple.");
                                 }
                                 String[] respuestas1 = {
-                                    datosPregunta[3].trim(),
-                                    datosPregunta[4].trim(),
-                                    datosPregunta[5].trim(),
-                                    datosPregunta[6].trim()
+                                        datosPregunta[3].trim(),
+                                        datosPregunta[4].trim(),
+                                        datosPregunta[5].trim(),
+                                        datosPregunta[6].trim()
                                 };
                                 pregunta = new MultipleOpcion(enunciado, puntaje, respuestas1, false,
                                         respuestaCorrecta);
@@ -157,7 +158,7 @@ public class Persistencia {
                                     throw new IllegalArgumentException(
                                             "Respuesta incorrecta para pregunta de tipo VF.");
                                 }
-                                String[] respuestas2 = {"Verdadero", "Falso"};
+                                String[] respuestas2 = { "Verdadero", "Falso" };
                                 pregunta = new MultipleOpcion(enunciado, puntaje, respuestas2, true, respuestaCorrecta);
                                 break;
                             default:
@@ -190,6 +191,7 @@ public class Persistencia {
     /**
      * Metodo que permite cargar al sistema los resultados de las evaluaciones
      * extraidos de un archivo de texto.
+     * 
      * @return lista
      */
     public Historiales cargarHistorialesDesdeArchivo() {
@@ -207,7 +209,7 @@ public class Persistencia {
         }
         return listaHistorial;
     }
-    
+
     /**
      * Metodo que persiste el puntaje obtenido por cada estudiante al realizar
      * una evaluacion.
@@ -215,7 +217,8 @@ public class Persistencia {
     public void persistirHistorialesEnArchivo(LinkedList<Historial> listaHistorial) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("historiales.txt"))) {
             for (Historial historial : listaHistorial) {
-                writer.write(historial.getTituloEvaluacion() + ";" + historial.getCiEstudiante() + ";" + historial.getPuntaje());
+                writer.write(historial.getTituloEvaluacion() + ";" + historial.getCiEstudiante() + ";"
+                        + historial.getPuntaje());
                 writer.newLine();
             }
         } catch (IOException e) {

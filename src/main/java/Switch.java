@@ -32,9 +32,9 @@ public class Switch {
      * Constructor para inicializar la clase Switch con los parámetros
      * proporcionados.
      *
-     * @param mensaje El contenido del mensaje.
+     * @param mensaje      El contenido del mensaje.
      * @param claseDestino La clase de destino.
-     * @param operacion La operación a realizar.
+     * @param operacion    La operación a realizar.
      */
     public Switch(String mensaje, String claseDestino, String operacion) {
         this.mensaje = mensaje;
@@ -130,7 +130,8 @@ public class Switch {
      */
     public Boolean validarOperacion() {
         Boolean valido = false;
-        if (!this.getOperacion().isBlank()) { // Verifica que la operacion no esté vacía ni sean solo espacios en blanco.
+        if (!this.getOperacion().isBlank()) { // Verifica que la operacion no esté vacía ni sean solo espacios en
+                                              // blanco.
             valido = true;
         }
         return valido;
@@ -213,23 +214,23 @@ public class Switch {
 
     }
 
-    public String derivarCambioPassword(){
+    public String derivarCambioPassword() {
         Usuarios usuarios = new Usuarios();
         usuarios.cargarUsuarios();
         String retorno = "";
         String[] tokens = mensaje.split(";;;");
         String usuario = tokens[0];
         String nuevaContrasenia = tokens[1];
-        if(usuarios.existeUsuario(usuario)){
+        if (usuarios.existeUsuario(usuario)) {
             usuarios.obtenerUsuario(usuario).setContrasenia(nuevaContrasenia);
             usuarios.perisistirUsuarios();
             retorno = "cambio con exito,;,200";
-        }else{
+        } else {
             retorno = "NO existe usuario,;,500";
         }
         return retorno;
     }
-    
+
     /**
      * Deriva la operación de login para los usuarios.
      *
@@ -285,13 +286,13 @@ public class Switch {
      * Método para derivar la creación de un usuario.
      *
      * @return Una cadena con el resultado de la operación y el código de estado
-     * HTTP correspondiente.
+     *         HTTP correspondiente.
      */
     public String derivarCrearUsuario() {
         String retorno = "";
         try {
             String mensaje = this.getMensaje();
- 
+
             // Validar que el msj no esté vacío
             if (mensaje == null || mensaje.isEmpty()) {
                 retorno = "Mensaje vacío,;,400";
@@ -341,7 +342,7 @@ public class Switch {
      *
      * @param operacion
      * @return Una cadena con el resultado de la operación y el código de estado
-     * HTTP correspondiente.
+     *         HTTP correspondiente.
      */
     public String derivarEvaluaciones(String operacion) {
         Persistencia persistencia = new Persistencia();
@@ -395,12 +396,12 @@ public class Switch {
                  * Procesa un mensaje de alta de evaluación desde el cliente.
                  *
                  * @param mensaje El mensaje recibido desde el cliente con el
-                 * formato:
-                 * "Evaluacion1;;;Pregunta1,,,Completar,,,0,,,Respuesta1;;;Pregunta2,,,Multiple,,,0,,,Respuesta2.1,,,Respuesta2.2,,,Respuesta3.3,,,Respuesta4.4,,,Opción
-                 * 2;;;Pregunta3,,,VF,,,0,,,Verdadero;;;Pregunta4,,,Completar,,,0,,,Respuesta4;;;Pregunta5,,,Multiple,,,0,,,Respuesta5.1,,,Respuesta5.2,,,Respuesta5.3,,,Respuesta5.4,,,Opción
-                 * 4;;;Pregunta6,,,VF,,,3,,,Verdadero;;;6"
+                 *                formato:
+                 *                "Evaluacion1;;;Pregunta1,,,Completar,,,0,,,Respuesta1;;;Pregunta2,,,Multiple,,,0,,,Respuesta2.1,,,Respuesta2.2,,,Respuesta3.3,,,Respuesta4.4,,,Opción
+                 *                2;;;Pregunta3,,,VF,,,0,,,Verdadero;;;Pregunta4,,,Completar,,,0,,,Respuesta4;;;Pregunta5,,,Multiple,,,0,,,Respuesta5.1,,,Respuesta5.2,,,Respuesta5.3,,,Respuesta5.4,,,Opción
+                 *                4;;;Pregunta6,,,VF,,,3,,,Verdadero;;;6"
                  * @return Retorna un mensaje indicando el estado de la
-                 * operación.
+                 *         operación.
                  */
                 // Divide el mensaje en partes usando el delimitador ';;;'
                 String[] mensajeTokenizado = mensaje.split(";;;");
@@ -411,7 +412,7 @@ public class Switch {
                     Preguntas ps = new Preguntas();
 
                     // Itera sobre todas las preguntas, excluyendo el último token que es el total
-                    for (int i = 1; i < mensajeTokenizado.length - 2; i++) { // Excluyendo el total
+                    for (int i = 1; i < mensajeTokenizado.length - 1; i++) { // Excluyendo el total
                         // Divide la información de cada pregunta en partes usando el delimitador ',,,'
                         String[] preguntaActual = mensajeTokenizado[i].split(",,,"); // tercer nivel
                         Pregunta p = null;
@@ -432,14 +433,14 @@ public class Switch {
                                 break;
                             case "Multiple":
                                 // Extrae las opciones para preguntas de tipo "Multiple"
-                                String[] opciones = {preguntaActual[3], preguntaActual[4], preguntaActual[5],
-                                    preguntaActual[6]};
+                                String[] opciones = { preguntaActual[3], preguntaActual[4], preguntaActual[5],
+                                        preguntaActual[6] };
                                 p = new MultipleOpcion(enunciadoPregunta, puntajePregunta, opciones, false,
                                         preguntaActual[7]);
                                 break;
                             case "VF":
                                 // Opciones fijas para preguntas de tipo "VF"
-                                String[] opcionesVF = {"Verdadero", "Falso"}; // Opciones para VF
+                                String[] opcionesVF = { "Verdadero", "Falso" }; // Opciones para VF
                                 p = new MultipleOpcion(enunciadoPregunta, puntajePregunta, opcionesVF, true,
                                         preguntaActual[3]);
                                 break;
@@ -451,13 +452,15 @@ public class Switch {
                         // Agrega la pregunta creada al objeto Preguntas
                         ps.agregarPregunta(p);
                     }
+                    String cantidadDePreguntas = mensajeTokenizado[mensajeTokenizado.length - 1];
+                    System.out.println("Cantidad de preguntas>" + cantidadDePreguntas);
 
                     try {
                         // Crea la evaluación y la agrega al sistema
                         Evaluacion ev = new Evaluacion(mensajeTokenizado[0], ps);
                         es.setListaEvaluaciones(persistencia.cargarEvaluacionesDesdeArchivo().getEvaluaciones());
                         es.agregarEvaluacion(ev);
-                        persistencia.persistirEvaluacionesEnArchivo(es.getEvaluaciones());
+                        persistencia.persistirEvaluacionesEnArchivo(es.getEvaluaciones(), cantidadDePreguntas);
                         retorno = "Evaluacion creada,;,200";
                     } catch (FileNotFoundException ex) {
                         // Maneja excepciones en caso de error al agregar la evaluación
@@ -486,7 +489,7 @@ public class Switch {
      * Método para derivar las operaciones sobre Historiales.
      *
      * @return Una cadena con el resultado de la operación y el código de estado
-     * HTTP correspondiente.
+     *         HTTP correspondiente.
      */
     public String derivarHistoriales(String operacion) {
         String retorno = "";
@@ -497,7 +500,7 @@ public class Switch {
             case "Ver":
                 if (hs.existeHistorial(mensaje)) {
                     LinkedList<Historial> hls = hs.obtenerHistoriales(mensaje);
-                    for (int i=0; i<hls.size(); i++) {
+                    for (int i = 0; i < hls.size(); i++) {
                         Historial historial = hls.get(i);
                         retorno += historial.getCiEstudiante() + ",,," + historial.getPuntaje() + ";;;";
                     }
