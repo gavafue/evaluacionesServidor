@@ -474,8 +474,14 @@ public class Switch {
                 break;
             case "ObtenerPregunta":
                 String[] tokens = mensaje.split(";;;");
-                System.out.println("Evaluacion: " + tokens[0] + "Pregunta num: " + tokens[1]);
                 retorno = obtenerPregunta(tokens[0],Integer.parseInt(tokens[1])); //titulo y numero pregunta
+                break;
+            case "Correccion":
+                String[] tokens2 = mensaje.split(";;;");
+                es.setListaEvaluaciones(persistencia.cargarEvaluacionesDesdeArchivo().getEvaluaciones());
+                System.out.println(tokens2[1]);
+                Evaluacion evaluacion = es.obtenerEvaluacion(tokens2[1]);
+                retorno = correccion(evaluacion.getListaPreguntas());
                 break;
         }
         return retorno;
@@ -510,7 +516,12 @@ public class Switch {
         return retorno;
     }
 
-    //TipoPregunta;;;Enunciado;;;Opc1(opcional);;Opc2(opcional);;;Opc3(opcional);;;Opc4(opcional);;;puntaje,;,200
+    /**
+     * Método que permite enviar al cliente la pregunta solicitada de una evaluación.
+     * @param evaluacionTitulo
+     * @param indice corresponde al número de pregunta.
+     * @return el mensaje a recibir por el cliente del tipo "tipo;;;enunciado;;;op1(opcional);;;op2(opcional);;;op3(opcional);;;op4(opcional);;;puntaje,;,200
+     */
     public String obtenerPregunta(String evaluacionTitulo, int indice) {
         String retorno = "";
         Evaluaciones evaluaciones = new Evaluaciones();
@@ -530,9 +541,43 @@ public class Switch {
                 CompletarEspacio completar = (CompletarEspacio) pregunta;
                 retorno = tipoPregunta + ";;;" + completar.getEnunciado() + ";;;" + completar.getPuntaje() + ",;,200";
             }
-        } else { //No encuentra la pregunta solicitada, lo que significa que se fue de rango y no hay más preguntas
+        } else { //Se fue de rango y no hay más preguntas
             retorno = "Finalizar,;,200";
         }
         return retorno;
+    }
+    
+    /**
+     * Método que calcúla la calificacion obtenida por un estudiante al realizar una evaluación.
+     * @param preguntas
+     * @return 
+     */
+    public String correccion (Preguntas preguntas){
+        String retorno = "";
+        String[] tokens = mensaje.split(";;;");
+        int puntajeTotal = 0;
+        String estudiante = tokens[0];
+        String evaluacion = tokens[1];
+        
+        for(int i=0; i<preguntas.getPreguntas().size();i++){
+            puntajeTotal += calificar(preguntas.obtenerPregunta(i),tokens[i+2]);
+        }
+        retorno = "puntaje total de " + puntajeTotal + " puntos,;,200";
+        return retorno;
+    }
+
+    /**
+     * Método que dada las preguntas individuales calcula la calificacion obtenida en cada una de ellas.
+     * @param pregunta
+     * @param respuesta dada por el estudiante.
+     * @return
+     */
+    public int calificar(Pregunta pregunta, String respuesta){
+        int puntaje = 0;
+        if(pregunta.esCorrecta(respuesta)){
+            System.out.println("Pregunta correcta");
+            puntaje = pregunta.getPuntaje();
+        }
+        return puntaje;
     }
 }

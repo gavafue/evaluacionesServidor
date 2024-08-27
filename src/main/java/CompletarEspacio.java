@@ -49,9 +49,9 @@ public class CompletarEspacio extends Pregunta {
      * @return
      */
     @Override
-    public boolean esCorrecta(String respuesta) { //Al comienzo las respuestas provienen en un unico String, separadas por espacios.
-        String[] respuestas = respuesta.split(" ");
-        return respuestasCorrectas == respuestas;
+    public boolean esCorrecta(String respuesta) { //Al comienzo las respuestas provienen en un unico String, separadas por coma.
+        String[] respuestas = respuesta.split(",");
+        return Arrays.equals(respuestasCorrectas, respuestas);
     }
 
     @Override
