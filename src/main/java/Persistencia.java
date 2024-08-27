@@ -176,6 +176,7 @@ public class Persistencia {
                 try {
                     Evaluacion evaluacion = new Evaluacion(tituloEvaluacion, listaPreguntas);
                     evaluaciones.agregarEvaluacion(evaluacion);
+                    listaPreguntas.listarPreguntas();
                 } catch (Exception e) {
                     System.err.println("Error al crear la evaluación: " + e.getMessage());
                 }

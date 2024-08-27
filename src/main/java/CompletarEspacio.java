@@ -58,4 +58,10 @@ public class CompletarEspacio extends Pregunta {
     public void mostrarPregunta() {
         System.out.println(getEnunciado() + " || [ Respuesta: ] " + Arrays.toString(respuestasCorrectas));
     }
+    
+    @Override
+    public String obtenerTipo(){
+        String tipo = "Completar";
+        return tipo;
+    }
 }

@@ -1,7 +1,1 @@
-Evaluacion 1;Preg 1,10,VF,Verdadero;Preg 2,0,Completar,hola,como;
-evaluacion 2;Pregunta 1,20,VF,Falso;Pregunta 2,200,Multiple,2.1,2.2,2.3,2.4,Opción 2;
-Evaluacion final;Pregunta 1,300,Completar,jjj,lll;Pregunta 2,300,Multiple,2.1,2.2,2.3,2.4,Opción 3;Pregunta 3,300,VF,Verdadero;
-Evaluacion 8;Preg 1,0,Completar,hola,como;Preg 2,110,Multiple,2.1,2.2,2.3,2.4,Opción 3;Pregunta 3,110,VF,Verdadero;
-Evaluacion 9;Preg 1,110,Completar,1,2;Preg 2,110,VF,Verdadero;Preg 3,110,Multiple,3.1,3.2,3.3,3.4,Opción 3;
-evl 9;prg1,220,Completar,pr1,pr2;prgt2,220,VF,Verdadero;prgt,220,Multiple,rsp1,rsp2,rsp3,rsp4,Opción 3;
-evl10;preg1,550,Multiple,rsp1,rsp2,rsp3,rsp4,Opción 3;prgt2,330,VF,Verdadero;prgt3,330,Completar,hola,chau;;3
+ev1;preg1,1,Multiple,r1,r2,r3,r4,3;Preg2 _,2,Completar,Resp1;Pregunta3,1,VF,Verdadero;3

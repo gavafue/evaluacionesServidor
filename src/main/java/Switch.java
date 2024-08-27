@@ -472,15 +472,11 @@ public class Switch {
                     retorno = "Ya existe evaluación con ese título,;,400";
                 }
                 break;
-            case "Realizar":
-                String[] msjTokenizado = mensaje.split(";;;");
-                String evaluacionTitulo = msjTokenizado[0];
-                int preguntaIndex = Integer.parseInt(msjTokenizado[1]);
-                String respuestaCliente = msjTokenizado.length > 2 ? msjTokenizado[2] : null;
-
-                retorno = realizarEvaluacion(evaluacionTitulo, preguntaIndex, respuestaCliente);
+            case "ObtenerPregunta":
+                String[] tokens = mensaje.split(";;;");
+                System.out.println("Evaluacion: " + tokens[0] + "Pregunta num: " + tokens[1]);
+                retorno = obtenerPregunta(tokens[0],Integer.parseInt(tokens[1])); //titulo y numero pregunta
                 break;
-
         }
         return retorno;
     }
@@ -514,42 +510,29 @@ public class Switch {
         return retorno;
     }
 
-    public String realizarEvaluacion(String evaluacionTitulo, int preguntaIndex, String respuestaCliente) {
-        Evaluaciones es = new Evaluaciones();
+    //TipoPregunta;;;Enunciado;;;Opc1(opcional);;Opc2(opcional);;;Opc3(opcional);;;Opc4(opcional);;;puntaje,;,200
+    public String obtenerPregunta(String evaluacionTitulo, int indice) {
         String retorno = "";
-
-        if (es.existeEvaluacion(evaluacionTitulo)) {
-            Evaluacion evaluacion = es.obtenerEvaluacion(evaluacionTitulo);
-            List<Pregunta> preguntas = evaluacion.getListaPreguntas().getPreguntas();
-
-            if (preguntaIndex < preguntas.size()) {
-                Pregunta preguntaActual = preguntas.get(preguntaIndex);
-
-                if (respuestaCliente == null) { // Enviar la pregunta al cliente
-                    retorno = preguntaActual.getEnunciado() + ";;;,;,200";
-                } else { // Recibir la respuesta del cliente y validar
-                    boolean resultadoCorrecto = preguntaActual.esCorrecta(respuestaCliente);
-
-                    if (resultadoCorrecto) {
-                        retorno = "Respuesta correcta,;;;,;,200";
-                    } else {
-                        retorno = "Respuesta incorrecta,;;;,;,500";
-                    }
-
-                    if (preguntaIndex + 1 < preguntas.size()) {
-                        retorno += ";;Siguiente pregunta";
-                    } else {
-                        retorno += ";;Evaluacion completada";
-                    }
-                }
+        Evaluaciones evaluaciones = new Evaluaciones();
+        Persistencia persistencia = new Persistencia();
+        evaluaciones.setListaEvaluaciones(persistencia.cargarEvaluacionesDesdeArchivo().getEvaluaciones());
+        Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(evaluacionTitulo);
+        if (indice < evaluacion.getListaPreguntas().getPreguntas().size()) {
+            Pregunta pregunta = evaluacion.getListaPreguntas().obtenerPregunta(indice);
+            String tipoPregunta = pregunta.obtenerTipo();
+            if (tipoPregunta.equals("Multiple")) {
+                MultipleOpcion multiple = (MultipleOpcion) pregunta;
+                retorno = tipoPregunta + ";;;" + multiple.getEnunciado() + ";;;" + multiple.getOpciones()[0] + ";;;" + multiple.getOpciones()[1] + ";;;" + multiple.getOpciones()[2] + ";;;" + multiple.getOpciones()[3] + ";;;" + multiple.getPuntaje() + ",;,200";
+            } else if (tipoPregunta.equals("VF")) {
+                MultipleOpcion vf = (MultipleOpcion) pregunta;
+                retorno = tipoPregunta + ";;;" + vf.getEnunciado() + ";;;" + vf.getPuntaje() + ",;,200";
             } else {
-                retorno = "Indice de pregunta fuera de rango,;,400";
+                CompletarEspacio completar = (CompletarEspacio) pregunta;
+                retorno = tipoPregunta + ";;;" + completar.getEnunciado() + ";;;" + completar.getPuntaje() + ",;,200";
             }
-        } else {
-            retorno = "Evaluacion NO existe,;,500";
+        } else { //No encuentra la pregunta solicitada, lo que significa que se fue de rango y no hay más preguntas
+            retorno = "Finalizar,;,200";
         }
-
         return retorno;
     }
-
 }

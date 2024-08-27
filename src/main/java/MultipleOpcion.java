@@ -79,4 +79,15 @@ public class MultipleOpcion extends Pregunta {
             System.out.println("  " + (i + 1) + ". " + opciones[i]);
         }
     }
+    
+    @Override
+    public String obtenerTipo(){
+        String tipo = "";
+        if(esVerdaderoOFalso){
+            tipo = "VF";
+        }else{
+            tipo = "Multiple";
+        }
+        return tipo;
+    }
 }

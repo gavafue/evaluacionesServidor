@@ -48,4 +48,6 @@ public abstract class Pregunta implements Serializable {
     public abstract boolean esCorrecta(String respuesta);
 
     public abstract void mostrarPregunta();
+    
+    public abstract String obtenerTipo();
 }
