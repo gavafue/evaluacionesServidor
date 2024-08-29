@@ -178,7 +178,7 @@ public class Switch {
                     break;
                 default:
                     // Error para clase de destino desconocida
-                    retorno = "Error: claseDestino [" + operacion + "] desconocido.,;,404";
+                    retorno = "Error: claseDestino [" + claseDestino + "] desconocido.,;,404";
                     System.err.println(retorno);
                     break;
             }
@@ -563,6 +563,7 @@ public class Switch {
             puntajeTotal += calificar(preguntas.obtenerPregunta(i),tokens[i+2]);
         }
         retorno = "puntaje total de " + puntajeTotal + " puntos,;,200";
+        System.out.println(retorno);//Para pruebas
         return retorno;
     }
 
@@ -577,6 +578,8 @@ public class Switch {
         if(pregunta.esCorrecta(respuesta)){
             System.out.println("Pregunta correcta");
             puntaje = pregunta.getPuntaje();
+        } else {
+            System.out.println("Incorrecto");        
         }
         return puntaje;
     }

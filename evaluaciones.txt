@@ -1,3 +1,5 @@
 ev1;preg1,1,Multiple,r1,r2,r3,r4,3;Preg2 _,2,Completar,Resp1;Pregunta3,1,VF,Verdadero;3
 titulo;enunciado1,1,Completar,r1, r2;enunciado 2,2,Multiple,op1,op2,op3,op4,3;enunciado3,5,VF,Verdadero;3
 ev2;espacios _,1,Completar,r1;_ dos espacios _,4,Completar,r1,r2;dos espacios _ _,6,Completar,r1, r2;3
+unaDePrueba;PrimerPregunta,5,Completar,larespuesta;Segunda pregunta,3,Multiple,no es,no es,no es,es la 4,4;ultima,5,VF,Verdadero;3
+otra;deRelleno,4,Completar,r1,r2;multiple,2,Multiple,no,no,no,si,4;vedraderooNO,1,VF,Falso;3

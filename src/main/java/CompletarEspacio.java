@@ -50,9 +50,41 @@ public class CompletarEspacio extends Pregunta {
      */
     @Override
     public boolean esCorrecta(String respuesta) { //Al comienzo las respuestas provienen en un unico String, separadas por coma.
+        //Que sucede si alguna es correcta pero faltan?
+        //en principio 0 puntos y que siga estudiando 
+        boolean todasCorrectas = true;
+        boolean encontrada;//Si se encuentra la respuesta del estudiante dentro de las posibles
         String[] respuestas = respuesta.split(",");
-        return Arrays.equals(respuestasCorrectas, respuestas);
+        //para pruebas
+        System.out.println("COMPLETAR ESPACIOS:");
+        System.out.println("RESPUESTAS ESPERADAS: "+Arrays.toString(respuestasCorrectas)+respuestasCorrectas.length);     
+        System.out.println("RECIBIDAS:"+ Arrays.toString(respuestas)+respuestas.length);      
+        //Comparo con for el arreglo de las respuestas del estudiante con el de las respuestas correctas                         
+            for (String respuestaX : respuestas) {
+                encontrada =false;
+                for (String respuestaCorrecta : respuestasCorrectas) {
+                    // Eliminar espacios al inicio y final, y comparar ignorando mayúsculas/minúsculas
+                    if (respuestaCorrecta!=null){
+                        if (respuestaX.trim().equalsIgnoreCase(respuestaCorrecta.trim())) {
+                            encontrada = true;
+                            break; // Salir del bucle si se encuentra la coincidencia
+                        }
+                    }
+                }
+
+                if (encontrada) {
+                    System.out.println("La respuesta \"" + respuestaX.trim() + "\" es correcta.");
+                } else {
+                    System.out.println("La respuesta \"" + respuestaX.trim() + "\" es incorrecta.");
+                    todasCorrectas = false; // Marcar que no todas son correctas
+                }
+            }
+      //  } 
+        
+        return todasCorrectas; // Retorna si todas son correctas o no       
+        
     }
+    
 
     @Override
     public void mostrarPregunta() {
