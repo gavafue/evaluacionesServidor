@@ -38,7 +38,7 @@ public class Historiales {
      * Metodo que persiste el puntaje obtenido por cada estudiante al realizar
      * una evaluacion.
      */
-    private void persistirHistoriales() {
+    public void persistirHistoriales() {
         Persistencia persistir = new Persistencia();
         persistir.persistirHistorialesEnArchivo(listaHistorial);
     }
@@ -55,19 +55,19 @@ public class Historiales {
     }
 
     /**
-     * Metodo que retorna el HIstorial dado su título.
+     * Metodo que retorna el historial de una evaluacion dado el titulo de la misma y la ci del estudiante.
      *
      * @param titulo del Historial a buscar.
      * @return el Historial encontrado en la coleccion.
      */
-    public Historial obtenerHistorial(String titulo) {
+    public Historial obtenerHistorial(String titulo, String ci) {
         Historial encontrado = null;
         for (Historial h : this.getListaHistorial()) {
-            if (h.getTituloEvaluacion().equals(titulo)) {
+            if (h.getTituloEvaluacion().equals(titulo)&&h.getCiEstudiante().equals(ci)) {
                 encontrado = h;
             }
         }
-        return encontrado; //Puede haber mas de una con el mismo titulo?
+        return encontrado;
     }
 
     /**
@@ -97,6 +97,24 @@ public class Historiales {
         boolean existe = false;
         for (Historial actual : this.getListaHistorial()) {
             if (actual.getTituloEvaluacion().equals(titulo)) {
+                existe = true;
+            }
+        }
+        return existe;
+    }
+    
+    /**
+     * Metodo que determina si existe al menos un Historial asociado a un estudiante a partir del
+     * titulo y la ci.
+     *
+     * @param titulo
+     * @param ci
+     * @return si existe un historial asociado a la ci
+     */
+    public boolean existeHistorial(String titulo, String ci){
+        boolean existe = false;
+        for (Historial actual : this.getListaHistorial()) {
+            if (actual.getTituloEvaluacion().equals(titulo)&&actual.getCiEstudiante().equals(ci)) {
                 existe = true;
             }
         }

@@ -485,7 +485,13 @@ public class Switch {
                 evaluaciones.actualizarListaEvaluaciones();
                 Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(tokens2[1]);
                 int puntajeObtenido = correccion(evaluacion.getListaPreguntas());
-                hs.agregarHistorial(new Historial(tokens2[1],tokens2[0],puntajeObtenido));
+                if(hs.existeHistorial(tokens2[1], tokens2[0])){
+                   Historial h = hs.obtenerHistorial(tokens2[1], tokens2[0]);
+                   h.setPuntaje(puntajeObtenido);
+                   hs.persistirHistoriales();
+                }else{
+                   hs.agregarHistorial(new Historial(tokens2[1],tokens2[0],puntajeObtenido));
+                }
                 retorno = "Historial agregado con exito,;,200";
                 break;
         }
