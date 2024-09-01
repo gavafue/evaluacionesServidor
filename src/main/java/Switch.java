@@ -151,9 +151,7 @@ public class Switch {
         // Verificación de que claseDestino no es nulo o vacío
         if (claseDestino == null || claseDestino.isEmpty()) { // PODRIA SER .isBlank para contemplar espacios vacios.
             // ############################################
-            retorno = "Error: claseDestino no puede estar vacío.";
-            // Imprime el error en la consola
-            System.err.println(retorno);
+            retorno = "Error: claseDestino no puede estar vacío.,;,400";
             return retorno;
         }
 
@@ -197,10 +195,16 @@ public class Switch {
         String retorno = "";
         switch (operacion) {
             case "Alta":
-                retorno = derivarCrearUsuario();
+                retorno = derivarCrearUsuario(); // ACA SOLO DEBE INGRESAR USUARIO DE TIPO ADMINISTRATIVO. RF4. De momento esto se hace en el cliente. Solo se abre "Registro()" si rol es Administrativo
                 break;
             case "Login":
                 retorno = derivarLogin();
+                break;
+                case "Validez":
+                retorno = derivarValidezNombreUsuario();
+                break;
+            case "Existencia":
+                retorno = derivarExistenciaUsuario();
                 break;
             case "CambioPassword":
                 retorno = derivarCambioPassword();
@@ -282,6 +286,34 @@ public class Switch {
         return retorno;
     }
 
+    public String derivarExistenciaUsuario() {
+        String retorno = "";
+        if (!this.derivarValidezNombreUsuario().contains("400")) {
+            Usuarios us = new Usuarios();
+            if (us.getListaUsuarios().containsKey(this.getMensaje())) {
+                retorno = "Usuario existe,;,200";
+            } else {
+                retorno = "Usuario NO existe,;,400";
+
+            }
+        } else {
+            retorno = "Cedula en formato incorrecto. ,;,400";
+        }
+
+        return retorno;
+    }
+
+    public String derivarValidezNombreUsuario() {
+        String retorno = "";
+        if (!this.getMensaje().isBlank() || this.getMensaje().length() == 8) {
+            retorno = "Formato de CI correcto,;,200";
+        } else {
+            retorno = "Cedula en formato incorrecto. [deben ser 8 digitos exactos],;,400";
+        }
+
+        return retorno;
+    }
+
     /**
      * Método para derivar la creación de un usuario.
      *
@@ -293,13 +325,13 @@ public class Switch {
         try {
             String mensaje = this.getMensaje();
 
-            // Validar que el msj no esté vacío
-            if (mensaje == null || mensaje.isEmpty()) {
+            // Validar que el msj no esté vacío ni sean solo espacios.
+            if (mensaje == null || mensaje.isBlank()) {
                 retorno = "Mensaje vacío,;,400";
                 return retorno;
             }
 
-            // Divide el msj en tokens usando ";;;" como delimitador
+            // Divide el msj en tokens usando ";;;" como delimitador. Segundo nivel.
             String[] tokens = mensaje.split(";;;");
 
             // Validar que el msj contenga los dos tokens necesarios
@@ -312,7 +344,7 @@ public class Switch {
             String contrasenia = tokens[1];
 
             // Validar que el usuario y la contraseña no estén vacíos
-            if (usuario.isEmpty() || contrasenia.isEmpty()) {
+            if (usuario.isBlank() || contrasenia.isBlank()) {
                 retorno = "Usuario y/o contraseña vacíos,;,400";
                 return retorno;
             }
@@ -322,7 +354,7 @@ public class Switch {
             // Validar la existencia del usuario
             if (listaUsuarios.existeUsuario(usuario)) {
                 String tipoDeUsuario = listaUsuarios.obtenerUsuario(usuario).getTipoDeUsuario().trim();
-                retorno = "El documento ya tiene un usuario registrado de tipo " + tipoDeUsuario + ",;,409";
+                retorno = "El documento ya tiene un usuario registrado de tipo " + tipoDeUsuario + ",;,400";
             } else {
                 // Intentar agregar un nuevo usuario
                 Usuario nuevoUsuario = new Usuario(usuario, contrasenia, "estudiante");
@@ -384,8 +416,7 @@ public class Switch {
                     retorno = listaEnString + ",;,200";
                 } catch (Exception e) {
                     // Manejo de la excepción
-                    System.err
-                            .println("Ocurrió un error al obtener los títulos de las evaluaciones: " + e.getMessage());
+                    //System.err.println("Ocurrió un error al leer el archivo: " + e.getMessage());
                     retorno = "Error al acceder a las evaluaciones,;,400";
                 }
                 break;
@@ -416,10 +447,10 @@ public class Switch {
                         Pregunta p = null;
                         String enunciadoPregunta = preguntaActual[0];
                         String tipoPregunta = preguntaActual[1];
-                        System.out.println("------------------------------------------------------");
-                        System.out.println(enunciadoPregunta);
-                        System.out.println(tipoPregunta);
-                        System.out.println("------------------------------------------------------");
+                        //System.out.println("------------------------------------------------------");
+                        //System.out.println(enunciadoPregunta);
+                        //System.out.println(tipoPregunta);
+                        //System.out.println("------------------------------------------------------");
                         int puntajePregunta = Integer.parseInt(preguntaActual[2]); // Puntaje de la pregunta
 
                         // Crea la pregunta según el tipo especificado
@@ -451,10 +482,10 @@ public class Switch {
                         ps.agregarPregunta(p);
                     }
                     Integer cantidadDePreguntas = Integer.valueOf(mensajeTokenizado[mensajeTokenizado.length - 1]);
-                    System.out.println("lo que interpreta de cantidad de preguntas es>"
-                            + mensajeTokenizado[mensajeTokenizado.length - 1] + "<" + cantidadDePreguntas);
+                    //System.out.println("lo que interpreta de cantidad de preguntas es>"
+                    //        + mensajeTokenizado[mensajeTokenizado.length - 1] + "<" + cantidadDePreguntas);
 
-                    System.out.println("Cantidad de preguntas>" + cantidadDePreguntas);
+                   // System.out.println("Cantidad de preguntas>" + cantidadDePreguntas);
 
                     try {
                         // Crea la evaluación y la agrega al sistema
@@ -590,10 +621,10 @@ public class Switch {
     public int calificar(Pregunta pregunta, String respuesta) {
         int puntaje = 0;
         if (pregunta.esCorrecta(respuesta)) {
-            System.out.println("Pregunta correcta");
+            //System.out.println("Pregunta correcta");
             puntaje = pregunta.getPuntaje();
         } else {
-            System.out.println("Incorrecto");
+            //System.out.println("Incorrecto");
         }
         return puntaje;
     }

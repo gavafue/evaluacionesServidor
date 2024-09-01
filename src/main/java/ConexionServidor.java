@@ -44,9 +44,10 @@ public class ConexionServidor {
                     String contenidoMensaje = tokens[0].trim();
                     String claseDestino = tokens[1].trim();
                     String operacion = tokens[2].trim();
-                    System.out.println("contenido: " + contenidoMensaje);
-                    System.out.println("clase: " + claseDestino);
-                    System.out.println("operacion: " + operacion);
+                    //System.out.println("contenido: " + contenidoMensaje);
+                    //System.out.println("clase: " + claseDestino);
+                    //System.out.println("operacion: " + operacion);
+                    System.out.println(" > Comunicacion recibida: " + mensaje);
 
                     if (tokens.length < 3) {
                         out.writeUTF("Formato de mensaje incorrecto");
@@ -56,7 +57,9 @@ public class ConexionServidor {
                     Switch derivador = new Switch(contenidoMensaje, claseDestino, operacion);
 
                     if (derivador.validarMensaje() && derivador.validarClaseFinal()) {
-                        out.writeUTF(derivador.derivadorDeClases());
+                        String retorno = derivador.derivadorDeClases();
+                        out.writeUTF(retorno);
+                        System.out.println(" < Comunicacion enviada: " + retorno);//UNICA IMPRESION DE LAS COMUNICACIONES. ELIMINAR EL RESTO DE LOS PRINT.
                     } else {
                         out.writeUTF("No existe dicha operación");
                     }
