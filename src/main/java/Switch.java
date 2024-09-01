@@ -478,12 +478,15 @@ public class Switch {
                 String[] tokens = mensaje.split(";;;");
                 retorno = obtenerPregunta(tokens[0], Integer.parseInt(tokens[1])); // titulo y numero pregunta
                 break;
-            case "Correccion":
+            case "Correccion": 
+                Historiales hs = new Historiales();
+                hs.actualizarHistoriales();
                 String[] tokens2 = mensaje.split(";;;");
                 evaluaciones.actualizarListaEvaluaciones();
-                System.out.println(tokens2[1]);
                 Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(tokens2[1]);
-                retorno = correccion(evaluacion.getListaPreguntas());
+                int puntajeObtenido = correccion(evaluacion.getListaPreguntas());
+                hs.agregarHistorial(new Historial(tokens2[1],tokens2[0],puntajeObtenido));
+                retorno = "Historial agregado con exito,;,200";
                 break;
         }
         return retorno;
@@ -498,8 +501,7 @@ public class Switch {
     public String derivarHistoriales(String operacion) {
         String retorno = "";
         Historiales hs = new Historiales();
-        Persistencia persistencia = new Persistencia();
-        hs.setListaHistorial(persistencia.cargarHistorialesDesdeArchivo().getListaHistorial());
+        hs.actualizarHistoriales();
         switch (operacion) {
             case "Ver":
                 if (hs.existeHistorial(mensaje)) {
@@ -530,8 +532,7 @@ public class Switch {
     public String obtenerPregunta(String evaluacionTitulo, int indice) {
         String retorno = "";
         Evaluaciones evaluaciones = new Evaluaciones();
-        Persistencia persistencia = new Persistencia();
-        evaluaciones.setListaEvaluaciones(persistencia.cargarEvaluacionesDesdeArchivo().getEvaluaciones());
+        evaluaciones.actualizarListaEvaluaciones();
         Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(evaluacionTitulo);
         if (indice < evaluacion.getListaPreguntas().getPreguntas().size()) {
             Pregunta pregunta = evaluacion.getListaPreguntas().obtenerPregunta(indice);
@@ -561,19 +562,15 @@ public class Switch {
      * @param preguntas
      * @return
      */
-    public String correccion(Preguntas preguntas) {
-        String retorno = "";
+    public int correccion(Preguntas preguntas) {
         String[] tokens = mensaje.split(";;;");
         int puntajeTotal = 0;
         String estudiante = tokens[0];
         String evaluacion = tokens[1];
-
         for (int i = 0; i < preguntas.getPreguntas().size(); i++) {
             puntajeTotal += calificar(preguntas.obtenerPregunta(i), tokens[i + 2]);
         }
-        retorno = "puntaje total de " + puntajeTotal + " puntos,;,200";
-        System.out.println(retorno);// Para pruebas
-        return retorno;
+        return puntajeTotal;
     }
 
     /**

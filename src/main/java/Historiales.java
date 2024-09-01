@@ -1,11 +1,4 @@
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import static java.lang.Integer.parseInt;
 import java.util.LinkedList;
-import java.util.Scanner;
 
 /**
  *
@@ -108,5 +101,13 @@ public class Historiales {
             }
         }
         return existe;
+    }
+    
+    /**
+     * Metodo que actualiza en memoria la lista de historiales a partir de un archivo de texto.
+     */
+    public void actualizarHistoriales() {
+        Persistencia persistir = new Persistencia();
+        this.setListaHistorial(persistir.cargarHistorialesDesdeArchivo().getListaHistorial());
     }
 }
