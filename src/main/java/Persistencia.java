@@ -10,6 +10,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import static java.lang.Integer.parseInt;
+import static java.lang.Integer.parseUnsignedInt;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,7 +46,7 @@ public class Persistencia {
      *
      * @throws java.io.FileNotFoundException
      */
-    public void persistirEvaluacionesEnArchivo(List<Evaluacion> listaEvaluaciones, String cantidadDePreguntas) {
+    public void persistirEvaluacionesEnArchivo(List<Evaluacion> listaEvaluaciones) {
         List<String> titulosExistentes = new ArrayList<>();
         try {
             titulosExistentes = obtenerTitulosDeEvaluacionesDesdeArchivo();
@@ -73,7 +75,7 @@ public class Persistencia {
                             }
                         }
                     }
-                    fw.write(cantidadDePreguntas);
+                    fw.write(String.valueOf(evaluacion.getCantidadDePreguntas()));
                     fw.write("\n");
                 }
             }

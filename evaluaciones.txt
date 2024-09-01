@@ -3,3 +3,4 @@ titulo;enunciado1,1,Completar,r1, r2;enunciado 2,2,Multiple,op1,op2,op3,op4,3;en
 ev2;espacios _,1,Completar,r1;_ dos espacios _,4,Completar,r1,r2;dos espacios _ _,6,Completar,r1, r2;3
 unaDePrueba;PrimerPregunta,5,Completar,larespuesta;Segunda pregunta,3,Multiple,no es,no es,no es,es la 4,4;ultima,5,VF,Verdadero;3
 otra;deRelleno,4,Completar,r1,r2;multiple,2,Multiple,no,no,no,si,4;vedraderooNO,1,VF,Falso;3
+Una evaluación casi real;Una variable es un _ en _ de la computadora, que sirve para almacenar datos.,100,Completar,espacio,memoria;Taller 2 esta siendo:,100,Multiple,una poronga,una concha,muy largo,todas son correctas,Opción 4;Esta es la mejor evaluación de todas hasta el momento,100,VF,Verdadero;3

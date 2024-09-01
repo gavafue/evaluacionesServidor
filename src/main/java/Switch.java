@@ -345,18 +345,17 @@ public class Switch {
      *         HTTP correspondiente.
      */
     public String derivarEvaluaciones(String operacion) {
-        Persistencia persistencia = new Persistencia();
-        Evaluaciones es = new Evaluaciones();
-        es.setListaEvaluaciones(persistencia.cargarEvaluacionesDesdeArchivo().getEvaluaciones());
+        Evaluaciones evaluaciones = new Evaluaciones();
+        evaluaciones.actualizarListaEvaluaciones();
         String retorno = null;
 
         switch (operacion) {
 
             case "Eliminar":
-                if (es.existeEvaluacion(mensaje)) {
+                if (evaluaciones.existeEvaluacion(mensaje)) {
 
                     try {
-                        es.eliminarEvaluacion(mensaje);
+                        evaluaciones.eliminarEvaluacion(mensaje);
                         retorno = "Evaluacion eliminada,;,200";
                     } catch (FileNotFoundException ex) {
                         Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
@@ -368,7 +367,7 @@ public class Switch {
                 break;
             case "Existencia":
 
-                if (es.existeEvaluacion(mensaje)) {
+                if (evaluaciones.existeEvaluacion(mensaje)) {
                     retorno = "Evaluacion existe,;,200";
                 } else {
                     retorno = "Evaluacion NO existe,;,500";
@@ -378,18 +377,17 @@ public class Switch {
             case "Listar":
                 String listaEnString = "";
                 try {
-                    List<String> listaTitulosEvaluaciones = persistencia.obtenerTitulosDeEvaluacionesDesdeArchivo();
+                    List<String> listaTitulosEvaluaciones = evaluaciones.obtenerTítulosEvaluaciones();
                     for (String parte : listaTitulosEvaluaciones) {
                         listaEnString += parte + ";;;";
-
                     }
                     retorno = listaEnString + ",;,200";
-                } catch (IOException e) {
+                } catch (Exception e) {
                     // Manejo de la excepción
-                    System.err.println("Ocurrió un error al leer el archivo: " + e.getMessage());
+                    System.err
+                            .println("Ocurrió un error al obtener los títulos de las evaluaciones: " + e.getMessage());
                     retorno = "Error al acceder a las evaluaciones,;,400";
                 }
-
                 break;
             case "Alta":
                 /**
@@ -407,7 +405,7 @@ public class Switch {
                 String[] mensajeTokenizado = mensaje.split(";;;");
 
                 // Verifica si ya existe una evaluación con el mismo título
-                if (!es.existeEvaluacion(mensajeTokenizado[0])) {
+                if (!evaluaciones.existeEvaluacion(mensajeTokenizado[0])) {
                     // Crear un objeto para almacenar las preguntas de la evaluación
                     Preguntas ps = new Preguntas();
 
@@ -452,15 +450,19 @@ public class Switch {
                         // Agrega la pregunta creada al objeto Preguntas
                         ps.agregarPregunta(p);
                     }
-                    String cantidadDePreguntas = mensajeTokenizado[mensajeTokenizado.length - 1];
+                    Integer cantidadDePreguntas = Integer.valueOf(mensajeTokenizado[mensajeTokenizado.length - 1]);
+                    System.out.println("lo que interpreta de cantidad de preguntas es>"
+                            + mensajeTokenizado[mensajeTokenizado.length - 1] + "<" + cantidadDePreguntas);
+
                     System.out.println("Cantidad de preguntas>" + cantidadDePreguntas);
 
                     try {
                         // Crea la evaluación y la agrega al sistema
                         Evaluacion ev = new Evaluacion(mensajeTokenizado[0], ps);
-                        es.setListaEvaluaciones(persistencia.cargarEvaluacionesDesdeArchivo().getEvaluaciones());
-                        es.agregarEvaluacion(ev);
-                        persistencia.persistirEvaluacionesEnArchivo(es.getEvaluaciones(), cantidadDePreguntas);
+                        ev.setCantidadDePreguntas(cantidadDePreguntas);
+                        evaluaciones.actualizarListaEvaluaciones();
+                        evaluaciones.agregarEvaluacion(ev);
+                        evaluaciones.persistirEvaluaciones(evaluaciones.getEvaluaciones());
                         retorno = "Evaluacion creada,;,200";
                     } catch (FileNotFoundException ex) {
                         // Maneja excepciones en caso de error al agregar la evaluación
@@ -474,13 +476,13 @@ public class Switch {
                 break;
             case "ObtenerPregunta":
                 String[] tokens = mensaje.split(";;;");
-                retorno = obtenerPregunta(tokens[0],Integer.parseInt(tokens[1])); //titulo y numero pregunta
+                retorno = obtenerPregunta(tokens[0], Integer.parseInt(tokens[1])); // titulo y numero pregunta
                 break;
             case "Correccion":
                 String[] tokens2 = mensaje.split(";;;");
-                es.setListaEvaluaciones(persistencia.cargarEvaluacionesDesdeArchivo().getEvaluaciones());
+                evaluaciones.actualizarListaEvaluaciones();
                 System.out.println(tokens2[1]);
-                Evaluacion evaluacion = es.obtenerEvaluacion(tokens2[1]);
+                Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(tokens2[1]);
                 retorno = correccion(evaluacion.getListaPreguntas());
                 break;
         }
@@ -517,10 +519,13 @@ public class Switch {
     }
 
     /**
-     * Método que permite enviar al cliente la pregunta solicitada de una evaluación.
+     * Método que permite enviar al cliente la pregunta solicitada de una
+     * evaluación.
+     * 
      * @param evaluacionTitulo
-     * @param indice corresponde al número de pregunta.
-     * @return el mensaje a recibir por el cliente del tipo "tipo;;;enunciado;;;op1(opcional);;;op2(opcional);;;op3(opcional);;;op4(opcional);;;puntaje,;,200
+     * @param indice           corresponde al número de pregunta.
+     * @return el mensaje a recibir por el cliente del tipo
+     *         "tipo;;;enunciado;;;op1(opcional);;;op2(opcional);;;op3(opcional);;;op4(opcional);;;puntaje,;,200
      */
     public String obtenerPregunta(String evaluacionTitulo, int indice) {
         String retorno = "";
@@ -533,7 +538,9 @@ public class Switch {
             String tipoPregunta = pregunta.obtenerTipo();
             if (tipoPregunta.equals("Multiple")) {
                 MultipleOpcion multiple = (MultipleOpcion) pregunta;
-                retorno = tipoPregunta + ";;;" + multiple.getEnunciado() + ";;;" + multiple.getOpciones()[0] + ";;;" + multiple.getOpciones()[1] + ";;;" + multiple.getOpciones()[2] + ";;;" + multiple.getOpciones()[3] + ";;;" + multiple.getPuntaje() + ",;,200";
+                retorno = tipoPregunta + ";;;" + multiple.getEnunciado() + ";;;" + multiple.getOpciones()[0] + ";;;"
+                        + multiple.getOpciones()[1] + ";;;" + multiple.getOpciones()[2] + ";;;"
+                        + multiple.getOpciones()[3] + ";;;" + multiple.getPuntaje() + ",;,200";
             } else if (tipoPregunta.equals("VF")) {
                 MultipleOpcion vf = (MultipleOpcion) pregunta;
                 retorno = tipoPregunta + ";;;" + vf.getEnunciado() + ";;;" + vf.getPuntaje() + ",;,200";
@@ -541,45 +548,49 @@ public class Switch {
                 CompletarEspacio completar = (CompletarEspacio) pregunta;
                 retorno = tipoPregunta + ";;;" + completar.getEnunciado() + ";;;" + completar.getPuntaje() + ",;,200";
             }
-        } else { //Se fue de rango y no hay más preguntas
+        } else { // Se fue de rango y no hay más preguntas
             retorno = "Finalizar,;,200";
         }
         return retorno;
     }
-    
+
     /**
-     * Método que calcúla la calificacion obtenida por un estudiante al realizar una evaluación.
+     * Método que calcúla la calificacion obtenida por un estudiante al realizar una
+     * evaluación.
+     * 
      * @param preguntas
-     * @return 
+     * @return
      */
-    public String correccion (Preguntas preguntas){
+    public String correccion(Preguntas preguntas) {
         String retorno = "";
         String[] tokens = mensaje.split(";;;");
         int puntajeTotal = 0;
         String estudiante = tokens[0];
         String evaluacion = tokens[1];
-        
-        for(int i=0; i<preguntas.getPreguntas().size();i++){
-            puntajeTotal += calificar(preguntas.obtenerPregunta(i),tokens[i+2]);
+
+        for (int i = 0; i < preguntas.getPreguntas().size(); i++) {
+            puntajeTotal += calificar(preguntas.obtenerPregunta(i), tokens[i + 2]);
         }
         retorno = "puntaje total de " + puntajeTotal + " puntos,;,200";
-        System.out.println(retorno);//Para pruebas
+        System.out.println(retorno);// Para pruebas
         return retorno;
     }
 
     /**
-     * Método que dada las preguntas individuales calcula la calificacion obtenida en cada una de ellas.
+     * Método que dada las preguntas individuales calcula la calificacion obtenida
+     * en cada una de ellas.
+     * 
      * @param pregunta
      * @param respuesta dada por el estudiante.
      * @return
      */
-    public int calificar(Pregunta pregunta, String respuesta){
+    public int calificar(Pregunta pregunta, String respuesta) {
         int puntaje = 0;
-        if(pregunta.esCorrecta(respuesta)){
+        if (pregunta.esCorrecta(respuesta)) {
             System.out.println("Pregunta correcta");
             puntaje = pregunta.getPuntaje();
         } else {
-            System.out.println("Incorrecto");        
+            System.out.println("Incorrecto");
         }
         return puntaje;
     }

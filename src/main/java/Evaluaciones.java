@@ -117,65 +117,30 @@ public class Evaluaciones {
         return evaluacion;
     }
 
-    /**
-     * Método que permite cargar las evaluaciones desde un archivo utilizando
-     * deserialización.
-     *
-     * @throws java.io.FileNotFoundException
-     */
-    // public void cargarEvaluaciones() throws FileNotFoundException {
-    // FileInputStream file = new FileInputStream("evaluaciones.txt");
-    // try (ObjectInputStream ois = new ObjectInputStream(file)) {
-    // listaEvaluaciones = (ArrayList<Evaluacion>) ois.readObject();
-    // ois.close();
-    // } catch (IOException | ClassNotFoundException e) {
-    // e.printStackTrace();
-    // }
-    // }
-    public void persistirEvaluaciones(ArrayList<Evaluacion> listaEvaluaciones, String cantidadDePreguntas) {
+    public void persistirEvaluaciones(ArrayList<Evaluacion> listaEvaluaciones) {
         Persistencia persistir = new Persistencia();
-        persistir.persistirEvaluacionesEnArchivo(listaEvaluaciones, cantidadDePreguntas);
+        persistir.persistirEvaluacionesEnArchivo(listaEvaluaciones);
     }
 
-    // ----------------- en texto plano ------------------
-    /**
-     * Metodo que permite cargar al sistema las evaluaciones extraidas de un
-     * archivo de texto.
-     */
-    /*
-     * public void cargarEvaluaciones() {
-     * try {
-     * Scanner s = new Scanner(new File("evaluaciones.txt"));
-     * while (s.hasNextLine()) {
-     * String linea = s.nextLine();
-     * String[] evaluacion = linea.split(";");
-     * this.agregarEvaluacion(new Evaluacion(evaluacion[0]));
-     * }
-     * s.close();
-     * } catch (IOException e) {
-     * e.printStackTrace();
-     * }
-     * }
-     */
-    /**
-     * Metodo que persiste las evaluaciones del sistema en su totalidad.
-     *
-     */
-    /*
-     * private void persistirEvaluaciones() {
-     * try (BufferedWriter writer = new BufferedWriter(new
-     * FileWriter("evaluaciones.txt"))) {
-     * for (Evaluacion evaluacion : listaEvaluaciones) {
-     * writer.write(evaluacion.getTitulo());
-     * writer.newLine();
-     * }
-     * } catch (IOException e) {
-     * e.printStackTrace();
-     * }
-     * }
-     * 
-     */
-    // ....................
+    public void actualizarListaEvaluaciones() {
+        Persistencia persistir = new Persistencia();
+        setListaEvaluaciones(persistir.cargarEvaluacionesDesdeArchivo().getEvaluaciones());
+    }
+
+    public List<String> obtenerTítulosEvaluaciones() {
+        Persistencia persistencia = new Persistencia();
+        List<String> listaTitulosEvaluaciones = new ArrayList<>();
+        try {
+            listaTitulosEvaluaciones = persistencia.obtenerTitulosDeEvaluacionesDesdeArchivo();
+        } catch (IOException e) {
+            // Manejo de la excepción: podrías registrar el error y/o lanzar una excepción personalizada
+            e.printStackTrace(); // Imprime la traza del error
+        }
+        return listaTitulosEvaluaciones;
+    }
+    
+
+
     public void listarEvaluaciones() {
         for (int i = 0; i < listaEvaluaciones.size(); i++) {
             System.out.println("[" + (i + 1) + "]. " + listaEvaluaciones.get(i).getTitulo());
@@ -183,32 +148,4 @@ public class Evaluaciones {
             System.out.println("\n\n\n");
         }
     }
-
-    /*
-     * public void cargarEvaluacionesIniciales() throws FileNotFoundException {
-     * Evaluacion evaluacion1 = new Evaluacion("Primer Parcial");
-     * Evaluacion evaluacion2 = new Evaluacion("Evaluacion Diagnostica");
-     * 
-     * String[] respuestas1 = {"Un pingüino", "una vaca", "un alien", "un perro"};
-     * MultipleOpcion pregunta1 = new
-     * MultipleOpcion("¿Què animal es la mascota de Linux?", 10, respuestas1, false,
-     * respuestas1[0]);
-     * evaluacion1.getListaPreguntas().agregarPregunta(pregunta1);
-     * 
-     * String[] respuestas2 = {"pinguino", "pico"};
-     * CompletarEspacio pregunta2 = new
-     * CompletarEspacio("El animal que es la mascota de Linux es un _ y tiene un _ naranja"
-     * , 5, respuestas2);
-     * evaluacion1.getListaPreguntas().agregarPregunta(pregunta2);
-     * 
-     * String[] respuestas3 = {"Verdadero", "Falso"};
-     * MultipleOpcion pregunta3 = new
-     * MultipleOpcion("La mascota de Linux es un pinguino", 10, respuestas3, true,
-     * respuestas3[0]);
-     * evaluacion2.getListaPreguntas().agregarPregunta(pregunta3);
-     * 
-     * agregarEvaluacion(evaluacion1);
-     * agregarEvaluacion(evaluacion2);
-     * }
-     */
 }
