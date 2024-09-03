@@ -134,7 +134,8 @@ public class Evaluaciones {
         try {
             listaTitulosEvaluaciones = persistencia.obtenerTitulosDeEvaluacionesDesdeArchivo();
         } catch (IOException e) {
-            // Manejo de la excepción: podrías registrar el error y/o lanzar una excepción personalizada
+            // Manejo de la excepción: podrías registrar el error y/o lanzar una excepción
+            // personalizada
             e.printStackTrace(); // Imprime la traza del error
         }
         return listaTitulosEvaluaciones;
@@ -146,25 +147,5 @@ public class Evaluaciones {
             listaEvaluaciones.get(i).getListaPreguntas().listarPreguntas();
             System.out.println("\n\n\n");
         }
-    }
-
-    public String obtenerPreguntasYRespuestas() {
-        String preguntaYRespuesta = "";
-        for (Evaluacion evaluacion : listaEvaluaciones) {
-            for (Pregunta pregunta : evaluacion.getListaPreguntas().getPreguntas()) {
-                String enunciado = pregunta.getEnunciado();
-                String respuesta = "";
-                if (pregunta instanceof CompletarEspacio) {
-                    CompletarEspacio ce = (CompletarEspacio) pregunta;
-                    String[] respuestas = ce.getRespuestasCorrectas();
-                    respuesta = String.join(", ", respuestas);
-                } else if (pregunta instanceof MultipleOpcion) {
-                    MultipleOpcion mo = (MultipleOpcion) pregunta;
-                    respuesta = mo.getRespuestaCorrecta();
-                }
-                preguntaYRespuesta += enunciado + ": " + respuesta + "\n";
-            }
-        }
-        return preguntaYRespuesta;
     }
 }
