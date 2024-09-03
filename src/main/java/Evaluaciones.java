@@ -2,6 +2,7 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Clase que permite crear una lista de evaluaciones.
@@ -133,13 +134,12 @@ public class Evaluaciones {
         try {
             listaTitulosEvaluaciones = persistencia.obtenerTitulosDeEvaluacionesDesdeArchivo();
         } catch (IOException e) {
-            // Manejo de la excepción: podrías registrar el error y/o lanzar una excepción personalizada
+            // Manejo de la excepción: podrías registrar el error y/o lanzar una excepción
+            // personalizada
             e.printStackTrace(); // Imprime la traza del error
         }
         return listaTitulosEvaluaciones;
     }
-    
-
 
     public void listarEvaluaciones() {
         for (int i = 0; i < listaEvaluaciones.size(); i++) {

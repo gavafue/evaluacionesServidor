@@ -195,12 +195,14 @@ public class Switch {
         String retorno = "";
         switch (operacion) {
             case "Alta":
-                retorno = derivarCrearUsuario(); // ACA SOLO DEBE INGRESAR USUARIO DE TIPO ADMINISTRATIVO. RF4. De momento esto se hace en el cliente. Solo se abre "Registro()" si rol es Administrativo
+                retorno = derivarCrearUsuario(); // ACA SOLO DEBE INGRESAR USUARIO DE TIPO ADMINISTRATIVO. RF4. De
+                                                 // momento esto se hace en el cliente. Solo se abre "Registro()" si rol
+                                                 // es Administrativo
                 break;
             case "Login":
                 retorno = derivarLogin();
                 break;
-                case "Validez":
+            case "Validez":
                 retorno = derivarValidezNombreUsuario();
                 break;
             case "Existencia":
@@ -416,7 +418,7 @@ public class Switch {
                     retorno = listaEnString + ",;,200";
                 } catch (Exception e) {
                     // Manejo de la excepción
-                    //System.err.println("Ocurrió un error al leer el archivo: " + e.getMessage());
+                    // System.err.println("Ocurrió un error al leer el archivo: " + e.getMessage());
                     retorno = "Error al acceder a las evaluaciones,;,400";
                 }
                 break;
@@ -447,10 +449,10 @@ public class Switch {
                         Pregunta p = null;
                         String enunciadoPregunta = preguntaActual[0];
                         String tipoPregunta = preguntaActual[1];
-                        //System.out.println("------------------------------------------------------");
-                        //System.out.println(enunciadoPregunta);
-                        //System.out.println(tipoPregunta);
-                        //System.out.println("------------------------------------------------------");
+                        // System.out.println("------------------------------------------------------");
+                        // System.out.println(enunciadoPregunta);
+                        // System.out.println(tipoPregunta);
+                        // System.out.println("------------------------------------------------------");
                         int puntajePregunta = Integer.parseInt(preguntaActual[2]); // Puntaje de la pregunta
 
                         // Crea la pregunta según el tipo especificado
@@ -482,10 +484,11 @@ public class Switch {
                         ps.agregarPregunta(p);
                     }
                     Integer cantidadDePreguntas = Integer.valueOf(mensajeTokenizado[mensajeTokenizado.length - 1]);
-                    //System.out.println("lo que interpreta de cantidad de preguntas es>"
-                    //        + mensajeTokenizado[mensajeTokenizado.length - 1] + "<" + cantidadDePreguntas);
+                    // System.out.println("lo que interpreta de cantidad de preguntas es>"
+                    // + mensajeTokenizado[mensajeTokenizado.length - 1] + "<" +
+                    // cantidadDePreguntas);
 
-                   // System.out.println("Cantidad de preguntas>" + cantidadDePreguntas);
+                    // System.out.println("Cantidad de preguntas>" + cantidadDePreguntas);
 
                     try {
                         // Crea la evaluación y la agrega al sistema
@@ -509,23 +512,46 @@ public class Switch {
                 String[] tokens = mensaje.split(";;;");
                 retorno = obtenerPregunta(tokens[0], Integer.parseInt(tokens[1])); // titulo y numero pregunta
                 break;
-            case "Correccion": 
+            case "Correccion":
                 Historiales hs = new Historiales();
                 hs.actualizarHistoriales();
                 String[] tokens2 = mensaje.split(";;;");
                 evaluaciones.actualizarListaEvaluaciones();
                 Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(tokens2[1]);
                 int puntajeObtenido = correccion(evaluacion.getListaPreguntas());
-                if(hs.existeHistorial(tokens2[1], tokens2[0])){
-                   Historial h = hs.obtenerHistorial(tokens2[1], tokens2[0]);
-                   h.setPuntaje(puntajeObtenido);
-                   hs.persistirHistoriales();
-                }else{
-                   hs.agregarHistorial(new Historial(tokens2[1],tokens2[0],puntajeObtenido));
+                if (hs.existeHistorial(tokens2[1], tokens2[0])) {
+                    Historial h = hs.obtenerHistorial(tokens2[1], tokens2[0]);
+                    h.setPuntaje(puntajeObtenido);
+                    hs.persistirHistoriales();
+                } else {
+                    hs.agregarHistorial(new Historial(tokens2[1], tokens2[0], puntajeObtenido));
                 }
                 retorno = "Historial agregado con exito,;,200";
                 break;
+            case "ObtenerCorrectas":
+                retorno = derivarObtenerRespuestas();
         }
+        return retorno;
+    }
+
+    private String derivarObtenerRespuestas() {
+        String retorno = "";
+        Evaluaciones evaluaciones = new Evaluaciones();
+        evaluaciones.actualizarListaEvaluaciones();
+
+        try {
+            Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(mensaje);
+            ArrayList<String> respuestasCorrectas = evaluacion.obtenerRespuestasCorrectas();
+
+            for (String preguntaYRespuesta : respuestasCorrectas) {
+                retorno += preguntaYRespuesta + ";;;";
+            }
+            retorno += ",;,200"; // Código de éxito 200
+        } catch (Exception e) {
+            // Si ocurre alguna excepción, retorna un código de error 400
+            retorno = ",;,400";
+        }
+
         return retorno;
     }
 
@@ -621,10 +647,10 @@ public class Switch {
     public int calificar(Pregunta pregunta, String respuesta) {
         int puntaje = 0;
         if (pregunta.esCorrecta(respuesta)) {
-            //System.out.println("Pregunta correcta");
+            // System.out.println("Pregunta correcta");
             puntaje = pregunta.getPuntaje();
         } else {
-            //System.out.println("Incorrecto");
+            // System.out.println("Incorrecto");
         }
         return puntaje;
     }
