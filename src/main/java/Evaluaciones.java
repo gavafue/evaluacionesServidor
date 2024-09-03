@@ -2,6 +2,7 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Clase que permite crear una lista de evaluaciones.
@@ -138,8 +139,6 @@ public class Evaluaciones {
         }
         return listaTitulosEvaluaciones;
     }
-    
-
 
     public void listarEvaluaciones() {
         for (int i = 0; i < listaEvaluaciones.size(); i++) {
@@ -147,5 +146,25 @@ public class Evaluaciones {
             listaEvaluaciones.get(i).getListaPreguntas().listarPreguntas();
             System.out.println("\n\n\n");
         }
+    }
+
+    public String obtenerPreguntasYRespuestas() {
+        String preguntaYRespuesta = "";
+        for (Evaluacion evaluacion : listaEvaluaciones) {
+            for (Pregunta pregunta : evaluacion.getListaPreguntas().getPreguntas()) {
+                String enunciado = pregunta.getEnunciado();
+                String respuesta = "";
+                if (pregunta instanceof CompletarEspacio) {
+                    CompletarEspacio ce = (CompletarEspacio) pregunta;
+                    String[] respuestas = ce.getRespuestasCorrectas();
+                    respuesta = String.join(", ", respuestas);
+                } else if (pregunta instanceof MultipleOpcion) {
+                    MultipleOpcion mo = (MultipleOpcion) pregunta;
+                    respuesta = mo.getRespuestaCorrecta();
+                }
+                preguntaYRespuesta += enunciado + ": " + respuesta + "\n";
+            }
+        }
+        return preguntaYRespuesta;
     }
 }
