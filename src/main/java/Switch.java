@@ -4,7 +4,6 @@
  */
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,14 +11,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Clase Switch para procesar mensajes y derivar operaciones a diferentes clases
- * según el contenido del mensaje, la clase de destino y la operación
- * especificada. Se espera que el mensaje tenga la estructura:
+ * Clase para procesar mensajes y derivar operaciones según el contenido del
+ * mensaje, la clase de destino y la operación especificada. Se espera que la
+ * consulta del cliente (el mensaje) tenga la estructura:
  * [contenidoMensaje,;,ClaseDestino,;,Operacion].
  *
  * Esta clase incluye métodos para validar los mensajes y derivar operaciones.
  *
- * Autor: Gabriel
+ * La respuesta del servidor puede incluir uno de los siguientes codigos:
+ * <ul>
+ * <li> 200: consulta con exito. </li>
+ * <li>400: error en la consulta realizada por el cliente.</li>
+ * <li>500: error en el servidor.</li>
+ * </ul>
+ * La respuesta del servidor tiene la estructura: [respuesta,;,codigo].
+ *
+ *
+ *
  */
 public class Switch {
 
@@ -32,9 +40,9 @@ public class Switch {
      * Constructor para inicializar la clase Switch con los parámetros
      * proporcionados.
      *
-     * @param mensaje      El contenido del mensaje.
+     * @param mensaje El contenido del mensaje.
      * @param claseDestino La clase de destino.
-     * @param operacion    La operación a realizar.
+     * @param operacion La operación a realizar.
      */
     public Switch(String mensaje, String claseDestino, String operacion) {
         this.mensaje = mensaje;
@@ -131,15 +139,14 @@ public class Switch {
     public Boolean validarOperacion() {
         Boolean valido = false;
         if (!this.getOperacion().isBlank()) { // Verifica que la operacion no esté vacía ni sean solo espacios en
-                                              // blanco.
+            // blanco.
             valido = true;
         }
         return valido;
     }
 
     /**
-     * Deriva la operación a la clase correspondiente según el contenido del
-     * msj, la clase de destino y la operación.
+     * Deriva la operación a la clase correspondiente según la clase de destino.
      *
      * @return El resultado de la derivación.
      */
@@ -149,7 +156,7 @@ public class Switch {
         String retorno = "";
 
         // Verificación de que claseDestino no es nulo o vacío
-        if (claseDestino == null || claseDestino.isEmpty()) { // PODRIA SER .isBlank para contemplar espacios vacios.
+        if (claseDestino == null || claseDestino.isBlank()) {
             // ############################################
             retorno = "Error: claseDestino no puede estar vacío.,;,400";
             return retorno;
@@ -176,28 +183,31 @@ public class Switch {
                     break;
                 default:
                     // Error para clase de destino desconocida
-                    retorno = "Error: claseDestino [" + claseDestino + "] desconocido.,;,404";
-                    System.err.println(retorno);
+                    retorno = "Error: claseDestino [" + claseDestino + "] desconocido.,;,400";
+                    //System.err.println(retorno);
                     break;
             }
         } catch (Exception e) {
             // Manejo de excepciones durante la derivación
-            retorno = "Error al derivar a " + claseDestino + ": " + e.getMessage(); // ESTO HAY QUE PASARLO A CODIGO 500
-            System.err.println(retorno);
+            retorno = "Error al derivar a " + claseDestino + ": " + e.getMessage() + ",;,500";
+            //System.err.println(retorno);
         }
 
         // Devuelve el resultado de la derivación
         return retorno;
     }
 
+    /**
+     * Metodo que gestiona la derivacion de las operaciones con usuarios.
+     */
     public String derivarUsuarios() {
         String operacion = this.getOperacion();
         String retorno = "";
         switch (operacion) {
             case "Alta":
                 retorno = derivarCrearUsuario(); // ACA SOLO DEBE INGRESAR USUARIO DE TIPO ADMINISTRATIVO. RF4. De
-                                                 // momento esto se hace en el cliente. Solo se abre "Registro()" si rol
-                                                 // es Administrativo
+                // momento esto se hace en el cliente. Solo se abre "Registro()" si rol
+                // es Administrativo
                 break;
             case "Login":
                 retorno = derivarLogin();
@@ -213,13 +223,16 @@ public class Switch {
                 break;
             default:
                 // Error para operación desconocida
-                retorno = "Error: Operación desconocida.,;,404";
+                retorno = "Error: Operación desconocida.,;,400";
                 break;
         }
         return retorno;
 
     }
 
+    /**
+     * Metodo que gestiona el cambio de contrasena de los usuarios.
+     */
     public String derivarCambioPassword() {
         Usuarios usuarios = new Usuarios();
         usuarios.cargarUsuarios();
@@ -279,7 +292,7 @@ public class Switch {
                 String tipoDeUsuario = listaUsuarios.obtenerUsuario(usuario).getTipoDeUsuario().trim();
                 retorno = tipoDeUsuario + ",;,200";
             } else {
-                retorno = "Usuario y/o contraseña incorrectos,;,404";
+                retorno = "Usuario y/o contraseña incorrectos,;,400";
             }
         } catch (Exception e) {
             // Manejar cualquier excepción no controlada
@@ -288,6 +301,10 @@ public class Switch {
         return retorno;
     }
 
+    /**
+     * Metodo que responde si la una CI tiene usuario asociado.
+     *
+     */
     public String derivarExistenciaUsuario() {
         String retorno = "";
         if (!this.derivarValidezNombreUsuario().contains("400")) {
@@ -305,6 +322,10 @@ public class Switch {
         return retorno;
     }
 
+    /**
+     * Metodo que responde si la una CI respeta un formato acorde.
+     *
+     */
     public String derivarValidezNombreUsuario() {
         String retorno = "";
         if (!this.getMensaje().isBlank() || this.getMensaje().length() == 8) {
@@ -320,7 +341,7 @@ public class Switch {
      * Método para derivar la creación de un usuario.
      *
      * @return Una cadena con el resultado de la operación y el código de estado
-     *         HTTP correspondiente.
+     * HTTP correspondiente.
      */
     public String derivarCrearUsuario() {
         String retorno = "";
@@ -376,7 +397,7 @@ public class Switch {
      *
      * @param operacion
      * @return Una cadena con el resultado de la operación y el código de estado
-     *         HTTP correspondiente.
+     * HTTP correspondiente.
      */
     public String derivarEvaluaciones(String operacion) {
         Evaluaciones evaluaciones = new Evaluaciones();
@@ -427,12 +448,12 @@ public class Switch {
                  * Procesa un mensaje de alta de evaluación desde el cliente.
                  *
                  * @param mensaje El mensaje recibido desde el cliente con el
-                 *                formato:
-                 *                "Evaluacion1;;;Pregunta1,,,Completar,,,0,,,Respuesta1;;;Pregunta2,,,Multiple,,,0,,,Respuesta2.1,,,Respuesta2.2,,,Respuesta3.3,,,Respuesta4.4,,,Opción
-                 *                2;;;Pregunta3,,,VF,,,0,,,Verdadero;;;Pregunta4,,,Completar,,,0,,,Respuesta4;;;Pregunta5,,,Multiple,,,0,,,Respuesta5.1,,,Respuesta5.2,,,Respuesta5.3,,,Respuesta5.4,,,Opción
-                 *                4;;;Pregunta6,,,VF,,,3,,,Verdadero;;;6"
+                 * formato:
+                 * "Evaluacion1;;;Pregunta1,,,Completar,,,0,,,Respuesta1;;;Pregunta2,,,Multiple,,,0,,,Respuesta2.1,,,Respuesta2.2,,,Respuesta3.3,,,Respuesta4.4,,,Opción
+                 * 2;;;Pregunta3,,,VF,,,0,,,Verdadero;;;Pregunta4,,,Completar,,,0,,,Respuesta4;;;Pregunta5,,,Multiple,,,0,,,Respuesta5.1,,,Respuesta5.2,,,Respuesta5.3,,,Respuesta5.4,,,Opción
+                 * 4;;;Pregunta6,,,VF,,,3,,,Verdadero;;;6"
                  * @return Retorna un mensaje indicando el estado de la
-                 *         operación.
+                 * operación.
                  */
                 // Divide el mensaje en partes usando el delimitador ';;;'
                 String[] mensajeTokenizado = mensaje.split(";;;");
@@ -464,14 +485,14 @@ public class Switch {
                                 break;
                             case "Multiple":
                                 // Extrae las opciones para preguntas de tipo "Multiple"
-                                String[] opciones = { preguntaActual[3], preguntaActual[4], preguntaActual[5],
-                                        preguntaActual[6] };
+                                String[] opciones = {preguntaActual[3], preguntaActual[4], preguntaActual[5],
+                                    preguntaActual[6]};
                                 p = new MultipleOpcion(enunciadoPregunta, puntajePregunta, opciones, false,
                                         preguntaActual[7]);
                                 break;
                             case "VF":
                                 // Opciones fijas para preguntas de tipo "VF"
-                                String[] opcionesVF = { "Verdadero", "Falso" }; // Opciones para VF
+                                String[] opcionesVF = {"Verdadero", "Falso"}; // Opciones para VF
                                 p = new MultipleOpcion(enunciadoPregunta, puntajePregunta, opcionesVF, true,
                                         preguntaActual[3]);
                                 break;
@@ -489,7 +510,6 @@ public class Switch {
                     // cantidadDePreguntas);
 
                     // System.out.println("Cantidad de preguntas>" + cantidadDePreguntas);
-
                     try {
                         // Crea la evaluación y la agrega al sistema
                         Evaluacion ev = new Evaluacion(mensajeTokenizado[0], ps);
@@ -534,6 +554,9 @@ public class Switch {
         return retorno;
     }
 
+    /**
+     * Metodo que gestiona la consulta de obtencion de respuestas de una evaluacion dada.
+     */
     private String derivarObtenerRespuestas() {
         String retorno = "";
         Evaluaciones evaluaciones = new Evaluaciones();
@@ -559,7 +582,7 @@ public class Switch {
      * Método para derivar las operaciones sobre Historiales.
      *
      * @return Una cadena con el resultado de la operación y el código de estado
-     *         HTTP correspondiente.
+     * HTTP correspondiente.
      */
     public String derivarHistoriales(String operacion) {
         String retorno = "";
@@ -586,11 +609,11 @@ public class Switch {
     /**
      * Método que permite enviar al cliente la pregunta solicitada de una
      * evaluación.
-     * 
+     *
      * @param evaluacionTitulo
-     * @param indice           corresponde al número de pregunta.
+     * @param indice corresponde al número de pregunta.
      * @return el mensaje a recibir por el cliente del tipo
-     *         "tipo;;;enunciado;;;op1(opcional);;;op2(opcional);;;op3(opcional);;;op4(opcional);;;puntaje,;,200
+     * "tipo;;;enunciado;;;op1(opcional);;;op2(opcional);;;op3(opcional);;;op4(opcional);;;puntaje,;,200
      */
     public String obtenerPregunta(String evaluacionTitulo, int indice) {
         String retorno = "";
@@ -619,9 +642,9 @@ public class Switch {
     }
 
     /**
-     * Método que calcúla la calificacion obtenida por un estudiante al realizar una
-     * evaluación.
-     * 
+     * Método que calcúla la calificacion obtenida por un estudiante al realizar
+     * una evaluación.
+     *
      * @param preguntas
      * @return
      */
@@ -637,9 +660,9 @@ public class Switch {
     }
 
     /**
-     * Método que dada las preguntas individuales calcula la calificacion obtenida
-     * en cada una de ellas.
-     * 
+     * Método que dada las preguntas individuales calcula la calificacion
+     * obtenida en cada una de ellas.
+     *
      * @param pregunta
      * @param respuesta dada por el estudiante.
      * @return
