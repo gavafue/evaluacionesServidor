@@ -550,6 +550,10 @@ public class Switch {
                 break;
             case "ObtenerCorrectas":
                 retorno = derivarObtenerRespuestas();
+                break;
+            case "ValorCheckboxRespuestas":
+                retorno = obtenerValorCheckboxRespuestas();
+                break;
         }
         return retorno;
     }
@@ -557,7 +561,7 @@ public class Switch {
     /**
      * Metodo que gestiona la consulta de obtencion de respuestas de una evaluacion dada.
      */
-    private String derivarObtenerRespuestas() {
+    public String derivarObtenerRespuestas() {
         String retorno = "";
         Evaluaciones evaluaciones = new Evaluaciones();
         evaluaciones.actualizarListaEvaluaciones();
@@ -676,5 +680,25 @@ public class Switch {
             // System.out.println("Incorrecto");
         }
         return puntaje;
+    }
+
+    public String obtenerValorCheckboxRespuestas() {
+        String retorno = "";
+        Evaluaciones evaluaciones = new Evaluaciones();
+        evaluaciones.actualizarListaEvaluaciones();
+
+        try {
+            Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(mensaje);
+            Boolean respuestasValidas = evaluacion.isRespuestasValidas();
+            String respuesta = String.valueOf(respuestasValidas);
+
+            retorno = respuesta;
+            retorno += ",;,200"; // Código de éxito 200
+        } catch (Exception e) {
+            // Si ocurre alguna excepción, retorna un código de error 400
+            retorno = ",;,400";
+        }
+
+        return retorno;
     }
 }
