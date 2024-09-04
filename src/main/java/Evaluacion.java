@@ -20,6 +20,7 @@ public class Evaluacion implements Serializable {
     private String titulo;
     private Preguntas listaPreguntas;
     private int cantidadDePreguntas;
+    private boolean respuestasValidas;
 
     // Constructor comun
     public Evaluacion(String titulo) {
@@ -37,8 +38,14 @@ public class Evaluacion implements Serializable {
     public Evaluacion(String titulo, Preguntas listaPreguntas) {
         this.titulo = titulo;
         this.listaPreguntas = listaPreguntas;
-
     }
+
+    public Evaluacion(String titulo, Preguntas listaPreguntas, boolean respuestasValidas) {
+        this.titulo = titulo;
+        this.listaPreguntas = listaPreguntas;
+        this.respuestasValidas = respuestasValidas;
+    }
+    
 
     // Getters
     public String getTitulo() {
@@ -53,6 +60,11 @@ public class Evaluacion implements Serializable {
         return cantidadDePreguntas;
     }
 
+    public boolean isRespuestasValidas() {
+        return respuestasValidas;
+    }
+
+    
     // Setters
     public void setCantidadDePreguntas(int cantidadDePreguntas) {
         this.cantidadDePreguntas = cantidadDePreguntas;
@@ -65,6 +77,12 @@ public class Evaluacion implements Serializable {
     public void setListaPreguntas(Preguntas listaPreguntas) {
         this.listaPreguntas = listaPreguntas;
     }
+
+    public void setRespuestasValidas(boolean respuestasValidas) {
+        this.respuestasValidas = respuestasValidas;
+    }
+    
+    
 
     public ArrayList<String> obtenerRespuestasCorrectas() {
         ArrayList<String> enunciadosConRespuestas = new ArrayList<String>();
