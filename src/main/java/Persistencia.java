@@ -75,9 +75,9 @@ public class Persistencia {
                             }
                         }
                     }
-                    fw.write(String.valueOf(evaluacion.getCantidadDePreguntas()));
-                    fw.write("/");
                     fw.write(String.valueOf(evaluacion.isRespuestasValidas()));
+                    fw.write(";");
+                    fw.write(String.valueOf(evaluacion.getCantidadDePreguntas()));
                     fw.write("\n");
                 }
             }
@@ -113,19 +113,10 @@ public class Persistencia {
         try (Scanner scanner = new Scanner(new File("evaluaciones.txt"))) {
             while (scanner.hasNextLine()) {
                 String linea = scanner.nextLine();
-
-                // Separa la línea en la parte de preguntas y la parte de respuestas válidas
-                String[] partesLinea = linea.split("/");
-                String lineaPreguntas = partesLinea[0].trim();
                 boolean respuestasValidas = false;
-
-                // Procesa la parte de respuestas válidas si existe
-                if (partesLinea.length > 1) {
-                    respuestasValidas = Boolean.parseBoolean(partesLinea[1].trim());
-                }
-
                 // Separa las preguntas por ';'
-                String[] arregloDePreguntas = lineaPreguntas.split(";");
+                String[] arregloDePreguntas = linea.split(";");
+                Integer cantidadPreguntas = Integer.parseInt(arregloDePreguntas[arregloDePreguntas.length - 1]);
 
                 String tituloEvaluacion = arregloDePreguntas[0].trim();
                 Preguntas listaPreguntas = new Preguntas();
@@ -159,10 +150,10 @@ public class Persistencia {
                                             "Faltan opciones en la pregunta de tipo Multiple.");
                                 }
                                 String[] respuestas1 = {
-                                    datosPregunta[3].trim(),
-                                    datosPregunta[4].trim(),
-                                    datosPregunta[5].trim(),
-                                    datosPregunta[6].trim()
+                                        datosPregunta[3].trim(),
+                                        datosPregunta[4].trim(),
+                                        datosPregunta[5].trim(),
+                                        datosPregunta[6].trim()
                                 };
                                 pregunta = new MultipleOpcion(enunciado, puntaje, respuestas1, false,
                                         respuestaCorrecta);
@@ -172,7 +163,7 @@ public class Persistencia {
                                     throw new IllegalArgumentException(
                                             "Respuesta incorrecta para pregunta de tipo VF.");
                                 }
-                                String[] respuestas2 = {"Verdadero", "Falso"};
+                                String[] respuestas2 = { "Verdadero", "Falso" };
                                 pregunta = new MultipleOpcion(enunciado, puntaje, respuestas2, true, respuestaCorrecta);
                                 break;
                             default:
@@ -189,6 +180,9 @@ public class Persistencia {
 
                 try {
                     Evaluacion evaluacion = new Evaluacion(tituloEvaluacion, listaPreguntas, respuestasValidas);
+                    evaluacion.setCantidadDePreguntas(cantidadPreguntas);
+                    Boolean permiteVerCorrectas = Boolean.valueOf(arregloDePreguntas[arregloDePreguntas.length - 2]);
+                    evaluacion.setRespuestasValidas(permiteVerCorrectas);
                     evaluaciones.agregarEvaluacion(evaluacion);
                     listaPreguntas.listarPreguntas();
                 } catch (Exception e) {

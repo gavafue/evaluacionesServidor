@@ -5,6 +5,7 @@
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
  *
  * La respuesta del servidor puede incluir uno de los siguientes codigos:
  * <ul>
- * <li> 200: consulta con exito. </li>
+ * <li>200: consulta con exito.</li>
  * <li>400: error en la consulta realizada por el cliente.</li>
  * <li>500: error en el servidor.</li>
  * </ul>
@@ -40,9 +41,9 @@ public class Switch {
      * Constructor para inicializar la clase Switch con los parámetros
      * proporcionados.
      *
-     * @param mensaje El contenido del mensaje.
+     * @param mensaje      El contenido del mensaje.
      * @param claseDestino La clase de destino.
-     * @param operacion La operación a realizar.
+     * @param operacion    La operación a realizar.
      */
     public Switch(String mensaje, String claseDestino, String operacion) {
         this.mensaje = mensaje;
@@ -184,13 +185,13 @@ public class Switch {
                 default:
                     // Error para clase de destino desconocida
                     retorno = "Error: claseDestino [" + claseDestino + "] desconocido.,;,400";
-                    //System.err.println(retorno);
+                    // System.err.println(retorno);
                     break;
             }
         } catch (Exception e) {
             // Manejo de excepciones durante la derivación
             retorno = "Error al derivar a " + claseDestino + ": " + e.getMessage() + ",;,500";
-            //System.err.println(retorno);
+            // System.err.println(retorno);
         }
 
         // Devuelve el resultado de la derivación
@@ -341,7 +342,7 @@ public class Switch {
      * Método para derivar la creación de un usuario.
      *
      * @return Una cadena con el resultado de la operación y el código de estado
-     * HTTP correspondiente.
+     *         HTTP correspondiente.
      */
     public String derivarCrearUsuario() {
         String retorno = "";
@@ -397,7 +398,7 @@ public class Switch {
      *
      * @param operacion
      * @return Una cadena con el resultado de la operación y el código de estado
-     * HTTP correspondiente.
+     *         HTTP correspondiente.
      */
     public String derivarEvaluaciones(String operacion) {
         Evaluaciones evaluaciones = new Evaluaciones();
@@ -444,19 +445,9 @@ public class Switch {
                 }
                 break;
             case "Alta":
-                /**
-                 * Procesa un mensaje de alta de evaluación desde el cliente.
-                 *
-                 * @param mensaje El mensaje recibido desde el cliente con el
-                 * formato:
-                 * "Evaluacion1;;;Pregunta1,,,Completar,,,0,,,Respuesta1;;;Pregunta2,,,Multiple,,,0,,,Respuesta2.1,,,Respuesta2.2,,,Respuesta3.3,,,Respuesta4.4,,,Opción
-                 * 2;;;Pregunta3,,,VF,,,0,,,Verdadero;;;Pregunta4,,,Completar,,,0,,,Respuesta4;;;Pregunta5,,,Multiple,,,0,,,Respuesta5.1,,,Respuesta5.2,,,Respuesta5.3,,,Respuesta5.4,,,Opción
-                 * 4;;;Pregunta6,,,VF,,,3,,,Verdadero;;;6"
-                 * @return Retorna un mensaje indicando el estado de la
-                 * operación.
-                 */
                 // Divide el mensaje en partes usando el delimitador ';;;'
                 String[] mensajeTokenizado = mensaje.split(";;;");
+                System.out.println("Mensaje tokenizado: " + Arrays.toString(mensajeTokenizado));
 
                 // Verifica si ya existe una evaluación con el mismo título
                 if (!evaluaciones.existeEvaluacion(mensajeTokenizado[0])) {
@@ -464,70 +455,71 @@ public class Switch {
                     Preguntas ps = new Preguntas();
 
                     // Itera sobre todas las preguntas, excluyendo el último token que es el total
-                    for (int i = 1; i < mensajeTokenizado.length - 1; i++) { // Excluyendo el total
+                    for (int i = 1; i < mensajeTokenizado.length - 2; i++) { // Excluyendo el total
                         // Divide la información de cada pregunta en partes usando el delimitador ',,,'
-                        String[] preguntaActual = mensajeTokenizado[i].split(",,,"); // tercer nivel
+                        String[] preguntaActual = mensajeTokenizado[i].split(",,,");
+                        System.out.println("Procesando pregunta: " + Arrays.toString(preguntaActual));
+
                         Pregunta p = null;
                         String enunciadoPregunta = preguntaActual[0];
                         String tipoPregunta = preguntaActual[1];
-                        // System.out.println("------------------------------------------------------");
-                        // System.out.println(enunciadoPregunta);
-                        // System.out.println(tipoPregunta);
-                        // System.out.println("------------------------------------------------------");
-                        int puntajePregunta = Integer.parseInt(preguntaActual[2]); // Puntaje de la pregunta
+                        int puntajePregunta = Integer.parseInt(preguntaActual[2]);
 
                         // Crea la pregunta según el tipo especificado
                         switch (tipoPregunta) {
                             case "Completar":
-                                // Extrae las respuestas para preguntas de tipo "Completar"
                                 String[] respuestas = preguntaActual[3].split(",");
                                 p = new CompletarEspacio(enunciadoPregunta, puntajePregunta, respuestas);
                                 break;
                             case "Multiple":
-                                // Extrae las opciones para preguntas de tipo "Multiple"
-                                String[] opciones = {preguntaActual[3], preguntaActual[4], preguntaActual[5],
-                                    preguntaActual[6]};
+                                if (preguntaActual.length < 8) {
+                                    System.out.println("Error: Pregunta de tipo Multiple mal formada: "
+                                            + Arrays.toString(preguntaActual));
+                                    continue;
+                                }
+                                String[] opciones = { preguntaActual[3], preguntaActual[4], preguntaActual[5],
+                                        preguntaActual[6] };
                                 p = new MultipleOpcion(enunciadoPregunta, puntajePregunta, opciones, false,
                                         preguntaActual[7]);
                                 break;
                             case "VF":
-                                // Opciones fijas para preguntas de tipo "VF"
-                                String[] opcionesVF = {"Verdadero", "Falso"}; // Opciones para VF
+                                if (preguntaActual.length < 4) {
+                                    System.out.println("Error: Pregunta de tipo VF mal formada: "
+                                            + Arrays.toString(preguntaActual));
+                                    continue;
+                                }
+                                String[] opcionesVF = { "Verdadero", "Falso" };
                                 p = new MultipleOpcion(enunciadoPregunta, puntajePregunta, opcionesVF, true,
                                         preguntaActual[3]);
                                 break;
                             default:
-                                // Maneja un tipo de pregunta desconocido
-                                continue; // O lanzar una excepción si es necesario
+                                continue;
                         }
 
-                        // Agrega la pregunta creada al objeto Preguntas
                         ps.agregarPregunta(p);
                     }
                     Integer cantidadDePreguntas = Integer.valueOf(mensajeTokenizado[mensajeTokenizado.length - 1]);
-                    // System.out.println("lo que interpreta de cantidad de preguntas es>"
-                    // + mensajeTokenizado[mensajeTokenizado.length - 1] + "<" +
-                    // cantidadDePreguntas);
+                    String respuestasValidasStr = mensajeTokenizado[mensajeTokenizado.length - 2];
+                    boolean respuestasValidas = respuestasValidasStr.equals("true");
 
-                    // System.out.println("Cantidad de preguntas>" + cantidadDePreguntas);
                     try {
-                        // Crea la evaluación y la agrega al sistema
                         Evaluacion ev = new Evaluacion(mensajeTokenizado[0], ps);
                         ev.setCantidadDePreguntas(cantidadDePreguntas);
+                        ev.setRespuestasValidas(respuestasValidas);
                         evaluaciones.actualizarListaEvaluaciones();
                         evaluaciones.agregarEvaluacion(ev);
                         evaluaciones.persistirEvaluaciones(evaluaciones.getEvaluaciones());
+
                         retorno = "Evaluacion creada,;,200";
                     } catch (FileNotFoundException ex) {
-                        // Maneja excepciones en caso de error al agregar la evaluación
                         Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
-                        retorno = "Error al crear la evaluación,;,500"; // Cambiar el mensaje según corresponda
+                        retorno = "Error al crear la evaluación,;,500";
                     }
                 } else {
-                    // Mensaje si la evaluación con ese título ya existe
                     retorno = "Ya existe evaluación con ese título,;,400";
                 }
                 break;
+
             case "ObtenerPregunta":
                 String[] tokens = mensaje.split(";;;");
                 retorno = obtenerPregunta(tokens[0], Integer.parseInt(tokens[1])); // titulo y numero pregunta
@@ -559,7 +551,8 @@ public class Switch {
     }
 
     /**
-     * Metodo que gestiona la consulta de obtencion de respuestas de una evaluacion dada.
+     * Metodo que gestiona la consulta de obtencion de respuestas de una
+     * evaluacion dada.
      */
     public String derivarObtenerRespuestas() {
         String retorno = "";
@@ -586,7 +579,7 @@ public class Switch {
      * Método para derivar las operaciones sobre Historiales.
      *
      * @return Una cadena con el resultado de la operación y el código de estado
-     * HTTP correspondiente.
+     *         HTTP correspondiente.
      */
     public String derivarHistoriales(String operacion) {
         String retorno = "";
@@ -615,9 +608,9 @@ public class Switch {
      * evaluación.
      *
      * @param evaluacionTitulo
-     * @param indice corresponde al número de pregunta.
+     * @param indice           corresponde al número de pregunta.
      * @return el mensaje a recibir por el cliente del tipo
-     * "tipo;;;enunciado;;;op1(opcional);;;op2(opcional);;;op3(opcional);;;op4(opcional);;;puntaje,;,200
+     *         "tipo;;;enunciado;;;op1(opcional);;;op2(opcional);;;op3(opcional);;;op4(opcional);;;puntaje,;,200
      */
     public String obtenerPregunta(String evaluacionTitulo, int indice) {
         String retorno = "";
