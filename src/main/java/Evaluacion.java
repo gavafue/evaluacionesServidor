@@ -38,6 +38,7 @@ public class Evaluacion implements Serializable {
     public Evaluacion(String titulo, Preguntas listaPreguntas) {
         this.titulo = titulo;
         this.listaPreguntas = listaPreguntas;
+        this.respuestasValidas = false;
     }
 
     public Evaluacion(String titulo, Preguntas listaPreguntas, boolean respuestasValidas) {
@@ -45,7 +46,6 @@ public class Evaluacion implements Serializable {
         this.listaPreguntas = listaPreguntas;
         this.respuestasValidas = respuestasValidas;
     }
-    
 
     // Getters
     public String getTitulo() {
@@ -64,7 +64,6 @@ public class Evaluacion implements Serializable {
         return respuestasValidas;
     }
 
-    
     // Setters
     public void setCantidadDePreguntas(int cantidadDePreguntas) {
         this.cantidadDePreguntas = cantidadDePreguntas;
@@ -81,8 +80,6 @@ public class Evaluacion implements Serializable {
     public void setRespuestasValidas(boolean respuestasValidas) {
         this.respuestasValidas = respuestasValidas;
     }
-    
-    
 
     public ArrayList<String> obtenerRespuestasCorrectas() {
         ArrayList<String> enunciadosConRespuestas = new ArrayList<String>();
