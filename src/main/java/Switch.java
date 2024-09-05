@@ -171,11 +171,12 @@ public class Switch {
                     retorno = derivadorUsuarios.derivarUsuarios();
                     break;
                 case "Evaluaciones":
-                DerivarEvaluaciones derivadorEvaluaciones = new DerivarEvaluaciones(operacion, mensaje)
-                    retorno = derivarEvaluaciones(operacion);
+                    DerivarEvaluaciones derivadorEvaluaciones = new DerivarEvaluaciones(operacion, mensaje);
+                    retorno = derivadorEvaluaciones.derivarEvaluaciones();
                     break;
                 case "Historiales":
-                    retorno = derivarHistoriales(operacion);
+                DerivarHistoriales derivadorHistoriales = new DerivarHistoriales(operacion, mensaje);
+                retorno = derivadorHistoriales.derivarHistoriales();
                     break;
 
                 case "Prueba":
@@ -200,158 +201,7 @@ public class Switch {
         return retorno;
     }
 
-   
-   
   
+    
 
-
-
-   
-
-   
-
-    /**
-     * Metodo que gestiona la consulta de obtencion de respuestas de una
-     * evaluacion dada.
-     */
-    public String derivarObtenerRespuestas() {
-        String retorno = "";
-        Evaluaciones evaluaciones = new Evaluaciones();
-        evaluaciones.actualizarListaEvaluaciones();
-
-        try {
-            Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(mensaje);
-            ArrayList<String> respuestasCorrectas = evaluacion.obtenerRespuestasCorrectas();
-
-            for (String preguntaYRespuesta : respuestasCorrectas) {
-                retorno += preguntaYRespuesta + ";;;";
-            }
-            retorno += ",;,200"; // Código de éxito 200
-        } catch (Exception e) {
-            // Si ocurre alguna excepción, retorna un código de error 400
-            retorno = ",;,400";
-        }
-
-        return retorno;
-    }
-
-    /**
-     * Método para derivar las operaciones sobre Historiales.
-     *
-     * @return Una cadena con el resultado de la operación y el código de estado
-     *         HTTP correspondiente.
-     */
-    public String derivarHistoriales(String operacion) {
-        String retorno = "";
-        Historiales hs = new Historiales();
-        hs.actualizarHistoriales();
-        switch (operacion) {
-            case "Ver":
-                if (hs.existeHistorial(mensaje)) {
-                    LinkedList<Historial> hls = hs.obtenerHistoriales(mensaje);
-                    for (int i = 0; i < hls.size(); i++) {
-                        Historial historial = hls.get(i);
-                        retorno += historial.getCiEstudiante() + ",,," + historial.getPuntaje() + ";;;";
-                    }
-                    retorno = retorno.substring(0, retorno.length() - 3);
-                    retorno += ",;,200";
-                } else {
-                    retorno = "NO existen historiales,;,500";
-                }
-                break;
-        }
-        return retorno;
-    }
-
-    /**
-     * Método que permite enviar al cliente la pregunta solicitada de una
-     * evaluación.
-     *
-     * @param evaluacionTitulo
-     * @param indice           corresponde al número de pregunta.
-     * @return el mensaje a recibir por el cliente del tipo
-     *         "tipo;;;enunciado;;;op1(opcional);;;op2(opcional);;;op3(opcional);;;op4(opcional);;;puntaje,;,200
-     */
-    public String obtenerPregunta(String evaluacionTitulo, int indice) {
-        String retorno = "";
-        Evaluaciones evaluaciones = new Evaluaciones();
-        evaluaciones.actualizarListaEvaluaciones();
-        Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(evaluacionTitulo);
-        if (indice < evaluacion.getListaPreguntas().getPreguntas().size()) {
-            Pregunta pregunta = evaluacion.getListaPreguntas().obtenerPregunta(indice);
-            String tipoPregunta = pregunta.obtenerTipo();
-            if (tipoPregunta.equals("Multiple")) {
-                MultipleOpcion multiple = (MultipleOpcion) pregunta;
-                retorno = tipoPregunta + ";;;" + multiple.getEnunciado() + ";;;" + multiple.getOpciones()[0] + ";;;"
-                        + multiple.getOpciones()[1] + ";;;" + multiple.getOpciones()[2] + ";;;"
-                        + multiple.getOpciones()[3] + ";;;" + multiple.getPuntaje() + ",;,200";
-            } else if (tipoPregunta.equals("VF")) {
-                MultipleOpcion vf = (MultipleOpcion) pregunta;
-                retorno = tipoPregunta + ";;;" + vf.getEnunciado() + ";;;" + vf.getPuntaje() + ",;,200";
-            } else {
-                CompletarEspacio completar = (CompletarEspacio) pregunta;
-                retorno = tipoPregunta + ";;;" + completar.getEnunciado() + ";;;" + completar.getPuntaje() + ",;,200";
-            }
-        } else { // Se fue de rango y no hay más preguntas
-            retorno = "Finalizar,;,200";
-        }
-        return retorno;
-    }
-
-    /**
-     * Método que calcúla la calificacion obtenida por un estudiante al realizar
-     * una evaluación.
-     *
-     * @param preguntas
-     * @return
-     */
-    public int correccion(Preguntas preguntas) {
-        String[] tokens = mensaje.split(";;;");
-        int puntajeTotal = 0;
-        String estudiante = tokens[0];
-        String evaluacion = tokens[1];
-        for (int i = 0; i < preguntas.getPreguntas().size(); i++) {
-            puntajeTotal += calificar(preguntas.obtenerPregunta(i), tokens[i + 2]);
-        }
-        return puntajeTotal;
-    }
-
-    /**
-     * Método que dada las preguntas individuales calcula la calificacion
-     * obtenida en cada una de ellas.
-     *
-     * @param pregunta
-     * @param respuesta dada por el estudiante.
-     * @return
-     */
-    public int calificar(Pregunta pregunta, String respuesta) {
-        int puntaje = 0;
-        if (pregunta.esCorrecta(respuesta)) {
-            // System.out.println("Pregunta correcta");
-            puntaje = pregunta.getPuntaje();
-        } else {
-            // System.out.println("Incorrecto");
-        }
-        return puntaje;
-    }
-
-    public String obtenerValorCheckboxRespuestas() {
-        String retorno = "";
-        Evaluaciones evaluaciones = new Evaluaciones();
-        evaluaciones.actualizarListaEvaluaciones();
-
-        try {
-            Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(mensaje);
-            Boolean respuestasValidas = evaluacion.isRespuestasValidas();
-            String respuesta = String.valueOf(respuestasValidas);
-
-            retorno = respuesta;
-            retorno += ",;,200"; // Código de éxito 200
-        } catch (Exception e) {
-            // Si ocurre alguna excepción, retorna un código de error 400
-            retorno = ",;,400";
-        }
-
-        return retorno;
-    }
 }
