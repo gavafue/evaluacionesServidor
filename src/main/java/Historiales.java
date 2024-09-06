@@ -6,20 +6,20 @@ import java.util.LinkedList;
  */
 public class Historiales {
 
-    // Atributos
+    //Atributos
     private LinkedList<Historial> listaHistorial;
 
-    // Constructor vacio
+    //Constructor vacio
     public Historiales() {
         this.listaHistorial = new LinkedList();
     }
 
-    // Getter
+    //Getter
     public LinkedList<Historial> getListaHistorial() {
         return listaHistorial;
     }
 
-    // Setter
+    //Setter
     public void setListaHistorial(LinkedList<Historial> listaHistorial) {
         this.listaHistorial = listaHistorial;
     }
@@ -55,8 +55,7 @@ public class Historiales {
     }
 
     /**
-     * Metodo que retorna el historial de una evaluacion dado el titulo de la misma
-     * y la ci del estudiante.
+     * Metodo que retorna el historial de una evaluacion dado el titulo de la misma y la ci del estudiante.
      *
      * @param titulo del Historial a buscar.
      * @return el Historial encontrado en la coleccion.
@@ -64,7 +63,7 @@ public class Historiales {
     public Historial obtenerHistorial(String titulo, String ci) {
         Historial encontrado = null;
         for (Historial h : this.getListaHistorial()) {
-            if (h.getTituloEvaluacion().equals(titulo) && h.getCiEstudiante().equals(ci)) {
+            if (h.getTituloEvaluacion().equals(titulo)&&h.getCiEstudiante().equals(ci)) {
                 encontrado = h;
             }
         }
@@ -103,39 +102,27 @@ public class Historiales {
         }
         return existe;
     }
-
+    
     /**
-     * Metodo que determina si existe al menos un Historial asociado a un estudiante
-     * a partir del
+     * Metodo que determina si existe al menos un Historial asociado a un estudiante a partir del
      * titulo y la ci.
      *
      * @param titulo
      * @param ci
      * @return si existe un historial asociado a la ci
      */
-    public boolean existeHistorial(String titulo, String ci) {
+    public boolean existeHistorial(String titulo, String ci){
         boolean existe = false;
         for (Historial actual : this.getListaHistorial()) {
-            if (actual.getTituloEvaluacion().equals(titulo) && actual.getCiEstudiante().equals(ci)) {
+            if (actual.getTituloEvaluacion().equals(titulo)&&actual.getCiEstudiante().equals(ci)) {
                 existe = true;
             }
         }
         return existe;
     }
-
-    public void eliminarTodosLosHistorialesDeUnaEvaluacion(String titulo) {
-        this.actualizarHistoriales();
-        for (Historial actual : this.getListaHistorial()) {
-            if (actual.getTituloEvaluacion().equals(titulo)) {
-                this.getListaHistorial().remove(actual);
-            }
-        }
-        this.persistirHistoriales();
-    }
-
+    
     /**
-     * Metodo que actualiza en memoria la lista de historiales a partir de un
-     * archivo de texto.
+     * Metodo que actualiza en memoria la lista de historiales a partir de un archivo de texto.
      */
     public void actualizarHistoriales() {
         Persistencia persistir = new Persistencia();
