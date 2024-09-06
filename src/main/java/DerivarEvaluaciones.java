@@ -119,6 +119,8 @@ public class DerivarEvaluaciones {
         if (evaluaciones.existeEvaluacion(mensaje)) {
             try {
                 evaluaciones.eliminarEvaluacion(mensaje);
+                Historiales historiales = new Historiales();
+                historiales.eliminarTodosLosHistorialesDeUnaEvaluacion(mensaje);
                 return "Evaluación eliminada,;,200";
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(DerivarEvaluaciones.class.getName()).log(Level.SEVERE, null, ex);
