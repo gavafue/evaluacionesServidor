@@ -97,6 +97,8 @@ public class DerivarEvaluaciones {
                 return derivarObtenerRespuestas();
             case "ValorCheckboxRespuestas":
                 return obtenerValorCheckboxRespuestas();
+            case "ObtenerPuntajeTotal":
+                return obtenerPuntajeTotalDeEvaluacion();
             default:
                 return "Operación desconocida,;,400";
         }
@@ -436,4 +438,41 @@ public class DerivarEvaluaciones {
         }
         return puntaje;
     }
+
+    /**
+     * Obtiene el puntaje total de la evaluación correspondiente al mensaje.
+     *
+     * @return Un string que contiene el puntaje total seguido del código de estado,
+     *         en el formato "puntajeTotal,;,codigoEstado".
+     */
+    private String obtenerPuntajeTotalDeEvaluacion() {
+        String retorno = "";
+        try {
+            // Crea una instancia de Evaluaciones y obtiene el puntaje total
+            Evaluaciones evaluaciones = new Evaluaciones();
+
+            // Verifica si el mensaje (título de la evaluación) es válido
+            if (mensaje == null || mensaje.trim().isEmpty()) {
+                throw new IllegalArgumentException("El título de la evaluación (mensaje) es nulo o vacío.");
+            }
+
+            // Obtiene el puntaje total de la evaluación correspondiente al mensaje
+            int puntajeTotal = evaluaciones.obtenerPuntajeTotal(mensaje);
+            String puntajeTotalEnString = String.valueOf(puntajeTotal);
+
+            // Construye el string de retorno con el puntaje total y el código de estado
+            retorno = puntajeTotalEnString + ",;,200";
+        } catch (IllegalArgumentException e) {
+            // Manejo de errores cuando el título de la evaluación es inválido
+            System.err.println("Error al obtener el puntaje total de la evaluación: " + e.getMessage());
+            retorno = "Error: " + e.getMessage() + ",;,400"; // Código de estado 400 para error de solicitud
+        } catch (Exception e) {
+            // Manejo de cualquier otra excepción inesperada
+            System.err.println("Error inesperado al obtener el puntaje total de la evaluación: " + e.getMessage());
+            retorno = "Error inesperado: " + e.getMessage() + ",;,500"; // Código de estado 500 para error interno del
+                                                                        // servidor
+        }
+        return retorno;
+    }
+
 }
