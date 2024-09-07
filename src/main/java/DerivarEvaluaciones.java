@@ -415,8 +415,6 @@ public class DerivarEvaluaciones {
     private int correccion(Preguntas preguntas) {
         String[] tokens = mensaje.split(";;;");
         int puntajeTotal = 0;
-        String estudiante = tokens[0];
-        String evaluacion = tokens[1];
         for (int i = 0; i < preguntas.getPreguntas().size(); i++) {
             puntajeTotal += calificar(preguntas.obtenerPregunta(i), tokens[i + 2]);
         }

@@ -2,8 +2,6 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import javax.swing.JPanel;
-
 /**
  * Esta clase permite crear una evaluacion con sus respectivas preguntas.
  */

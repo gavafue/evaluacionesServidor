@@ -2,7 +2,6 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Clase que permite crear una lista de evaluaciones.
@@ -31,7 +30,6 @@ public class Evaluaciones {
     /**
      * Metodo que permite agregar un evaluacion a la lista de evaluaciones.
      * Asume que no ingresara una evaluacion con un titulo ya existente.
-     * TODO:AGREGAR VALIDACIÓN/RESTRICCIÓN ACÁ MISMO.
      *
      * @param evaluacion
      * @throws java.io.FileNotFoundException

@@ -1,4 +1,4 @@
-import java.io.IOException;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -15,7 +15,7 @@ public class Historiales {
 
     // Constructor vacio
     public Historiales() {
-        this.listaHistorial = new LinkedList();
+        this.listaHistorial = new LinkedList<Historial>();
     }
 
     // Getter
@@ -140,30 +140,31 @@ public class Historiales {
         try {
             // Actualizar la lista de historiales antes de eliminar
             this.actualizarHistoriales();
-    
-            // Usar un iterador para evitar problemas al modificar la lista mientras se recorre
+
+            // Usar un iterador para evitar problemas al modificar la lista mientras se
+            // recorre
             Iterator<Historial> iterador = this.getListaHistorial().iterator();
-    
+
             boolean historialEliminado = false;
-    
+
             while (iterador.hasNext()) {
                 Historial actual = iterador.next();
                 if (actual.getTituloEvaluacion().equals(titulo)) {
-                    iterador.remove();  // Elimina el historial de forma segura
+                    iterador.remove(); // Elimina el historial de forma segura
                     historialEliminado = true;
                 }
             }
-    
+
             // Persistir los cambios en los historiales
             this.persistirHistoriales();
-    
+
             if (!historialEliminado) {
-                Logger.getLogger(Historiales.class.getName()).log(Level.INFO, 
+                Logger.getLogger(Historiales.class.getName()).log(Level.INFO,
                         "No se encontraron historiales asociados a la evaluación: {0}", titulo);
             }
-    
+
         } catch (Exception ex) {
-            Logger.getLogger(Historiales.class.getName()).log(Level.SEVERE, 
+            Logger.getLogger(Historiales.class.getName()).log(Level.SEVERE,
                     "Error inesperado al eliminar los historiales de la evaluación: " + titulo, ex);
             throw new RuntimeException("Error inesperado al eliminar los historiales.", ex);
         }
