@@ -2,8 +2,6 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import javax.swing.JPanel;
-
 /**
  * Esta clase permite crear una evaluacion con sus respectivas preguntas.
  */
@@ -31,7 +29,7 @@ public class Evaluacion implements Serializable {
 
     /**
      * Constructor
-     * 
+     *
      * @param titulo
      * @param listaPreguntas
      */
@@ -92,7 +90,12 @@ public class Evaluacion implements Serializable {
                 respuesta = String.join("*", respuestas);
             } else if (pregunta instanceof MultipleOpcion) {
                 MultipleOpcion mo = (MultipleOpcion) pregunta;
-                respuesta = mo.getRespuestaCorrecta();
+                if (mo.getRespuestaCorrecta().matches("[1-4]")) {
+                    int indice = Integer.parseInt(mo.getRespuestaCorrecta()) - 1;
+                    respuesta = "Opcion " + mo.getRespuestaCorrecta() + ": " + mo.getOpciones()[indice];
+                } else {
+                    respuesta = mo.getRespuestaCorrecta();
+                }
             }
             enunciadosConRespuestas.add(enunciado + ",,," + respuesta);
         }

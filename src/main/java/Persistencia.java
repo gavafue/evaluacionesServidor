@@ -1,19 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import static java.lang.Integer.parseInt;
-import static java.lang.Integer.parseUnsignedInt;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,41 +12,42 @@ import java.util.Map;
 import java.util.Scanner;
 
 /**
- *
- * @author Gabriel
+ * La clase Persistencia se encarga de la persistencia de datos en archivos
+ * relacionados con usuarios, evaluaciones y historiales.
  */
 public class Persistencia {
 
+    /**
+     * Persiste la lista de usuarios en un archivo de texto.
+     *
+     * @param hashUsuarios un HashMap que contiene los usuarios a persistir.
+     */
     public void persistirListaDeUsuariosEnArchivo(HashMap<String, Usuario> hashUsuarios) {
-        try {
-            FileWriter fw = new FileWriter("passwords.txt");
-            for (Map.Entry<String, Usuario> entry : hashUsuarios.entrySet()) { // CODIFICACION SUGERIDA EN LA
-                // DOCUMENTACION OFICIAL DE JAVA.
+        try (FileWriter fw = new FileWriter("passwords.txt")) {
+            for (Map.Entry<String, Usuario> entry : hashUsuarios.entrySet()) {
                 fw.write(entry.getKey() + ";" + entry.getValue().getContrasenia() + ";"
                         + entry.getValue().getTipoDeUsuario() + "\n");
             }
-            fw.close();
         } catch (IOException e) {
-            e.printStackTrace(); // @todo, despues tenemos que redirigir estos errores a un log.
+            System.err.println("Error al escribir el archivo de usuarios: " + e.getMessage());
+            e.printStackTrace(); // @todo: redirigir a un log
         }
     }
 
     /**
-     * Método que persiste las evaluaciones en un archivo utilizando
-     * serialización.
+     * Persiste una lista de evaluaciones en un archivo de texto.
      *
-     * @throws java.io.FileNotFoundException
+     * @param listaEvaluaciones una lista de evaluaciones a persistir.
      */
     public void persistirEvaluacionesEnArchivo(List<Evaluacion> listaEvaluaciones) {
         List<String> titulosExistentes = new ArrayList<>();
         try {
             titulosExistentes = obtenerTitulosDeEvaluacionesDesdeArchivo();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error al obtener títulos de evaluaciones: " + e.getMessage());
         }
 
-        try {
-            FileWriter fw = new FileWriter("evaluaciones.txt", true);
+        try (FileWriter fw = new FileWriter("evaluaciones.txt", true)) {
             for (Evaluacion evaluacion : listaEvaluaciones) {
                 if (!titulosExistentes.contains(evaluacion.getTitulo())) {
                     fw.write(evaluacion.getTitulo() + ";");
@@ -81,40 +73,48 @@ public class Persistencia {
                     fw.write("\n");
                 }
             }
-            fw.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error al escribir el archivo de evaluaciones: " + e.getMessage());
+            e.printStackTrace(); // @todo: redirigir a un log
         }
     }
 
+    /**
+     * Obtiene los títulos de evaluaciones desde un archivo de texto.
+     *
+     * @return una lista de títulos de evaluaciones.
+     * @throws IOException si ocurre un error al leer el archivo.
+     */
     public List<String> obtenerTitulosDeEvaluacionesDesdeArchivo() throws IOException {
-        List<String> resultados = new ArrayList<String>();
+        List<String> resultados = new ArrayList<>();
         String archivoRuta = "evaluaciones.txt"; // Ruta del archivo a leer
 
         try (BufferedReader br = new BufferedReader(new FileReader(archivoRuta))) {
             String linea;
             while ((linea = br.readLine()) != null) {
-                // Divide la línea en partes usando el delimitador ';' y toma la primera parte
                 String[] partes = linea.split(";");
                 if (partes.length > 0) {
                     resultados.add(partes[0]);
                 }
             }
         } catch (IOException e) {
-            // Manejo de excepciones en caso de error al leer el archivo
-            throw new IOException("Error al leer el archivo de evaluaciones", e);
+            throw new IOException("Error al leer el archivo de evaluaciones: " + e.getMessage(), e);
         }
 
         return resultados;
     }
 
+    /**
+     * Carga las evaluaciones desde un archivo de texto.
+     *
+     * @return una instancia de Evaluaciones con los datos cargados.
+     */
     public Evaluaciones cargarEvaluacionesDesdeArchivo() {
         Evaluaciones evaluaciones = new Evaluaciones();
         try (Scanner scanner = new Scanner(new File("evaluaciones.txt"))) {
             while (scanner.hasNextLine()) {
                 String linea = scanner.nextLine();
                 boolean respuestasValidas = false;
-                // Separa las preguntas por ';'
                 String[] arregloDePreguntas = linea.split(";");
                 Integer cantidadPreguntas = Integer.parseInt(arregloDePreguntas[arregloDePreguntas.length - 1]);
 
@@ -125,7 +125,6 @@ public class Persistencia {
                     String[] datosPregunta = arregloDePreguntas[i].split(",");
 
                     if (datosPregunta.length < 4) {
-                        // Si no hay suficientes datos para procesar la pregunta, saltar
                         System.err.println("Datos de pregunta incompletos en la línea: " + linea);
                         continue;
                     }
@@ -198,30 +197,29 @@ public class Persistencia {
     }
 
     /**
-     * Metodo que permite cargar al sistema los resultados de las evaluaciones
-     * extraidos de un archivo de texto.
+     * Carga los historiales desde un archivo de texto.
      *
-     * @return lista
+     * @return una instancia de Historiales con los datos cargados.
      */
     public Historiales cargarHistorialesDesdeArchivo() {
         Historiales listaHistorial = new Historiales();
-        try {
-            Scanner s = new Scanner(new File("historiales.txt"));
+        try (Scanner s = new Scanner(new File("historiales.txt"))) {
             while (s.hasNextLine()) {
                 String linea = s.nextLine();
                 String[] historial = linea.split(";");
-                listaHistorial.agregarHistorial(new Historial(historial[0], historial[1], parseInt(historial[2])));
+                listaHistorial
+                        .agregarHistorial(new Historial(historial[0], historial[1], Integer.parseInt(historial[2])));
             }
-            s.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error al leer el archivo de historiales: " + e.getMessage());
         }
         return listaHistorial;
     }
 
     /**
-     * Metodo que persiste el puntaje obtenido por cada estudiante al realizar
-     * una evaluacion.
+     * Persiste el puntaje obtenido por cada estudiante al realizar una evaluación.
+     *
+     * @param listaHistorial una lista de historiales a persistir.
      */
     public void persistirHistorialesEnArchivo(LinkedList<Historial> listaHistorial) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("historiales.txt"))) {
@@ -231,7 +229,8 @@ public class Persistencia {
                 writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error al escribir el archivo de historiales: " + e.getMessage());
+            e.printStackTrace(); // @todo: redirigir a un log
         }
     }
 }

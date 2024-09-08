@@ -1,16 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * Clase para procesar mensajes y derivar operaciones según el contenido del
  * mensaje, la clase de destino y la operación especificada. Se espera que la
@@ -175,8 +162,8 @@ public class Switch {
                     retorno = derivadorEvaluaciones.derivarEvaluaciones();
                     break;
                 case "Historiales":
-                DerivarHistoriales derivadorHistoriales = new DerivarHistoriales(operacion, mensaje);
-                retorno = derivadorHistoriales.derivarHistoriales();
+                    DerivarHistoriales derivadorHistoriales = new DerivarHistoriales(operacion, mensaje);
+                    retorno = derivadorHistoriales.derivarHistoriales();
                     break;
 
                 case "Prueba":
@@ -200,8 +187,5 @@ public class Switch {
         // Devuelve el resultado de la derivación
         return retorno;
     }
-
-  
-    
 
 }

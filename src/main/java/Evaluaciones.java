@@ -2,7 +2,6 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Clase que permite crear una lista de evaluaciones.
@@ -31,13 +30,64 @@ public class Evaluaciones {
     /**
      * Metodo que permite agregar un evaluacion a la lista de evaluaciones.
      * Asume que no ingresara una evaluacion con un titulo ya existente.
-     * TODO:AGREGAR VALIDACIÓN/RESTRICCIÓN ACÁ MISMO.
      *
      * @param evaluacion
      * @throws java.io.FileNotFoundException
      */
     public void agregarEvaluacion(Evaluacion evaluacion) throws FileNotFoundException {
         listaEvaluaciones.add(evaluacion);
+    }
+
+    /**
+     * Obtiene el puntaje total de una evaluación dada su título.
+     *
+     * @param titulo El título de la evaluación de la cual se desea obtener el
+     *               puntaje total.
+     * @return El puntaje total de la evaluación. Si la evaluación no existe o tiene
+     *         preguntas inválidas, devuelve 0.
+     */
+    public int obtenerPuntajeTotal(String titulo) {
+        this.actualizarListaEvaluaciones(); // Asegura que la lista de evaluaciones esté actualizada
+        int puntajeTotal = 0;
+
+        try {
+            // Obtiene la evaluación basada en el título proporcionado
+            Evaluacion evaluacion = this.obtenerEvaluacion(titulo);
+
+            // Verifica si la evaluación es null
+            if (evaluacion == null) {
+                throw new IllegalArgumentException("La evaluación con el título '" + titulo + "' no existe.");
+            }
+
+            // Obtiene la lista de preguntas de la evaluación
+            List<Pregunta> preguntas = evaluacion.getListaPreguntas().getPreguntas();
+
+            // Verifica si la lista de preguntas es null o vacía
+            if (preguntas == null || preguntas.isEmpty()) {
+                throw new IllegalStateException("La evaluación '" + titulo + "' no tiene preguntas asignadas.");
+            }
+
+            // Suma los puntajes de todas las preguntas
+            for (Pregunta pregunta : preguntas) {
+                if (pregunta == null) {
+                    System.err.println("Advertencia: Pregunta nula encontrada en la evaluación '" + titulo + "'.");
+                    continue;
+                }
+                puntajeTotal += pregunta.getPuntaje();
+            }
+
+        } catch (IllegalArgumentException e) {
+            // Manejo de errores cuando la evaluación no existe
+            System.err.println("Error al obtener puntaje total: " + e.getMessage());
+        } catch (IllegalStateException e) {
+            // Manejo de errores cuando la evaluación no tiene preguntas asignadas
+            System.err.println("Error al calcular puntaje total: " + e.getMessage());
+        } catch (Exception e) {
+            // Manejo de cualquier otra excepción inesperada
+            System.err.println("Error inesperado al obtener el puntaje total: " + e.getMessage());
+        }
+
+        return puntajeTotal;
     }
 
     /**

@@ -15,21 +15,21 @@ import java.util.LinkedList;
  */
 public class Preguntas implements Serializable {
 
-    //Atributos
-    private  LinkedList<Pregunta> preguntas;
+    // Atributos
+    private LinkedList<Pregunta> preguntas;
 
-    //Contructor comun
+    // Contructor comun
     public Preguntas() {
-        this.preguntas = new LinkedList();
+        this.preguntas = new LinkedList<Pregunta>();
     }
 
-    //Getter
-    public  LinkedList<Pregunta> getPreguntas() {
+    // Getter
+    public LinkedList<Pregunta> getPreguntas() {
         return preguntas;
     }
 
-    //Setter
-    public void setPreguntas( LinkedList<Pregunta> preguntas) {
+    // Setter
+    public void setPreguntas(LinkedList<Pregunta> preguntas) {
         this.preguntas = preguntas;
     }
 
@@ -61,4 +61,3 @@ public class Preguntas implements Serializable {
         }
     }
 }
-
