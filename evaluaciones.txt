@@ -1,4 +1,0 @@
-este es el titulo;preg1,0,Completar,rsp1;preg2,0,Completar,rsp2;preg3,0,Completar,rsp3;true;3
-ev de prueba;prg1,400,Completar,hola,como;,400,Multiple,hola,como,estas,es esta,4;verdadero,400,VF,Verdadero;true;3
-ev de prueba 2;hola como,500,Completar,hola,como;multiple4,500,Multiple,hol,hol,hol,esta,4;vdd,500,VF,Verdadero;true;3
-ev3;hola como,300,Completar,hola,como;hola34,300,Multiple,esta,1,2,3,1;falsa,300,VF,Falso;true;3
