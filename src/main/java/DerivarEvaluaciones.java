@@ -171,6 +171,9 @@ public class DerivarEvaluaciones {
             for (String parte : listaTitulosEvaluaciones) {
                 listaEnString += parte + ";;;";
             }
+            if (listaEnString.length() > 3) { // Elimino el ;;; sobrantes
+                listaEnString = listaEnString.substring(0, listaEnString.length() - 3);
+            }
             return listaEnString + ",;,200";
         } catch (Exception e) {
             return "Error al acceder a las evaluaciones,;,400";
