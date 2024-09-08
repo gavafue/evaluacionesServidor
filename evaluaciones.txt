@@ -1,0 +1,4 @@
+Nueva;r1,,,1,,,Completar,,,r1;op3,,,2,,,Multiple,,,tampoco,,,no,,,si,,,no es,,,3;verdadero,,,9,,,VF,,,Verdadero;false;3
+nueva2;preg1 respuesta r1,r2,,,2,,,Completar,,,r1,,,r2;la respuesta es, verdadera,,,5,,,VF,,,Verdadero;la 1 es la, correcta,,,6,,,Multiple,,,op1,,,op2,,,op3,,,op4,,,1;true;3
+titulo, con coma,;r1,r2,,,3,,,Completar,,,r1,,,r2;v,,,5,,,VF,,,Verdadero;op1,,,1,,,Multiple,,,op1,,,op2,,,op3,,,op4,,,1;false;3
+más correctas espacios;r1,r2,r3 son correctas,,,3,,,Completar,,,r1,,,r2,,,r3;r1,r2 son correctas,,,1,,,Completar,,,r1,,,r2;r1,r2,r3,r4 son correctas,,,5,,,Completar,,,r1,,,r2,,,r3,,,r4;true;3
