@@ -99,6 +99,8 @@ public class DerivarEvaluaciones {
                 return obtenerValorCheckboxRespuestas();
             case "ObtenerPuntajeTotal":
                 return obtenerPuntajeTotalDeEvaluacion();
+            case "ObtenerTituloAlAzar":
+                return obtenerTituloAlAzar();
             default:
                 return "Operación desconocida,;,400";
         }
@@ -168,6 +170,9 @@ public class DerivarEvaluaciones {
             List<String> listaTitulosEvaluaciones = evaluaciones.obtenerTítulosEvaluaciones();
             for (String parte : listaTitulosEvaluaciones) {
                 listaEnString += parte + ";;;";
+            }
+            if (listaEnString.length() > 3) { // Elimino el ;;; sobrantes
+                listaEnString = listaEnString.substring(0, listaEnString.length() - 3);
             }
             return listaEnString + ",;,200";
         } catch (Exception e) {
@@ -474,5 +479,26 @@ public class DerivarEvaluaciones {
         }
         return retorno;
     }
+ 
+    /**
+     * Método que obtiene un título de una evaluación aleatoria.
+     * @return título de la evaluación.
+     */
+    private String obtenerTituloAlAzar() {
+        String retorno = "";
+        Evaluaciones evaluaciones = new Evaluaciones();
+        evaluaciones.actualizarListaEvaluaciones();
 
+        // Verificamos si hay evaluaciones disponibles
+        if (evaluaciones.getEvaluaciones().isEmpty()) {
+            retorno = "No existen evaluaciones,;,500";
+        } else {
+            // Generamos un índice aleatorio basado en la cantidad de evaluaciones disponibles
+            int randomIndex = (int) (Math.random() * evaluaciones.getEvaluaciones().size());
+            // Obtenemos el título de la evaluación en el índice aleatorio
+            retorno = evaluaciones.getEvaluaciones().get(randomIndex).getTitulo();
+            retorno += ",;,200";
+        }
+        return retorno;
+    }
 }

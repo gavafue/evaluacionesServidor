@@ -53,16 +53,16 @@ public class Persistencia {
                     fw.write(evaluacion.getTitulo() + ";");
                     LinkedList<Pregunta> listaPreguntas = evaluacion.getListaPreguntas().getPreguntas();
                     for (Pregunta pregunta : listaPreguntas) {
-                        fw.write(pregunta.getEnunciado() + "," + pregunta.getPuntaje() + ",");
+                        fw.write(pregunta.getEnunciado() + ",,," + pregunta.getPuntaje() + ",,,");
                         if (pregunta instanceof CompletarEspacio) {
                             CompletarEspacio ce = (CompletarEspacio) pregunta;
-                            fw.write("Completar," + String.join(",", ce.getRespuestasCorrectas()) + ";");
+                            fw.write("Completar,,," + String.join(",,,", ce.getRespuestasCorrectas()) + ";");
                         } else if (pregunta instanceof MultipleOpcion) {
                             MultipleOpcion mo = (MultipleOpcion) pregunta;
                             if (mo.getEsVerdaderoOFalso()) {
-                                fw.write("VF," + mo.getRespuestaCorrecta() + ";");
+                                fw.write("VF,,," + mo.getRespuestaCorrecta() + ";");
                             } else {
-                                fw.write("Multiple," + String.join(",", mo.getOpciones()) + ","
+                                fw.write("Multiple,,," + String.join(",,,", mo.getOpciones()) + ",,,"
                                         + mo.getRespuestaCorrecta() + ";");
                             }
                         }
@@ -122,7 +122,7 @@ public class Persistencia {
                 Preguntas listaPreguntas = new Preguntas();
 
                 for (int i = 1; i < arregloDePreguntas.length; i++) {
-                    String[] datosPregunta = arregloDePreguntas[i].split(",");
+                    String[] datosPregunta = arregloDePreguntas[i].split(",,,");
 
                     if (datosPregunta.length < 4) {
                         System.err.println("Datos de pregunta incompletos en la línea: " + linea);
