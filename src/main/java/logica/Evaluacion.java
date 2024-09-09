@@ -1,4 +1,9 @@
+package logica;
 
+
+import logica.MultipleOpcion;
+import logica.Pregunta;
+import logica.Preguntas;
 import java.io.Serializable;
 import java.util.ArrayList;
 

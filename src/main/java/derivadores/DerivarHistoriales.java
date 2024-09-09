@@ -1,3 +1,7 @@
+package derivadores;
+
+import logica.Historial;
+import logica.Historiales;
 import java.util.LinkedList;
 
 /**

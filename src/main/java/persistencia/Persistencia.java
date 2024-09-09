@@ -1,3 +1,14 @@
+package persistencia;
+
+import logica.CompletarEspacio;
+import logica.Evaluacion;
+import logica.Evaluaciones;
+import logica.Historial;
+import logica.Historiales;
+import logica.MultipleOpcion;
+import logica.Pregunta;
+import logica.Preguntas;
+import logica.Usuario;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;

@@ -1,3 +1,5 @@
+package logica;
+
 
 /**
  * Esta clase permite guardar el puntaje obtenido por un estudiante al realizar

@@ -1,4 +1,7 @@
+package logica;
 
+
+import persistencia.Persistencia;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.logging.Level;

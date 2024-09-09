@@ -1,3 +1,13 @@
+package derivadores;
+
+import logica.CompletarEspacio;
+import logica.Evaluacion;
+import logica.Evaluaciones;
+import logica.Historial;
+import logica.Historiales;
+import logica.MultipleOpcion;
+import logica.Pregunta;
+import logica.Preguntas;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;

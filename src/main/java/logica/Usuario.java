@@ -1,3 +1,5 @@
+package logica;
+
 /**
  * Esta clase permite crear un usuario con su respectivo nombre de usuario y
  * contraseña.

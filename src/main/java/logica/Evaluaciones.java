@@ -1,4 +1,8 @@
+package logica;
 
+
+import persistencia.Persistencia;
+import logica.Pregunta;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
