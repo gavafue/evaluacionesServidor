@@ -1,77 +1,106 @@
 package logica;
 
-import persistencia.Persistencia;
-import java.io.File;
-import java.io.IOException;
+import persistencia.PersistirUsuarios;
 import java.util.HashMap;
-import java.util.Scanner;
 
 /**
- * Esta clase permite crear un hash de usuarios.
- *
- * @author
- * @since version 2
+ * La clase {@code Usuarios} gestiona un conjunto de usuarios, permitiendo
+ * agregar,
+ * eliminar, obtener y verificar usuarios, así como actualizar contraseñas y
+ * persistir
+ * la información de los usuarios en un archivo.
+ * 
  */
 public class Usuarios {
 
     // Atributos
-    private HashMap<String, Usuario> hashUsuarios;
+    private HashMap<String, Usuario> hashUsuarios; // Mapa que almacena los usuarios con su nombre de usuario como clave
 
-    // Constructor vacio
+    /**
+     * Constructor de la clase {@code Usuarios}.
+     * Inicializa el {@code HashMap} de usuarios.
+     */
     public Usuarios() {
         this.hashUsuarios = new HashMap<String, Usuario>();
-        cargarUsuarios();
+    }
+
+    /**
+     * Actualiza la lista de usuarios cargando los datos desde un archivo.
+     */
+    public void actualizarListaDeUsuarios() {
+        PersistirUsuarios persistirUsuarios = new PersistirUsuarios();
+        HashMap<String, Usuario> listaDeUsuarios = persistirUsuarios.cargarUsuariosDesdeArchivo();
+        this.setListaUsuarios(listaDeUsuarios);
     }
 
     // Getter
+
+    /**
+     * Obtiene el {@code HashMap} de usuarios.
+     * 
+     * @return El {@code HashMap} de usuarios.
+     */
     public HashMap<String, Usuario> getListaUsuarios() {
         return hashUsuarios;
     }
 
     // Setter
+
+    /**
+     * Establece el {@code HashMap} de usuarios.
+     * 
+     * @param hashUsuarios El {@code HashMap} de usuarios a asignar.
+     */
     public void setListaUsuarios(HashMap<String, Usuario> hashUsuarios) {
         this.hashUsuarios = hashUsuarios;
     }
 
     /**
-     * Este metodo permite dado un usuario agregarlo a la lista.
-     *
-     * @param usuario
+     * Agrega un usuario al {@code HashMap} de usuarios.
+     * 
+     * @param usuario El usuario a agregar.
      */
     public void agregarUsuario(Usuario usuario) {
         this.getListaUsuarios().put(usuario.getNombreUsuario(), usuario);
     }
 
     /**
-     * Este metodo permite eliminar un usuario dado su nombre.
-     *
-     * @param nombreUsuario
+     * Elimina un usuario del {@code HashMap} dado su nombre de usuario.
+     * 
+     * @param nombreUsuario El nombre del usuario a eliminar.
      */
     public void eliminarUsuario(String nombreUsuario) {
         this.getListaUsuarios().remove(nombreUsuario);
     }
 
     /**
-     * Este metodo permite obtener el objeto Usuario dado su nombre.
-     *
-     * @param nombreUsuario
-     * @return
+     * Obtiene un objeto {@code Usuario} dado su nombre de usuario.
+     * 
+     * @param nombreUsuario El nombre del usuario.
+     * @return El objeto {@code Usuario} asociado al nombre dado.
      */
     public Usuario obtenerUsuario(String nombreUsuario) {
         return this.getListaUsuarios().get(nombreUsuario);
     }
 
     /**
-     * Este metodo permite confirmar que existe un usuario ingresado con ese
-     * nombre.
+     * Verifica si existe un usuario con el nombre dado.
+     * 
+     * @param nombreUsuario El nombre del usuario a verificar.
+     * @return {@code true} si el usuario existe, {@code false} en caso contrario.
      */
     public boolean existeUsuario(String nombreUsuario) {
         return getListaUsuarios().containsKey(nombreUsuario);
     }
 
     /**
-     * Este metodo permite confirmar que existe un usuario ingresado con ese
-     * nombre y password. Se utiliza para el login.
+     * Verifica si existe un usuario con el nombre y la contraseña proporcionados.
+     * Se utiliza para la autenticación de usuarios.
+     * 
+     * @param nombreUsuario El nombre del usuario a verificar.
+     * @param password      La contraseña del usuario.
+     * @return {@code true} si el usuario existe y la contraseña es correcta,
+     *         {@code false} en caso contrario.
      */
     public boolean existeUsuarioLogin(String nombreUsuario, String password) {
         return getListaUsuarios().containsKey(nombreUsuario)
@@ -79,29 +108,11 @@ public class Usuarios {
     }
 
     /**
-     * Metodo que permite cargar al sistema los usuarios extraidos de un archivo
-     * de texto.
-     */
-    public void cargarUsuarios() {
-        try {
-            Scanner s = new Scanner(new File("passwords.txt"));
-            while (s.hasNextLine()) {
-                String linea = s.nextLine();
-                String[] usuario = linea.split(";"); // de momento dos posiciones. Podria haber un tercer
-                // atributo que identifique tipo de usuario.
-                this.agregarUsuario(new Usuario(usuario[0], usuario[1], usuario[2]));
-            }
-            s.close();
-        } catch (IOException e) {
-            e.printStackTrace(); // @todo Despues tenemos que redirigir estos errores a un log.
-        }
-    }
-
-    /**
-     * Metodo que actualiza la contraseña de un usuario, identifacdo por nombre.
-     *
-     * @param nombre
-     * @param nuevaContrasenia
+     * Actualiza la contraseña de un usuario identificado por su nombre de usuario.
+     * 
+     * @param nombre           El nombre del usuario cuya contraseña se va a
+     *                         actualizar.
+     * @param nuevaContrasenia La nueva contraseña para el usuario.
      */
     public void actualizarContrasenia(String nombre, String nuevaContrasenia) {
         obtenerUsuario(nombre).setContrasenia(nuevaContrasenia);
@@ -109,13 +120,11 @@ public class Usuarios {
     }
 
     /**
-     * Metodo que persiste los usuarios del sistema en su totalidad.
-     *
-     * @todo, en un futuro solo persistir solo el modificado.
-     *
+     * Persiste la lista completa de usuarios en un archivo.
+     * 
      */
     public void perisistirUsuarios() {
-        Persistencia persistir = new Persistencia();
+        PersistirUsuarios persistir = new PersistirUsuarios();
         persistir.persistirListaDeUsuariosEnArchivo(hashUsuarios);
     }
 }

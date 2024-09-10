@@ -1,16 +1,21 @@
 package derivadores;
 
-import logica.Historial;
-import logica.Historiales;
 import java.util.LinkedList;
 
+import logica.Historial;
+import logica.Historiales;
+
 /**
- * La clase <code>DerivarHistoriales</code> gestiona operaciones relacionadas con los historiales
- * de evaluaciones de los estudiantes, como ver historiales específicos.
+ * La clase DerivarHistoriales es responsable de gestionar las operaciones
+ * relacionadas con los historiales de evaluaciones
+ * de los estudiantes. Permite realizar diversas acciones dependiendo de la
+ * operación solicitada.
  * 
- * <p>Permite realizar diversas acciones en función de la operación solicitada.</p>
+ * Se utiliza para ver los historiales específicos de un estudiante y devolver
+ * los resultados en función de las operaciones
+ * que se realizan. Esta clase interactúa con otras clases como Historial y
+ * Historiales para obtener y actualizar la información.
  * 
- * @author Gabriel
  */
 public class DerivarHistoriales {
 
@@ -18,10 +23,20 @@ public class DerivarHistoriales {
     private String mensaje;
 
     /**
-     * Constructor que inicializa la operación y el mensaje.
+     * Constructor que inicializa la operación y el mensaje de la clase
+     * DerivarHistoriales.
      * 
-     * @param operacion La operación a realizar (e.g., "Ver").
-     * @param mensaje   El mensaje que contiene datos necesarios para la operación.
+     * Este constructor acepta dos parámetros que permiten configurar la operación a
+     * realizar
+     * (como ver los historiales de los estudiantes) y el mensaje que contiene la
+     * información
+     * relevante para dicha operación.
+     * 
+     * @param operacion Indica la operación que se va a realizar, por ejemplo,
+     *                  "Ver".
+     * @param mensaje   Define el mensaje que contiene los datos necesarios para la
+     *                  operación,
+     *                  como el número de cédula del estudiante.
      */
     public DerivarHistoriales(String operacion, String mensaje) {
         this.operacion = operacion;
@@ -29,52 +44,70 @@ public class DerivarHistoriales {
     }
 
     /**
-     * Establece el mensaje.
+     * Método que permite establecer un nuevo mensaje en la instancia de la clase.
      * 
-     * @param mensaje El nuevo mensaje.
+     * @param mensaje Nuevo valor para el mensaje que puede contener, por ejemplo,
+     *                el número
+     *                de identificación de un estudiante.
      */
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
     }
 
     /**
-     * Obtiene el mensaje.
+     * Método que permite obtener el mensaje actual almacenado en la instancia de la
+     * clase.
      * 
-     * @return El mensaje actual.
+     * 
+     * 
+     * @return El valor actual del mensaje.
      */
     public String getMensaje() {
         return this.mensaje;
     }
 
     /**
-     * Establece la operación.
+     * Método que permite establecer una nueva operación en la instancia de la
+     * clase.
      * 
-     * @param operacion La nueva operación.
+     * 
+     * 
+     * @param operacion Nuevo valor para la operación, como "Ver".
      */
     public void setOperacion(String operacion) {
         this.operacion = operacion;
     }
 
     /**
-     * Obtiene la operación.
+     * Método que permite obtener la operación actual almacenada en la instancia de
+     * la clase.
      * 
-     * @return La operación actual.
+     * 
+     * 
+     * @return El valor actual de la operación.
      */
     public String getOperacion() {
         return this.operacion;
     }
 
     /**
-     * Método principal que dirige las operaciones relacionadas con los historiales.
+     * Método principal que dirige la ejecución de las operaciones relacionadas con
+     * los historiales.
      * 
-     * <p>Dependiendo del valor de <code>operacion</code>, se realizan diferentes acciones.</p>
+     * Dependiendo del valor de la operación establecida, este método llama al
+     * correspondiente
+     * método para realizar la acción solicitada. En el caso de que la operación no
+     * sea reconocida,
+     * devuelve un mensaje de error.
      * 
-     * @return Una cadena con el resultado de la operación y el código de estado HTTP correspondiente.
+     * @return El resultado de la operación en forma de cadena, junto con un código
+     *         de estado
+     *         HTTP que indica si la operación fue exitosa o no.
      */
     public String derivarHistoriales() {
         Historiales hs = new Historiales();
         hs.actualizarHistoriales();
-        
+
         switch (operacion) {
             case "Ver":
                 return verHistorial();
@@ -84,31 +117,37 @@ public class DerivarHistoriales {
     }
 
     /**
-     * Visualiza los historiales de un estudiante específico.
      * 
-     * <p>Si existen historiales para el estudiante identificado por el <code>mensaje</code>,
-     * devuelve una cadena con la información de cada historial (ci del estudiante y puntaje).</p>
      * 
-     * @return Una cadena con los historiales del estudiante y el código de estado HTTP.
+     * Este método busca los historiales del estudiante identificado por el valor
+     * del mensaje.
+     * Si existen historiales para el estudiante, devuelve una cadena con la
+     * información sobre
+     * los historiales, incluyendo el número de identificación del estudiante y su
+     * puntaje.
+     * Si no existen historiales, devuelve un mensaje de error.
+     * 
+     * @return Una cadena con los historiales del estudiante, incluyendo su número
+     *         de identificación
+     *         y puntaje, o un mensaje de error si no existen historiales. El
+     *         formato de la cadena
+     *         incluye también un código de estado HTTP que indica el éxito o fallo
+     *         de la operación.
      */
     private String verHistorial() {
         String retorno = "";
         Historiales hs = new Historiales();
-        
-        // Actualiza la lista de historiales
+
         hs.actualizarHistoriales();
-        
-        // Verifica si existen historiales para el estudiante especificado en el mensaje
+
         if (hs.existeHistorial(mensaje)) {
             LinkedList<Historial> hls = hs.obtenerHistoriales(mensaje);
-            
-            // Itera sobre cada historial y construye la cadena de resultado
+
             for (int i = 0; i < hls.size(); i++) {
                 Historial historial = hls.get(i);
                 retorno += historial.getCiEstudiante() + ",,," + historial.getPuntaje() + ";;;";
             }
-            
-            // Elimina el último delimitador y añade el código de estado HTTP
+
             retorno = retorno.substring(0, retorno.length() - 3);
             retorno += ",;,200";
         } else {

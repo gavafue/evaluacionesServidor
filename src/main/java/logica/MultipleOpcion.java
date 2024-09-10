@@ -1,98 +1,115 @@
 package logica;
 
-
-import logica.Pregunta;
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 /**
- *
- * @author Gabriel
- */
-/**
- * Esta clase permite crear el tipo de pregunta multiple opcion y verdadero o
- * falso.
+ * La clase MultipleOpcion extiende la clase {@link Pregunta} y representa una
+ * pregunta
+ * de opción múltiple, que puede ser del tipo verdadero o falso o con múltiples
+ * opciones.
+ * 
  */
 public class MultipleOpcion extends Pregunta {
 
-    //Atributos
-    private String[] opciones;
-    /**
-     * Es verdadero o falso cuando la cantidad de opciones es dos.
-     */
-    private boolean esVerdaderoOFalso;
-    /**
-     * Este tipo de pregunta admite una unica respuesta correcta.
-     */
-    private String respuestaCorrecta;
+    // Atributos
+    private String[] opciones; // Opciones disponibles para la pregunta
+    private boolean esVerdaderoOFalso; // Indica si la pregunta es de tipo verdadero o falso
+    private String respuestaCorrecta; // Respuesta correcta para la pregunta
 
-    //Constructor comun
-    public MultipleOpcion(String enunciado, int puntaje, String[] opciones, boolean esVerdaderoOFalso, String respuestaCorrecta) {
+    /**
+     * Constructor de la clase MultipleOpcion.
+     * 
+     * @param enunciado         El enunciado de la pregunta.
+     * @param puntaje           El puntaje asociado a la pregunta.
+     * @param opciones          Las opciones disponibles para la pregunta.
+     * @param esVerdaderoOFalso Indica si la pregunta es de tipo verdadero o falso.
+     * @param respuestaCorrecta La respuesta correcta para la pregunta.
+     */
+    public MultipleOpcion(String enunciado, int puntaje, String[] opciones, boolean esVerdaderoOFalso,
+            String respuestaCorrecta) {
         super(enunciado, puntaje);
         this.opciones = opciones;
         this.esVerdaderoOFalso = esVerdaderoOFalso;
         this.respuestaCorrecta = respuestaCorrecta;
     }
 
-    //Getters
+    // Getters
+
+    /**
+     * Obtiene las opciones disponibles para la pregunta.
+     * 
+     * @return Las opciones de la pregunta.
+     */
     public String[] getOpciones() {
         return opciones;
     }
 
+    /**
+     * Determina si la pregunta es de tipo verdadero o falso.
+     * 
+     * @return True si la pregunta es de tipo verdadero o falso, false si es de
+     *         opción múltiple.
+     */
     public boolean getEsVerdaderoOFalso() {
         return esVerdaderoOFalso;
     }
 
+    /**
+     * Obtiene la respuesta correcta para la pregunta.
+     * 
+     * @return La respuesta correcta.
+     */
     public String getRespuestaCorrecta() {
         return respuestaCorrecta;
     }
 
-    //Setters
+    // Setters
+
+    /**
+     * Establece las opciones disponibles para la pregunta.
+     * 
+     * @param opciones Las nuevas opciones.
+     */
     public void setOpciones(String[] opciones) {
         this.opciones = opciones;
     }
 
+    /**
+     * Establece si la pregunta es de tipo verdadero o falso.
+     * 
+     * @param esVerdaderoOFalso True si la pregunta es de tipo verdadero o falso,
+     *                          false si es de opción múltiple.
+     */
     public void setEsVerdaderoOFalso(boolean esVerdaderoOFalso) {
         this.esVerdaderoOFalso = esVerdaderoOFalso;
     }
 
+    /**
+     * Establece la respuesta correcta para la pregunta.
+     * 
+     * @param respuestaCorrecta La nueva respuesta correcta.
+     */
     public void setRespuestaCorrecta(String respuestaCorrecta) {
         this.respuestaCorrecta = respuestaCorrecta;
     }
 
     /**
-     * Metodo que determina si la repuesta dada por el estudiante es correcta o
-     * no.
-     *
-     * @param respuesta
-     * @return
+     * Determina si la respuesta dada por el estudiante es correcta.
+     * 
+     * @param respuesta La respuesta dada por el estudiante.
+     * @return True si la respuesta es correcta, false en caso contrario.
      */
     @Override
     public boolean esCorrecta(String respuesta) {
-        return (respuesta.equals(respuestaCorrecta));
+        return respuesta.equals(respuestaCorrecta);
     }
 
+    /**
+     * Obtiene el tipo de pregunta.
+     * 
+     * @return "VF" si la pregunta es de tipo verdadero o falso, "Multiple" si es de
+     *         opción múltiple.
+     */
     @Override
-    //Probablemente no interese ver la pregunta en pantalla de esta manera
-    public void mostrarPregunta() {
-        System.out.println(getEnunciado());
-        String[] opciones = getOpciones();
-        for (int i = 0; i < opciones.length; i++) {
-            System.out.println("  " + (i + 1) + ". " + opciones[i]);
-        }
-    }
-    
-    @Override
-    public String obtenerTipo(){
-        String tipo = "";
-        if(esVerdaderoOFalso){
-            tipo = "VF";
-        }else{
-            tipo = "Multiple";
-        }
-        return tipo;
+    public String obtenerTipo() {
+        return esVerdaderoOFalso ? "VF" : "Multiple";
     }
 }

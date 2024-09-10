@@ -1,65 +1,63 @@
 package logica;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-/**
- *
- * @author Gabriel
- */
-import java.io.Serializable;
 import java.util.LinkedList;
 
 /**
- * Esta clase permite crear una lista de preguntas.
+ * La clase {@code Preguntas} representa una colección de preguntas.
+ * Permite gestionar una lista de preguntas de manera organizada.
+ * 
  */
-public class Preguntas implements Serializable {
+public class Preguntas {
 
     // Atributos
-    private LinkedList<Pregunta> preguntas;
+    private LinkedList<Pregunta> preguntas; // Lista de preguntas
 
-    // Contructor comun
+    /**
+     * Constructor de la clase {@code Preguntas}.
+     * Inicializa la lista de preguntas como una {@code LinkedList}.
+     */
     public Preguntas() {
         this.preguntas = new LinkedList<Pregunta>();
     }
 
     // Getter
+
+    /**
+     * Obtiene la lista de preguntas.
+     * 
+     * @return Una {@code LinkedList} de {@code Pregunta}.
+     */
     public LinkedList<Pregunta> getPreguntas() {
         return preguntas;
     }
 
     // Setter
+
+    /**
+     * Establece la lista de preguntas.
+     * 
+     * @param preguntas Una {@code LinkedList} de {@code Pregunta} a asignar.
+     */
     public void setPreguntas(LinkedList<Pregunta> preguntas) {
         this.preguntas = preguntas;
     }
 
     /**
-     * Metodo que dado una pregunta la agrega a la evaluacion.
-     *
-     * @param pregunta
+     * Agrega una pregunta a la lista de preguntas.
+     * 
+     * @param pregunta La {@code Pregunta} a agregar.
      */
     public void agregarPregunta(Pregunta pregunta) {
         preguntas.add(pregunta);
     }
 
     /**
-     * Merodo que permite obtener una pregunta dado su numero de indice.
-     *
-     * @param indice
-     * @return pregunta
+     * Obtiene una pregunta de la lista dado su índice.
+     * 
+     * @param indice El índice de la pregunta en la lista.
+     * @return La {@code Pregunta} en el índice especificado.
      */
     public Pregunta obtenerPregunta(int indice) {
         return preguntas.get(indice);
-    }
-
-    /**
-     * Metodo que permite listar las preguntas de una evaluacion.
-     */
-    public void listarPreguntas() {
-        for (int i = 0; i < preguntas.size(); i++) {
-            this.obtenerPregunta(i).mostrarPregunta();
-        }
     }
 }

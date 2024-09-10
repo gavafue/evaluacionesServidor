@@ -16,16 +16,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * La clase <code>DerivarEvaluaciones</code> gestiona operaciones relacionadas
- * con evaluaciones,
- * incluyendo creación, eliminación, obtención y corrección.
- * 
- * <p>
- * Permite realizar diversas acciones en función de la operación solicitada.
- * </p>
- * 
- * @author Gabriel
+ * La clase DerivarEvaluaciones gestiona operaciones relacionadas con
+ * evaluaciones,
+ * incluyendo creación, eliminación, obtención y corrección. Permite realizar
+ * diversas acciones en función de la operación solicitada.
  */
+
 public class DerivarEvaluaciones {
 
     private String operacion;
@@ -80,11 +76,8 @@ public class DerivarEvaluaciones {
 
     /**
      * Método para derivar las operaciones sobre Evaluaciones.
-     * 
-     * <p>
-     * Realiza la operación indicada en base al valor de <code>operacion</code> y
-     * <code>mensaje</code>.
-     * </p>
+     * Realiza la operación indicada en base al valor de operacion y
+     * mensaje.
      * 
      * @return Una cadena con el resultado de la operación y el código de estado
      *         HTTP correspondiente.
@@ -119,11 +112,6 @@ public class DerivarEvaluaciones {
     /**
      * Elimina una evaluación si existe.
      * 
-     * <p>
-     * Actualiza la lista de evaluaciones y elimina la evaluación especificada en el
-     * mensaje.
-     * </p>
-     * 
      * @return Resultado de la operación y código de estado HTTP.
      */
     private String eliminarEvaluacion() {
@@ -148,11 +136,6 @@ public class DerivarEvaluaciones {
     /**
      * Verifica si una evaluación existe.
      * 
-     * <p>
-     * Actualiza la lista de evaluaciones y verifica la existencia de una evaluación
-     * con el título especificado en el mensaje.
-     * </p>
-     * 
      * @return Resultado de la verificación y código de estado HTTP.
      */
     private String verificarExistencia() {
@@ -164,10 +147,6 @@ public class DerivarEvaluaciones {
     /**
      * Lista todas las evaluaciones existentes.
      * 
-     * <p>
-     * Actualiza la lista de evaluaciones y devuelve una cadena con los títulos de
-     * todas las evaluaciones.
-     * </p>
      * 
      * @return Cadena con los títulos de las evaluaciones y código de estado HTTP.
      */
@@ -192,11 +171,6 @@ public class DerivarEvaluaciones {
 
     /**
      * Crea una nueva evaluación.
-     * 
-     * <p>
-     * Divide el mensaje en partes, crea preguntas según el tipo especificado, y
-     * agrega la evaluación a la lista si no existe.
-     * </p>
      * 
      * @return Resultado de la creación de la evaluación y código de estado HTTP.
      */
@@ -278,12 +252,9 @@ public class DerivarEvaluaciones {
     }
 
     /**
-     * Obtiene una pregunta específica de una evaluación.
      * 
-     * <p>
      * Busca la evaluación por su título y devuelve la pregunta en el índice
      * especificado.
-     * </p>
      * 
      * @return Una cadena con la pregunta y su tipo, junto con el código de estado
      *         HTTP.
@@ -294,12 +265,9 @@ public class DerivarEvaluaciones {
     }
 
     /**
-     * Corrige una evaluación y actualiza el historial del estudiante.
      * 
-     * <p>
      * Calcula el puntaje obtenido en la evaluación y actualiza o agrega el
      * historial del estudiante.
-     * </p>
      * 
      * @return Resultado de la corrección y código de estado HTTP.
      */
@@ -323,12 +291,9 @@ public class DerivarEvaluaciones {
     }
 
     /**
-     * Obtiene una pregunta específica de una evaluación.
      * 
-     * <p>
      * Busca la evaluación por su título y devuelve la pregunta en el índice
      * especificado.
-     * </p>
      * 
      * @param evaluacionTitulo El título de la evaluación.
      * @param indice           El índice de la pregunta dentro de la evaluación.
@@ -368,12 +333,10 @@ public class DerivarEvaluaciones {
     }
 
     /**
-     * Deriva las respuestas correctas de una evaluación.
      * 
-     * <p>
      * Obtiene las respuestas correctas para la evaluación especificada en el
      * mensaje.
-     * </p>
+     * 
      * 
      * @return Una cadena con las respuestas correctas y el código de estado HTTP.
      */
@@ -398,11 +361,10 @@ public class DerivarEvaluaciones {
     }
 
     /**
-     * Obtiene el valor del checkbox de respuestas válidas de una evaluación.
      * 
-     * <p>
-     * Devuelve si las respuestas de la evaluación son válidas o no.
-     * </p>
+     * 
+     * El método se fija si la evaluacion correspondiente tiene habilitada la opcion
+     * de ver las respuestas correctas o no
      * 
      * @return Valor booleano de respuestas válidas y código de estado HTTP.
      */
@@ -489,9 +451,10 @@ public class DerivarEvaluaciones {
         }
         return retorno;
     }
- 
+
     /**
      * Método que obtiene un título de una evaluación aleatoria.
+     * 
      * @return título de la evaluación.
      */
     private String obtenerTituloAlAzar() {
@@ -503,7 +466,8 @@ public class DerivarEvaluaciones {
         if (evaluaciones.getEvaluaciones().isEmpty()) {
             retorno = "No existen evaluaciones,;,500";
         } else {
-            // Generamos un índice aleatorio basado en la cantidad de evaluaciones disponibles
+            // Generamos un índice aleatorio basado en la cantidad de evaluaciones
+            // disponibles
             int randomIndex = (int) (Math.random() * evaluaciones.getEvaluaciones().size());
             // Obtenemos el título de la evaluación en el índice aleatorio
             retorno = evaluaciones.getEvaluaciones().get(randomIndex).getTitulo();
