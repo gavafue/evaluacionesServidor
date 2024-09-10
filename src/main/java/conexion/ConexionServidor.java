@@ -56,7 +56,7 @@ public class ConexionServidor {
                                                                                               // derivador para manejar
                                                                                               // el mensaje.
 
-                    if (derivador.validarMensaje() && derivador.validarClaseFinal()) {
+                    if (derivador.validarMensaje() && derivador.validarClaseFinal()) { // Si no son vacíos
                         String retorno = derivador.derivadorDeClases(); // Deriva el mensaje a la clase y operación
                                                                         // correspondiente.
                         out.writeUTF(retorno); // Envía la respuesta al cliente.

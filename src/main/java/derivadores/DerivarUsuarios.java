@@ -17,6 +17,7 @@ public class DerivarUsuarios {
 
     private String operacion;
     private String mensaje;
+    private Usuarios usuarios;
 
     /**
      * Constructor que inicializa la operación y el mensaje de la clase
@@ -30,6 +31,8 @@ public class DerivarUsuarios {
     public DerivarUsuarios(String operacion, String mensaje) {
         this.operacion = operacion;
         this.mensaje = mensaje;
+        this.usuarios = new Usuarios();
+        usuarios.actualizarListaDeUsuarios();
     }
 
     /**
@@ -72,7 +75,39 @@ public class DerivarUsuarios {
     public String getOperacion() {
         return this.operacion;
     }
+    
+    /**
+     * Establece la nueva lista de usuarios.
+     * 
+     * @param usuarios a nueva lista a usar.
+     */
+    public void setUsuarios(Usuarios usuarios){
+        this.usuarios = usuarios;
+    }
+    
+    /**
+     * Obtiene la lista de usuarios del sistema.
+     * 
+     * @return lista de usuarios.
+     */
+    public Usuarios getUsuarios(){
+        return usuarios;
+    }
 
+    /**
+     * Valida que el usuario y contraseña no sean vacíos.
+     * @param usuario el usuario.
+     * @param contrasenia la contraseña del usuario.
+     * @return true si son válidos y false en caso contrario.
+     */
+    public boolean validarDatos(String usuario, String contrasenia){
+        boolean esValido = false;
+        if((!usuario.isBlank())&&(!contrasenia.isBlank())){
+            esValido = true;
+        }
+        return esValido;
+    }
+    
     /**
      * Método principal que gestiona la derivación de las operaciones con usuarios
      * según el valor de la operación configurada.
@@ -83,10 +118,10 @@ public class DerivarUsuarios {
      * @return El resultado de la operación correspondiente en forma de cadena.
      */
     public String derivarUsuarios() {
-        String operacion = this.getOperacion();
+        String operacionActual = this.getOperacion();
         String retorno = "";
 
-        switch (operacion) {
+        switch (operacionActual) {
             case "Alta":
                 retorno = derivarCrearUsuario();
                 break;
@@ -110,49 +145,36 @@ public class DerivarUsuarios {
     }
 
     /**
-     * 
-     * Este método valida el formato del mensaje, verifica si el usuario ya existe
-     * y,
-     * si no existe, lo crea con el rol de "estudiante".
-     * 
+     *
+     * Este método valida el formato del mensaje, verifica si el usuario ya
+     * existe y, si no existe, lo crea con el rol de "estudiante".
+     *
      * @return Una cadena con el resultado de la operación y el código de estado
-     *         HTTP correspondiente.
+     * HTTP correspondiente.
      */
-    public String derivarCrearUsuario() {
+    public String derivarCrearUsuario() { // Llegado este punto sabemos que el mensaje no es vacío.
         String retorno = "";
         try {
-            String mensaje = this.getMensaje();
+            String mensajeActual = this.getMensaje();
+            String[] tokens = mensajeActual.split(";;;");
 
-            if (mensaje == null || mensaje.isBlank()) {
-                retorno = "Mensaje vacío,;,400";
-                return retorno;
-            }
-
-            String[] tokens = mensaje.split(";;;");
-
-            if (tokens.length != 2) {
+            if (tokens.length != 2) { // Si el formato es incorrecto
                 retorno = "Formato de mensaje incorrecto,;,400";
-                return retorno;
-            }
+            } else { // Si el formato no es incorrecto
+                String usuario = tokens[0];
+                String contrasenia = tokens[1];
 
-            String usuario = tokens[0];
-            String contrasenia = tokens[1];
-
-            if (usuario.isBlank() || contrasenia.isBlank()) {
-                retorno = "Usuario y/o contraseña vacíos,;,400";
-                return retorno;
-            }
-
-            Usuarios listaUsuarios = new Usuarios();
-
-            if (listaUsuarios.existeUsuario(usuario)) {
-                String tipoDeUsuario = listaUsuarios.obtenerUsuario(usuario).getTipoDeUsuario().trim();
-                retorno = "El documento ya tiene un usuario registrado de tipo " + tipoDeUsuario + ",;,400";
-            } else {
-                Usuario nuevoUsuario = new Usuario(usuario, contrasenia, "estudiante");
-                listaUsuarios.agregarUsuario(nuevoUsuario);
-                listaUsuarios.perisistirUsuarios();
-                retorno = "Usuario creado con éxito,;,200";
+                if (!this.validarDatos(usuario, contrasenia)) {
+                    retorno = "Usuario y/o contraseña vacíos,;,400";
+                } else {
+                    if (this.getUsuarios().existeUsuario(usuario)) {
+                        retorno = "El documento ya tiene un usuario registrado,;,400";
+                    } else { // Solo se hace alta de estudiantes
+                        Usuario nuevoUsuario = new Usuario(usuario, contrasenia, "estudiante");
+                        this.getUsuarios().agregarUsuario(nuevoUsuario); // En memoria y en persistencia
+                        retorno = "Usuario creado con éxito,;,200";
+                    }
+                }
             }
         } catch (Exception e) {
             retorno = "Error del servidor: " + e.getMessage() + ",;,500";
@@ -161,48 +183,36 @@ public class DerivarUsuarios {
     }
 
     /**
-     * 
      * 
      * Este método valida el formato del mensaje y verifica las credenciales del
      * usuario
      * para realizar el login.
-     * 
-     * @return El resultado de la operación de login con el código de estado HTTP
-     *         correspondiente.
+     *
+     * @return El resultado de la operación de login con el código de estado
+     * HTTP correspondiente.
      */
     public String derivarLogin() {
-        String retorno = null;
+        String retorno = "";
         try {
             String msj = this.getMensaje();
-
-            if (msj == null || msj.isEmpty()) {
-                retorno = "Mensaje vacío,;,400";
-                return retorno;
-            }
-
             String[] tokens = msj.split(";;;");
 
-            if (tokens.length != 2) {
+            if (tokens.length != 2) { // Si el formato es incorrecto
                 retorno = "Formato de mensaje incorrecto,;,400";
-                return retorno;
-            }
-
-            String usuario = tokens[0];
-            String contrasenia = tokens[1];
-
-            if (usuario.isEmpty() || contrasenia.isEmpty()) {
-                retorno = "Usuario y/o contraseña vacíos,;,400";
-                return retorno;
-            }
-
-            Usuarios listaUsuarios = new Usuarios();
-            listaUsuarios.actualizarListaDeUsuarios();
-
-            if (listaUsuarios.existeUsuarioLogin(usuario, contrasenia)) {
-                String tipoDeUsuario = listaUsuarios.obtenerUsuario(usuario).getTipoDeUsuario().trim();
-                retorno = tipoDeUsuario + ",;,200";
             } else {
-                retorno = "Usuario y/o contraseña incorrectos,;,400";
+                String usuario = tokens[0];
+                String contrasenia = tokens[1];
+
+                if (!this.validarDatos(usuario, contrasenia)) { // Si usuario y contraseña no son válidos
+                    retorno = "Usuario y/o contraseña vacíos,;,400";
+                } else {
+                    if (this.getUsuarios().existeUsuarioLogin(usuario, contrasenia)) {
+                        String tipoDeUsuario = this.getUsuarios().obtenerUsuario(usuario).getTipoDeUsuario().trim();
+                        retorno = tipoDeUsuario + ",;,200";
+                    } else {
+                        retorno = "Usuario y/o contraseña incorrectos,;,400";
+                    }
+                }
             }
         } catch (Exception e) {
             retorno = "Error del servidor: " + e.getMessage() + ",;,500";
@@ -211,29 +221,38 @@ public class DerivarUsuarios {
     }
 
     /**
-     * 
-     * 
+     *
      * Este método valida el formato del mensaje y actualiza la contraseña del
-     * usuario
-     * si el usuario existe.
-     * 
+     * usuario si el usuario existe.
+     *
      * @return El resultado de la operación con el código de estado HTTP
-     *         correspondiente.
+     * correspondiente.
      */
     public String derivarCambioPassword() {
-        Usuarios usuarios = new Usuarios();
-        usuarios.actualizarListaDeUsuarios();
         String retorno = "";
-        String[] tokens = mensaje.split(";;;");
-        String usuario = tokens[0];
-        String nuevaContrasenia = tokens[1];
+        try {
+            String msj = this.getMensaje();
+            String[] tokens = msj.split(";;;");
 
-        if (usuarios.existeUsuario(usuario)) {
-            usuarios.obtenerUsuario(usuario).setContrasenia(nuevaContrasenia);
-            usuarios.perisistirUsuarios();
-            retorno = "Cambio con éxito,;,200";
-        } else {
-            retorno = "No existe usuario,;,500";
+            if (tokens.length != 2) { // Si el formato es incorrecto
+                retorno = "Formato de mensaje incorrecto,;,400";
+            } else {
+                String usuario = tokens[0];
+                String nuevaContrasenia = tokens[1];
+                if (!this.validarDatos(usuario, nuevaContrasenia)) { // Si usuario y contraseña no son válidos
+                    retorno = "Usuario y/o contraseña vacíos,;,400";
+                } else {
+                    if (this.getUsuarios().existeUsuario(usuario)) {
+                        this.getUsuarios().obtenerUsuario(usuario).setContrasenia(nuevaContrasenia);
+                        this.getUsuarios().perisistirUsuarios();
+                        retorno = "Cambio con éxito,;,200";
+                    } else {
+                        retorno = "No existe usuario,;,500";
+                    }
+                }
+            }
+        } catch (Exception e) {
+            retorno = "Error del servidor: " + e.getMessage() + ",;,500";
         }
         return retorno;
     }
@@ -251,8 +270,7 @@ public class DerivarUsuarios {
         String retorno = "";
 
         if (!this.derivarValidezNombreUsuario().contains("400")) {
-            Usuarios us = new Usuarios();
-            if (us.getListaUsuarios().containsKey(this.getMensaje())) {
+            if (this.getUsuarios().getListaUsuarios().containsKey(this.getMensaje())) {
                 retorno = "Usuario existe,;,200";
             } else {
                 retorno = "Usuario NO existe,;,400";
@@ -260,7 +278,6 @@ public class DerivarUsuarios {
         } else {
             retorno = "Cédula en formato incorrecto.,;,400";
         }
-
         return retorno;
     }
 

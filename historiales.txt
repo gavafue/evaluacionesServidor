@@ -1,5 +1,5 @@
 Evaluacion;11111111;0
-Nueva;11111111;0
-nueva2;11111111;13
 más correctas espacios;11111111;9
 doblespreguntas;11111111;7
+nuevaprueba;11111111;12
+unadeprueba;11111111;0

@@ -1,25 +1,21 @@
 package conexion;
 
-import derivadores.DerivarUsuarios;
-import derivadores.DerivarHistoriales;
-import derivadores.DerivarEvaluaciones;
-import logica.Evaluaciones;
+import derivadores.*;
 
 /**
- * Clase para procesar mensajes y derivar operaciones según el contenido del
- * mensaje, la clase de destino y la operación especificada.
- * Se espera que la consulta del cliente tenga la estructura
- * [contenidoMensaje,;,ClaseDestino,;,Operacion].
- * La respuesta del servidor puede incluir códigos como 200 (éxito), 400 (error
- * en la consulta), o 500 (error en el servidor).
- * La respuesta tiene la estructura [respuesta,;,codigo].
+ * Clase para procesar mensajes, validarlos y derivar operaciones según el
+ * contenido del mensaje, la clase de destino y la operación especificada. Se
+ * espera que la consulta del cliente tenga la estructura
+ * [contenidoMensaje,;,ClaseDestino,;,Operacion]. La respuesta del servidor
+ * puede incluir códigos como 200 (éxito), 400 (error en la consulta), o 500
+ * (error en el servidor). La respuesta tiene la estructura
+ * [respuesta,;,codigo].
  */
 public class Switch {
 
     private String mensaje; // Contenido del mensaje.
     private String claseDestino; // Clase de destino a la cual se debe derivar la operación.
     private String operacion; // Operación que se debe realizar.
-    Evaluaciones es;
 
     /**
      * Constructor para inicializar la clase Switch con los parámetros
@@ -33,7 +29,6 @@ public class Switch {
         this.mensaje = mensaje;
         this.claseDestino = claseDestino;
         this.operacion = operacion;
-        this.es = new Evaluaciones();
     }
 
     /**
@@ -124,17 +119,12 @@ public class Switch {
      * 
      * @return El resultado de la derivación.
      */
-    public String derivadorDeClases() {
-        String claseDestino = this.getClaseDestino(); // Obtiene el nombre de la clase de destino.
+    public String derivadorDeClases() { // Solo se llama a derivador si la clase y operación no son vacías
+        String clase = this.getClaseDestino();; // Almacena la clase destino.
         String retorno = ""; // Almacena la respuesta de la operación derivada.
 
-        if (claseDestino == null || claseDestino.isBlank()) {
-            return "Error: claseDestino no puede estar vacío.,;,400"; // Retorna un error si la clase de destino es nula
-                                                                      // o vacía.
-        }
-
         try {
-            switch (claseDestino) {
+            switch (clase) {
                 case "Usuarios":
                     DerivarUsuarios derivadorUsuarios = new DerivarUsuarios(operacion, mensaje);
                     retorno = derivadorUsuarios.derivarUsuarios(); // Deriva la operación a la clase DerivarUsuarios.
@@ -155,16 +145,14 @@ public class Switch {
                     }
                     break;
                 default:
-                    retorno = "Error: claseDestino [" + claseDestino + "] desconocido.,;,400"; // Retorna un error si la
-                                                                                               // clase de destino no es
-                                                                                               // válida.
-                    break;
+                    retorno = "Error: claseDestino [" + clase + "] desconocido.,;,400"; // Retorna un error si la
+                                                                                           // clase de destino no es
+                                                                                           // válida.
             }
         } catch (Exception e) {
-            retorno = "Error al derivar a " + claseDestino + ": " + e.getMessage() + ",;,500"; // Maneja errores durante
+            retorno = "Error al derivar a " + clase + ": " + e.getMessage() + ",;,500"; // Maneja errores durante
                                                                                                // la derivación.
         }
-
         return retorno; // Devuelve el resultado de la derivación.
     }
 }

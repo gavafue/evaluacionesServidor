@@ -21,6 +21,7 @@ public class DerivarHistoriales {
 
     private String operacion;
     private String mensaje;
+    private Historiales historiales;
 
     /**
      * Constructor que inicializa la operación y el mensaje de la clase
@@ -41,6 +42,8 @@ public class DerivarHistoriales {
     public DerivarHistoriales(String operacion, String mensaje) {
         this.operacion = operacion;
         this.mensaje = mensaje;
+        this.historiales = new Historiales();
+        this.historiales.actualizarHistoriales();
     }
 
     /**
@@ -89,6 +92,28 @@ public class DerivarHistoriales {
     public String getOperacion() {
         return this.operacion;
     }
+    
+     /**
+     * Método que permite establecer la lista de historiales.
+     * 
+     * 
+     * 
+     * @param historiales La lista de historiales nueva.
+     */
+    public void setHistoriales(Historiales historiales){
+        this.historiales = historiales;
+    }
+    
+    /**
+     * Método que permite obtener los historiales de estudiantes.
+     * 
+     * 
+     * 
+     * @return La lista de historiales.
+     */
+    public Historiales getHistoriales(){
+        return historiales;
+    }
 
     /**
      * Método principal que dirige la ejecución de las operaciones relacionadas con
@@ -105,10 +130,7 @@ public class DerivarHistoriales {
      *         HTTP que indica si la operación fue exitosa o no.
      */
     public String derivarHistoriales() {
-        Historiales hs = new Historiales();
-        hs.actualizarHistoriales();
-
-        switch (operacion) {
+        switch (this.getOperacion()) {
             case "Ver":
                 return verHistorial();
             default:
@@ -117,38 +139,28 @@ public class DerivarHistoriales {
     }
 
     /**
-     * 
-     * 
-     * Este método busca los historiales del estudiante identificado por el valor
-     * del mensaje.
-     * Si existen historiales para el estudiante, devuelve una cadena con la
-     * información sobre
-     * los historiales, incluyendo el número de identificación del estudiante y su
-     * puntaje.
-     * Si no existen historiales, devuelve un mensaje de error.
-     * 
-     * @return Una cadena con los historiales del estudiante, incluyendo su número
-     *         de identificación
-     *         y puntaje, o un mensaje de error si no existen historiales. El
-     *         formato de la cadena
-     *         incluye también un código de estado HTTP que indica el éxito o fallo
-     *         de la operación.
+     *
+     *
+     * Este método busca los historiales del estudiante identificado por el
+     * valor del mensaje. Si existen historiales para el estudiante, devuelve
+     * una cadena con la información sobre los historiales, incluyendo el número
+     * de identificación del estudiante y su puntaje. Si no existen historiales,
+     * devuelve un mensaje de error.
+     *
+     * @return Una cadena con los historiales del estudiante, incluyendo su
+     * número de identificación y puntaje, o un mensaje de error si no existen
+     * historiales. El formato de la cadena incluye también un código de estado
+     * HTTP que indica el éxito o fallo de la operación.
      */
     private String verHistorial() {
         String retorno = "";
-        Historiales hs = new Historiales();
-
-        hs.actualizarHistoriales();
-
-        if (hs.existeHistorial(mensaje)) {
-            LinkedList<Historial> hls = hs.obtenerHistoriales(mensaje);
-
+        if (this.getHistoriales().existeHistorial(mensaje)) {
+            LinkedList<Historial> hls = this.getHistoriales().obtenerHistoriales(mensaje);
             for (int i = 0; i < hls.size(); i++) {
                 Historial historial = hls.get(i);
                 retorno += historial.getCiEstudiante() + ",,," + historial.getPuntaje() + ";;;";
             }
-
-            retorno = retorno.substring(0, retorno.length() - 3);
+            retorno = retorno.substring(0, retorno.length() - 3); // Eliminar los últimos ",,," sobrantes.
             retorno += ",;,200";
         } else {
             retorno = "NO existen historiales,;,500";

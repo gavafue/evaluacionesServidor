@@ -56,21 +56,25 @@ public class Usuarios {
     }
 
     /**
-     * Agrega un usuario al {@code HashMap} de usuarios.
-     * 
+     * Agrega un usuario al {@code HashMap} de usuarios y al archivo de texto
+     * correspondiente.
+     *
      * @param usuario El usuario a agregar.
      */
     public void agregarUsuario(Usuario usuario) {
         this.getListaUsuarios().put(usuario.getNombreUsuario(), usuario);
+        this.perisistirUsuarios();
     }
 
     /**
-     * Elimina un usuario del {@code HashMap} dado su nombre de usuario.
-     * 
+     * Elimina un usuario del {@code HashMap} dado su nombre de usuario y del
+     * archivo de texto correspondiente.
+     *
      * @param nombreUsuario El nombre del usuario a eliminar.
      */
     public void eliminarUsuario(String nombreUsuario) {
         this.getListaUsuarios().remove(nombreUsuario);
+        this.perisistirUsuarios();
     }
 
     /**
