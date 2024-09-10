@@ -68,6 +68,10 @@ public class Evaluacion {
 
     // Getters
 
+    public Evaluacion(String titulo2, Preguntas preguntas, Integer cantidadDePreguntas2, boolean respuestasValidas2) {
+        //TODO Auto-generated constructor stub
+    }
+
     /**
      * Obtiene el título de la evaluación.
      * 
