@@ -1,3 +1,13 @@
+package derivadores;
+
+import logica.CompletarEspacio;
+import logica.Evaluacion;
+import logica.Evaluaciones;
+import logica.Historial;
+import logica.Historiales;
+import logica.MultipleOpcion;
+import logica.Pregunta;
+import logica.Preguntas;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,16 +16,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * La clase <code>DerivarEvaluaciones</code> gestiona operaciones relacionadas
- * con evaluaciones,
- * incluyendo creación, eliminación, obtención y corrección.
- * 
- * <p>
- * Permite realizar diversas acciones en función de la operación solicitada.
- * </p>
- * 
- * @author Gabriel
+ * La clase DerivarEvaluaciones gestiona operaciones relacionadas con
+ * evaluaciones,
+ * incluyendo creación, eliminación, obtención y corrección. Permite realizar
+ * diversas acciones en función de la operación solicitada.
  */
+
 public class DerivarEvaluaciones {
 
     private String operacion;
@@ -70,11 +76,8 @@ public class DerivarEvaluaciones {
 
     /**
      * Método para derivar las operaciones sobre Evaluaciones.
-     * 
-     * <p>
-     * Realiza la operación indicada en base al valor de <code>operacion</code> y
-     * <code>mensaje</code>.
-     * </p>
+     * Realiza la operación indicada en base al valor de operacion y
+     * mensaje.
      * 
      * @return Una cadena con el resultado de la operación y el código de estado
      *         HTTP correspondiente.
@@ -109,11 +112,6 @@ public class DerivarEvaluaciones {
     /**
      * Elimina una evaluación si existe.
      * 
-     * <p>
-     * Actualiza la lista de evaluaciones y elimina la evaluación especificada en el
-     * mensaje.
-     * </p>
-     * 
      * @return Resultado de la operación y código de estado HTTP.
      */
     private String eliminarEvaluacion() {
@@ -124,7 +122,7 @@ public class DerivarEvaluaciones {
             try {
                 evaluaciones.eliminarEvaluacion(mensaje);
                 Historiales historiales = new Historiales();
-                historiales.eliminarTodosLosHistorialesDeUnaEvaluacion(mensaje);
+                historiales.eliminarTodosLosHistorialesDeUnaEvaluacion(mensaje); // En memoria y en persistencia
                 return "Evaluación eliminada,;,200";
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(DerivarEvaluaciones.class.getName()).log(Level.SEVERE, null, ex);
@@ -138,11 +136,6 @@ public class DerivarEvaluaciones {
     /**
      * Verifica si una evaluación existe.
      * 
-     * <p>
-     * Actualiza la lista de evaluaciones y verifica la existencia de una evaluación
-     * con el título especificado en el mensaje.
-     * </p>
-     * 
      * @return Resultado de la verificación y código de estado HTTP.
      */
     private String verificarExistencia() {
@@ -154,10 +147,6 @@ public class DerivarEvaluaciones {
     /**
      * Lista todas las evaluaciones existentes.
      * 
-     * <p>
-     * Actualiza la lista de evaluaciones y devuelve una cadena con los títulos de
-     * todas las evaluaciones.
-     * </p>
      * 
      * @return Cadena con los títulos de las evaluaciones y código de estado HTTP.
      */
@@ -183,120 +172,152 @@ public class DerivarEvaluaciones {
     /**
      * Crea una nueva evaluación.
      * 
-     * <p>
-     * Divide el mensaje en partes, crea preguntas según el tipo especificado, y
-     * agrega la evaluación a la lista si no existe.
-     * </p>
-     * 
      * @return Resultado de la creación de la evaluación y código de estado HTTP.
      */
     private String altaEvaluacion() {
         Evaluaciones evaluaciones = new Evaluaciones();
         evaluaciones.actualizarListaEvaluaciones();
 
-        // Divide el mensaje en partes usando el delimitador ';;;'
-        String[] mensajeTokenizado = mensaje.split(";;;");
-        System.out.println("Mensaje tokenizado: " + Arrays.toString(mensajeTokenizado));
-
-        if (!evaluaciones.existeEvaluacion(mensajeTokenizado[0])) {
-            Preguntas ps = new Preguntas();
-
-            // Itera sobre todas las preguntas, excluyendo el último token que es el total
-            for (int i = 1; i < mensajeTokenizado.length - 2; i++) { // Excluyendo el total
-                String[] preguntaActual = mensajeTokenizado[i].split(",,,");
-                System.out.println("Procesando pregunta: " + Arrays.toString(preguntaActual));
-
-                Pregunta p = null;
-                String enunciadoPregunta = preguntaActual[0];
-                String tipoPregunta = preguntaActual[1];
-                int puntajePregunta = Integer.parseInt(preguntaActual[2]);
-
-                // Crea la pregunta según el tipo especificado
-                switch (tipoPregunta) {
-                    case "Completar":
-                        // Tipo de pregunta Completar
-                        String[] respuestas = preguntaActual[3].split(",");
-                        p = new CompletarEspacio(enunciadoPregunta, puntajePregunta, respuestas);
-                        break;
-                    case "Multiple":
-                        // Tipo de pregunta Multiple
-                        if (preguntaActual.length < 8) {
-                            System.out.println(
-                                    "Error: Pregunta de tipo Multiple mal formada: " + Arrays.toString(preguntaActual));
-                            continue;
-                        }
-                        String[] opciones = { preguntaActual[3], preguntaActual[4], preguntaActual[5],
-                                preguntaActual[6] };
-                        p = new MultipleOpcion(enunciadoPregunta, puntajePregunta, opciones, false, preguntaActual[7]);
-                        break;
-                    case "VF":
-                        // Tipo de pregunta Verdadero/Falso
-                        if (preguntaActual.length < 4) {
-                            System.out.println(
-                                    "Error: Pregunta de tipo VF mal formada: " + Arrays.toString(preguntaActual));
-                            continue;
-                        }
-                        String[] opcionesVF = { "Verdadero", "Falso" };
-                        p = new MultipleOpcion(enunciadoPregunta, puntajePregunta, opcionesVF, true, preguntaActual[3]);
-                        break;
-                    default:
-                        // Tipo de pregunta desconocido
-                        continue;
-                }
-
-                ps.agregarPregunta(p);
-            }
-
-            Integer cantidadDePreguntas = Integer.valueOf(mensajeTokenizado[mensajeTokenizado.length - 1]);
-            String respuestasValidasStr = mensajeTokenizado[mensajeTokenizado.length - 2];
-            boolean respuestasValidas = respuestasValidasStr.equals("true");
-
-            try {
-                Evaluacion ev = new Evaluacion(mensajeTokenizado[0], ps);
-                ev.setCantidadDePreguntas(cantidadDePreguntas);
-                ev.setRespuestasValidas(respuestasValidas);
-                evaluaciones.agregarEvaluacion(ev);
-                evaluaciones.persistirEvaluaciones(evaluaciones.getEvaluaciones());
-                return "Evaluación creada,;,200";
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(DerivarEvaluaciones.class.getName()).log(Level.SEVERE, null, ex);
-                return "Error al crear la evaluación,;,500";
-            }
-        } else {
+        String[] mensajeTokenizado = tokenizarMensaje(mensaje);
+        if (evaluaciones.existeEvaluacion(mensajeTokenizado[0])) {
             return "Ya existe evaluación con ese título,;,400";
+        }
+
+        Preguntas preguntas = procesarPreguntas(mensajeTokenizado);
+        Integer cantidadDePreguntas = Integer.valueOf(mensajeTokenizado[mensajeTokenizado.length - 1]);
+        boolean respuestasValidas = Boolean.parseBoolean(mensajeTokenizado[mensajeTokenizado.length - 2]);
+
+        return crearYPersistirEvaluacion(evaluaciones, mensajeTokenizado[0], preguntas, cantidadDePreguntas,
+                respuestasValidas);
+    }
+
+    /**
+     * Divide el mensaje en partes usando el delimitador ';;;' y muestra el
+     * resultado.
+     * 
+     * @param mensaje El mensaje a tokenizar.
+     * @return Un arreglo de cadenas que representan las partes del mensaje.
+     */
+    private String[] tokenizarMensaje(String mensaje) {
+        String[] mensajeTokenizado = mensaje.split(";;;");
+        return mensajeTokenizado;
+    }
+
+    /**
+     * Procesa las preguntas a partir del mensaje tokenizado.
+     * 
+     * @param mensajeTokenizado El mensaje tokenizado que contiene las preguntas.
+     * @return Un objeto Preguntas que contiene todas las preguntas procesadas.
+     */
+    private Preguntas procesarPreguntas(String[] mensajeTokenizado) {
+        Preguntas preguntas = new Preguntas();
+
+        for (int i = 1; i < mensajeTokenizado.length - 2; i++) { // Excluyendo el total
+            String[] preguntaActual = mensajeTokenizado[i].split(",,,");
+            System.out.println("Procesando pregunta: " + Arrays.toString(preguntaActual));
+
+            Pregunta p = crearPregunta(preguntaActual);
+            if (p != null) {
+                preguntas.agregarPregunta(p);
+            }
+        }
+
+        return preguntas;
+    }
+
+    /**
+     * Crea una pregunta a partir de los datos proporcionados.
+     * 
+     * @param preguntaDatos Los datos de la pregunta.
+     * @return La pregunta creada o null si los datos son incorrectos.
+     */
+    private Pregunta crearPregunta(String[] preguntaDatos) {
+        String enunciadoPregunta = preguntaDatos[0];
+        String tipoPregunta = preguntaDatos[1];
+        int puntajePregunta = Integer.parseInt(preguntaDatos[2]);
+        Pregunta pregunta = null;
+
+        switch (tipoPregunta) {
+            case "Completar":
+                String[] respuestas = preguntaDatos[3].split(",");
+                pregunta = new CompletarEspacio(enunciadoPregunta, puntajePregunta, respuestas);
+                break;
+            case "Multiple":
+                if (preguntaDatos.length < 8) {
+                    System.out
+                            .println("Error: Pregunta de tipo Multiple mal formada: " + Arrays.toString(preguntaDatos));
+                    break;
+                }
+                String[] opciones = { preguntaDatos[3], preguntaDatos[4], preguntaDatos[5], preguntaDatos[6] };
+                pregunta = new MultipleOpcion(enunciadoPregunta, puntajePregunta, opciones, false, preguntaDatos[7]);
+                break;
+            case "VF":
+                if (preguntaDatos.length < 4) {
+                    System.out.println("Error: Pregunta de tipo VF mal formada: " + Arrays.toString(preguntaDatos));
+                    break;
+                }
+                String[] opcionesVF = { "Verdadero", "Falso" };
+                pregunta = new MultipleOpcion(enunciadoPregunta, puntajePregunta, opcionesVF, true, preguntaDatos[3]);
+                break;
+            default:
+                System.out.println("Error: Tipo de pregunta desconocido: " + tipoPregunta);
+                break;
+        }
+
+        return pregunta;
+    }
+
+    /**
+     * Crea y persiste una nueva evaluación.
+     * 
+     * @param evaluaciones        El objeto Evaluaciones donde se agregará la nueva
+     *                            evaluación.
+     * @param titulo              El título de la evaluación.
+     * @param preguntas           El objeto Preguntas con las preguntas a incluir.
+     * @param cantidadDePreguntas La cantidad de preguntas en la evaluación.
+     * @param respuestasValidas   Indica si las respuestas son válidas.
+     * @return Resultado de la creación y persistencia de la evaluación y código de
+     *         estado HTTP.
+     */
+    private String crearYPersistirEvaluacion(Evaluaciones evaluaciones, String titulo, Preguntas preguntas,
+            Integer cantidadDePreguntas, boolean respuestasValidas) {
+        try {
+            Evaluacion evaluacion = new Evaluacion(titulo, preguntas);
+            evaluacion.setCantidadDePreguntas(cantidadDePreguntas);
+            evaluacion.setRespuestasValidas(respuestasValidas);
+            evaluaciones.agregarEvaluacion(evaluacion);
+            evaluaciones.persistirEvaluaciones(evaluaciones.getEvaluaciones());
+            return "Evaluación creada,;,200";
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(DerivarEvaluaciones.class.getName()).log(Level.SEVERE, null, ex);
+            return "Error al crear la evaluación,;,500";
         }
     }
 
     /**
-     * Obtiene una pregunta específica de una evaluación.
      * 
-     * <p>
      * Busca la evaluación por su título y devuelve la pregunta en el índice
      * especificado.
-     * </p>
      * 
      * @return Una cadena con la pregunta y su tipo, junto con el código de estado
      *         HTTP.
      */
     private String obtenerPregunta() {
-        String[] tokens = mensaje.split(";;;");
+        String[] tokens = tokenizarMensaje(mensaje);
         return obtenerPregunta(tokens[0], Integer.parseInt(tokens[1])); // título y número de pregunta
     }
 
     /**
-     * Corrige una evaluación y actualiza el historial del estudiante.
      * 
-     * <p>
      * Calcula el puntaje obtenido en la evaluación y actualiza o agrega el
      * historial del estudiante.
-     * </p>
      * 
      * @return Resultado de la corrección y código de estado HTTP.
      */
     private String correccionEvaluacion() {
         Historiales hs = new Historiales();
         hs.actualizarHistoriales();
-        String[] tokens = mensaje.split(";;;");
+        String[] tokens = tokenizarMensaje(mensaje);
         Evaluaciones evaluaciones = new Evaluaciones();
         evaluaciones.actualizarListaEvaluaciones();
         Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(tokens[1]);
@@ -313,12 +334,9 @@ public class DerivarEvaluaciones {
     }
 
     /**
-     * Obtiene una pregunta específica de una evaluación.
      * 
-     * <p>
      * Busca la evaluación por su título y devuelve la pregunta en el índice
      * especificado.
-     * </p>
      * 
      * @param evaluacionTitulo El título de la evaluación.
      * @param indice           El índice de la pregunta dentro de la evaluación.
@@ -358,12 +376,10 @@ public class DerivarEvaluaciones {
     }
 
     /**
-     * Deriva las respuestas correctas de una evaluación.
      * 
-     * <p>
      * Obtiene las respuestas correctas para la evaluación especificada en el
      * mensaje.
-     * </p>
+     * 
      * 
      * @return Una cadena con las respuestas correctas y el código de estado HTTP.
      */
@@ -388,11 +404,10 @@ public class DerivarEvaluaciones {
     }
 
     /**
-     * Obtiene el valor del checkbox de respuestas válidas de una evaluación.
      * 
-     * <p>
-     * Devuelve si las respuestas de la evaluación son válidas o no.
-     * </p>
+     * 
+     * El método se fija si la evaluacion correspondiente tiene habilitada la opcion
+     * de ver las respuestas correctas o no
      * 
      * @return Valor booleano de respuestas válidas y código de estado HTTP.
      */
@@ -420,7 +435,7 @@ public class DerivarEvaluaciones {
      * @return Puntaje total obtenido en la evaluación.
      */
     private int correccion(Preguntas preguntas) {
-        String[] tokens = mensaje.split(";;;");
+        String[] tokens = tokenizarMensaje(mensaje);
         int puntajeTotal = 0;
         for (int i = 0; i < preguntas.getPreguntas().size(); i++) {
             puntajeTotal += calificar(preguntas.obtenerPregunta(i), tokens[i + 2]);
@@ -479,9 +494,10 @@ public class DerivarEvaluaciones {
         }
         return retorno;
     }
- 
+
     /**
      * Método que obtiene un título de una evaluación aleatoria.
+     * 
      * @return título de la evaluación.
      */
     private String obtenerTituloAlAzar() {
@@ -493,7 +509,8 @@ public class DerivarEvaluaciones {
         if (evaluaciones.getEvaluaciones().isEmpty()) {
             retorno = "No existen evaluaciones,;,500";
         } else {
-            // Generamos un índice aleatorio basado en la cantidad de evaluaciones disponibles
+            // Generamos un índice aleatorio basado en la cantidad de evaluaciones
+            // disponibles
             int randomIndex = (int) (Math.random() * evaluaciones.getEvaluaciones().size());
             // Obtenemos el título de la evaluación en el índice aleatorio
             retorno = evaluaciones.getEvaluaciones().get(randomIndex).getTitulo();

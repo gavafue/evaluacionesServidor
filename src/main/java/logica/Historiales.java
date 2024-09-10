@@ -1,37 +1,55 @@
+package logica;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import persistencia.PersistirHistoriales;
+
 /**
- *
- * @author anaju
+ * La clase Historiales gestiona una colección de objetos de tipo
+ * {@link Historial},
+ * permitiendo realizar operaciones sobre los historiales de evaluaciones de los
+ * estudiantes.
+ * 
  */
 public class Historiales {
 
     // Atributos
-    private LinkedList<Historial> listaHistorial;
+    private LinkedList<Historial> listaHistorial; // Lista de historiales de evaluaciones
 
-    // Constructor vacio
+    /**
+     * Constructor de la clase Historiales que inicializa la lista de historiales.
+     */
     public Historiales() {
         this.listaHistorial = new LinkedList<Historial>();
     }
 
-    // Getter
+    // Getter y Setter
+
+    /**
+     * Obtiene la lista de historiales.
+     * 
+     * @return La lista de historiales.
+     */
     public LinkedList<Historial> getListaHistorial() {
         return listaHistorial;
     }
 
-    // Setter
+    /**
+     * Establece la lista de historiales.
+     * 
+     * @param listaHistorial La nueva lista de historiales.
+     */
     public void setListaHistorial(LinkedList<Historial> listaHistorial) {
         this.listaHistorial = listaHistorial;
     }
 
     /**
-     * Metodo que agrega un historial a la lista de historiales.
-     *
-     * @param historial
+     * Agrega un historial a la lista de historiales y persiste los cambios.
+     * 
+     * @param historial El historial a agregar.
      */
     public void agregarHistorial(Historial historial) {
         this.listaHistorial.add(historial);
@@ -39,31 +57,31 @@ public class Historiales {
     }
 
     /**
-     * Metodo que persiste el puntaje obtenido por cada estudiante al realizar
-     * una evaluacion.
+     * Persiste el puntaje obtenido por cada estudiante al realizar una evaluación
+     * en un archivo.
      */
     public void persistirHistoriales() {
-        Persistencia persistir = new Persistencia();
+        PersistirHistoriales persistir = new PersistirHistoriales();
         persistir.persistirHistorialesEnArchivo(listaHistorial);
     }
 
     /**
-     * Metodo que retorna el Historial dado su posicion en la lista. Asume que
-     * el numero de indice es valido.
-     *
-     * @param indice
-     * @return Historial
+     * Obtiene un historial dado su posición en la lista.
+     * 
+     * @param indice El índice del historial en la lista.
+     * @return El historial en la posición indicada.
      */
     public Historial obtenerHistorial(int indice) {
         return this.getListaHistorial().get(indice);
     }
 
     /**
-     * Metodo que retorna el historial de una evaluacion dado el titulo de la misma
-     * y la ci del estudiante.
-     *
-     * @param titulo del Historial a buscar.
-     * @return el Historial encontrado en la coleccion.
+     * Obtiene el historial de una evaluación dado el título de la evaluación
+     * y el número de cédula de identidad del estudiante.
+     * 
+     * @param titulo El título de la evaluación.
+     * @param ci     El número de cédula de identidad del estudiante.
+     * @return El historial correspondiente o null si no se encuentra.
      */
     public Historial obtenerHistorial(String titulo, String ci) {
         Historial encontrado = null;
@@ -76,10 +94,10 @@ public class Historiales {
     }
 
     /**
-     * Metodo que permite obtener todos los historiales de igual titulo.
-     *
-     * @param titulo del Historial a buscar.
-     * @return las coincidencias de Historial encontrado en la coleccion.
+     * Obtiene todos los historiales de una evaluación dada su título.
+     * 
+     * @param titulo El título de la evaluación.
+     * @return Una lista de historiales que corresponden al título especificado.
      */
     public LinkedList<Historial> obtenerHistoriales(String titulo) {
         LinkedList<Historial> encontrados = new LinkedList<Historial>();
@@ -92,11 +110,11 @@ public class Historiales {
     }
 
     /**
-     * Metodo que determina si existe al menos un Historial a partir de un
-     * titulo.
-     *
-     * @param titulo
-     * @return si existe el Historial
+     * Determina si existe al menos un historial con el título especificado.
+     * 
+     * @param titulo El título del historial a buscar.
+     * @return True si existe al menos un historial con el título especificado,
+     *         false en caso contrario.
      */
     public boolean existeHistorial(String titulo) {
         boolean existe = false;
@@ -109,13 +127,13 @@ public class Historiales {
     }
 
     /**
-     * Metodo que determina si existe al menos un Historial asociado a un estudiante
-     * a partir del
-     * titulo y la ci.
-     *
-     * @param titulo
-     * @param ci
-     * @return si existe un historial asociado a la ci
+     * Determina si existe un historial asociado a un estudiante dado el título de
+     * la evaluación
+     * y el número de cédula de identidad.
+     * 
+     * @param titulo El título de la evaluación.
+     * @param ci     El número de cédula de identidad del estudiante.
+     * @return True si existe un historial asociado, false en caso contrario.
      */
     public boolean existeHistorial(String titulo, String ci) {
         boolean existe = false;
@@ -128,14 +146,19 @@ public class Historiales {
     }
 
     /**
-     * Metodo que actualiza en memoria la lista de historiales a partir de un
-     * archivo de texto.
+     * Actualiza en memoria la lista de historiales a partir de un archivo de texto.
      */
     public void actualizarHistoriales() {
-        Persistencia persistir = new Persistencia();
+        PersistirHistoriales persistir = new PersistirHistoriales();
         this.setListaHistorial(persistir.cargarHistorialesDesdeArchivo().getListaHistorial());
     }
 
+    /**
+     * Elimina todos los historiales asociados a una evaluación dada su título.
+     * 
+     * @param titulo El título de la evaluación cuyas historiales se desean
+     *               eliminar.
+     */
     public void eliminarTodosLosHistorialesDeUnaEvaluacion(String titulo) {
         try {
             // Actualizar la lista de historiales antes de eliminar

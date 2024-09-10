@@ -1,43 +1,34 @@
+package persistencia;
+
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
+import logica.CompletarEspacio;
+import logica.Evaluacion;
+import logica.Evaluaciones;
+import logica.MultipleOpcion;
+import logica.Pregunta;
+import logica.Preguntas;
 
 /**
- * La clase Persistencia se encarga de la persistencia de datos en archivos
- * relacionados con usuarios, evaluaciones y historiales.
+ * La clase {@code PersistirEvaluaciones} maneja la persistencia de evaluaciones
+ * en un archivo de texto.
+ * Permite guardar, cargar y gestionar evaluaciones a través de métodos que leen
+ * y escriben en archivos.
+ * 
  */
-public class Persistencia {
-
-    /**
-     * Persiste la lista de usuarios en un archivo de texto.
-     *
-     * @param hashUsuarios un HashMap que contiene los usuarios a persistir.
-     */
-    public void persistirListaDeUsuariosEnArchivo(HashMap<String, Usuario> hashUsuarios) {
-        try (FileWriter fw = new FileWriter("passwords.txt")) {
-            for (Map.Entry<String, Usuario> entry : hashUsuarios.entrySet()) {
-                fw.write(entry.getKey() + ";" + entry.getValue().getContrasenia() + ";"
-                        + entry.getValue().getTipoDeUsuario() + "\n");
-            }
-        } catch (IOException e) {
-            System.err.println("Error al escribir el archivo de usuarios: " + e.getMessage());
-            e.printStackTrace(); // @todo: redirigir a un log
-        }
-    }
+public class PersistirEvaluaciones {
 
     /**
      * Persiste una lista de evaluaciones en un archivo de texto.
-     *
-     * @param listaEvaluaciones una lista de evaluaciones a persistir.
+     * 
+     * @param listaEvaluaciones Una lista de evaluaciones a persistir.
      */
     public void persistirEvaluacionesEnArchivo(List<Evaluacion> listaEvaluaciones) {
         List<String> titulosExistentes = new ArrayList<>();
@@ -81,9 +72,9 @@ public class Persistencia {
 
     /**
      * Obtiene los títulos de evaluaciones desde un archivo de texto.
-     *
-     * @return una lista de títulos de evaluaciones.
-     * @throws IOException si ocurre un error al leer el archivo.
+     * 
+     * @return Una lista de títulos de evaluaciones.
+     * @throws IOException Si ocurre un error al leer el archivo.
      */
     public List<String> obtenerTitulosDeEvaluacionesDesdeArchivo() throws IOException {
         List<String> resultados = new ArrayList<>();
@@ -106,8 +97,8 @@ public class Persistencia {
 
     /**
      * Carga las evaluaciones desde un archivo de texto.
-     *
-     * @return una instancia de Evaluaciones con los datos cargados.
+     * 
+     * @return Una instancia de {@code Evaluaciones} con los datos cargados.
      */
     public Evaluaciones cargarEvaluacionesDesdeArchivo() {
         Evaluaciones evaluaciones = new Evaluaciones();
@@ -116,7 +107,7 @@ public class Persistencia {
                 String linea = scanner.nextLine();
                 boolean respuestasValidas = false;
                 String[] arregloDePreguntas = linea.split(";");
-                Integer cantidadPreguntas = Integer.parseInt(arregloDePreguntas[arregloDePreguntas.length - 1]);
+                Integer cantidadPreguntas = Integer.valueOf(arregloDePreguntas[arregloDePreguntas.length - 1]);
 
                 String tituloEvaluacion = arregloDePreguntas[0].trim();
                 Preguntas listaPreguntas = new Preguntas();
@@ -183,7 +174,6 @@ public class Persistencia {
                     Boolean permiteVerCorrectas = Boolean.valueOf(arregloDePreguntas[arregloDePreguntas.length - 2]);
                     evaluacion.setRespuestasValidas(permiteVerCorrectas);
                     evaluaciones.agregarEvaluacion(evaluacion);
-                    listaPreguntas.listarPreguntas();
                 } catch (Exception e) {
                     System.err.println("Error al crear la evaluación: " + e.getMessage());
                 }
@@ -194,43 +184,5 @@ public class Persistencia {
             System.err.println("Error inesperado: " + e.getMessage());
         }
         return evaluaciones;
-    }
-
-    /**
-     * Carga los historiales desde un archivo de texto.
-     *
-     * @return una instancia de Historiales con los datos cargados.
-     */
-    public Historiales cargarHistorialesDesdeArchivo() {
-        Historiales listaHistorial = new Historiales();
-        try (Scanner s = new Scanner(new File("historiales.txt"))) {
-            while (s.hasNextLine()) {
-                String linea = s.nextLine();
-                String[] historial = linea.split(";");
-                listaHistorial
-                        .agregarHistorial(new Historial(historial[0], historial[1], Integer.parseInt(historial[2])));
-            }
-        } catch (IOException e) {
-            System.err.println("Error al leer el archivo de historiales: " + e.getMessage());
-        }
-        return listaHistorial;
-    }
-
-    /**
-     * Persiste el puntaje obtenido por cada estudiante al realizar una evaluación.
-     *
-     * @param listaHistorial una lista de historiales a persistir.
-     */
-    public void persistirHistorialesEnArchivo(LinkedList<Historial> listaHistorial) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("historiales.txt"))) {
-            for (Historial historial : listaHistorial) {
-                writer.write(historial.getTituloEvaluacion() + ";" + historial.getCiEstudiante() + ";"
-                        + historial.getPuntaje());
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            System.err.println("Error al escribir el archivo de historiales: " + e.getMessage());
-            e.printStackTrace(); // @todo: redirigir a un log
-        }
     }
 }
