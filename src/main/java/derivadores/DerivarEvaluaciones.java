@@ -17,15 +17,16 @@ import java.util.logging.Logger;
 
 /**
  * La clase DerivarEvaluaciones gestiona operaciones relacionadas con
- * evaluaciones,
- * incluyendo creación, eliminación, obtención y corrección. Permite realizar
- * diversas acciones en función de la operación solicitada.
+ * evaluaciones, incluyendo creación, eliminación, obtención y corrección.
+ * Permite realizar diversas acciones en función de la operación solicitada.
  */
 
 public class DerivarEvaluaciones {
 
     private String operacion;
     private String mensaje;
+    private Evaluaciones evaluaciones;
+    private Historiales historiales;
 
     /**
      * Constructor que inicializa la operación y el mensaje.
@@ -36,6 +37,10 @@ public class DerivarEvaluaciones {
     public DerivarEvaluaciones(String operacion, String mensaje) {
         this.operacion = operacion;
         this.mensaje = mensaje;
+        this.evaluaciones = new Evaluaciones();
+        this.evaluaciones.actualizarListaEvaluaciones();
+        this.historiales = new Historiales();
+        this.historiales.actualizarHistoriales();
     }
 
     /**
@@ -53,7 +58,7 @@ public class DerivarEvaluaciones {
      * @return El mensaje actual.
      */
     public String getMensaje() {
-        return this.mensaje;
+        return mensaje;
     }
 
     /**
@@ -71,128 +76,47 @@ public class DerivarEvaluaciones {
      * @return La operación actual.
      */
     public String getOperacion() {
-        return this.operacion;
+        return operacion;
     }
 
     /**
-     * Método para derivar las operaciones sobre Evaluaciones.
-     * Realiza la operación indicada en base al valor de operacion y
-     * mensaje.
+     * Establece la colección de evaluaciones.
      * 
-     * @return Una cadena con el resultado de la operación y el código de estado
-     *         HTTP correspondiente.
+     * @param evaluaciones La nueva colección de evaluaciones.
      */
-    public String derivarEvaluaciones() {
-        switch (operacion) {
-            case "Eliminar":
-                return eliminarEvaluacion();
-            case "Existencia":
-                return verificarExistencia();
-            case "Listar":
-                return listarEvaluaciones();
-            case "Alta":
-                return altaEvaluacion();
-            case "ObtenerPregunta":
-                return obtenerPregunta();
-            case "Correccion":
-                return correccionEvaluacion();
-            case "ObtenerCorrectas":
-                return derivarObtenerRespuestas();
-            case "ValorCheckboxRespuestas":
-                return obtenerValorCheckboxRespuestas();
-            case "ObtenerPuntajeTotal":
-                return obtenerPuntajeTotalDeEvaluacion();
-            case "ObtenerTituloAlAzar":
-                return obtenerTituloAlAzar();
-            default:
-                return "Operación desconocida,;,400";
-        }
+    public void setEvaluaciones(Evaluaciones evaluaciones) {
+        this.evaluaciones = evaluaciones;
     }
 
     /**
-     * Elimina una evaluación si existe.
+     * Obtiene las evaluaciones.
      * 
-     * @return Resultado de la operación y código de estado HTTP.
+     * @return La colección de evaluaciones.
      */
-    private String eliminarEvaluacion() {
-        Evaluaciones evaluaciones = new Evaluaciones();
-        evaluaciones.actualizarListaEvaluaciones();
-
-        if (evaluaciones.existeEvaluacion(mensaje)) {
-            try {
-                evaluaciones.eliminarEvaluacion(mensaje);
-                Historiales historiales = new Historiales();
-                historiales.eliminarTodosLosHistorialesDeUnaEvaluacion(mensaje); // En memoria y en persistencia
-                return "Evaluación eliminada,;,200";
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(DerivarEvaluaciones.class.getName()).log(Level.SEVERE, null, ex);
-                return "Error al eliminar la evaluación,;,500";
-            }
-        } else {
-            return "Evaluación NO existe,;,500";
-        }
+    public Evaluaciones getEvaluaciones() {
+        return evaluaciones;
     }
-
+    
     /**
-     * Verifica si una evaluación existe.
+     * Establece la colección de historiales.
      * 
-     * @return Resultado de la verificación y código de estado HTTP.
+     * @param historiales La nueva colección de historiales.
      */
-    private String verificarExistencia() {
-        Evaluaciones evaluaciones = new Evaluaciones();
-        evaluaciones.actualizarListaEvaluaciones();
-        return evaluaciones.existeEvaluacion(mensaje) ? "Evaluación existe,;,200" : "Evaluación NO existe,;,500";
+    public void setHistoriales(Historiales historiales) {
+        this.historiales = historiales;
     }
 
     /**
-     * Lista todas las evaluaciones existentes.
+     * Obtiene los historiales.
      * 
-     * 
-     * @return Cadena con los títulos de las evaluaciones y código de estado HTTP.
+     * @return La colección de historiales.
      */
-    private String listarEvaluaciones() {
-        Evaluaciones evaluaciones = new Evaluaciones();
-        evaluaciones.actualizarListaEvaluaciones();
-        String listaEnString = "";
-
-        try {
-            List<String> listaTitulosEvaluaciones = evaluaciones.obtenerTítulosEvaluaciones();
-            for (String parte : listaTitulosEvaluaciones) {
-                listaEnString += parte + ";;;";
-            }
-            if (listaEnString.length() > 3) { // Elimino el ;;; sobrantes
-                listaEnString = listaEnString.substring(0, listaEnString.length() - 3);
-            }
-            return listaEnString + ",;,200";
-        } catch (Exception e) {
-            return "Error al acceder a las evaluaciones,;,400";
-        }
+    public Historiales getHistoriales() {
+        return historiales;
     }
-
+    
     /**
-     * Crea una nueva evaluación.
-     * 
-     * @return Resultado de la creación de la evaluación y código de estado HTTP.
-     */
-    private String altaEvaluacion() {
-        Evaluaciones evaluaciones = new Evaluaciones();
-        evaluaciones.actualizarListaEvaluaciones();
-
-        String[] mensajeTokenizado = tokenizarMensaje(mensaje);
-        if (evaluaciones.existeEvaluacion(mensajeTokenizado[0])) {
-            return "Ya existe evaluación con ese título,;,400";
-        }
-
-        Preguntas preguntas = procesarPreguntas(mensajeTokenizado);
-        Integer cantidadDePreguntas = Integer.valueOf(mensajeTokenizado[mensajeTokenizado.length - 1]);
-        boolean respuestasValidas = Boolean.parseBoolean(mensajeTokenizado[mensajeTokenizado.length - 2]);
-
-        return crearYPersistirEvaluacion(evaluaciones, mensajeTokenizado[0], preguntas, cantidadDePreguntas,
-                respuestasValidas);
-    }
-
-    /**
-     * Divide el mensaje en partes usando el delimitador ';;;' y muestra el
+     * Divide el mensaje en partes usando el delimitador ';;;' y devuelve el
      * resultado.
      * 
      * @param mensaje El mensaje a tokenizar.
@@ -202,6 +126,136 @@ public class DerivarEvaluaciones {
         String[] mensajeTokenizado = mensaje.split(";;;");
         return mensajeTokenizado;
     }
+    
+    /**
+     * Método para derivar las operaciones sobre Evaluaciones.
+     * Realiza la operación indicada en base al valor de operacion y
+     * mensaje.
+     * 
+     * @return Una cadena con el resultado de la operación y el código de estado
+     *         HTTP correspondiente.
+     */
+    public String derivarEvaluaciones() {
+        String retorno = "";
+        switch (operacion) {
+            case "Eliminar":
+                retorno = eliminarEvaluacion();
+                break;
+            case "Existencia":
+                retorno = verificarExistencia();
+                break;
+            case "Listar":
+                retorno = listarEvaluaciones();
+                break;
+            case "Alta":
+                retorno = altaEvaluacion();
+                break;
+            case "ObtenerPregunta":
+                retorno = obtenerPregunta();
+                break;
+            case "Correccion":
+                retorno = correccionEvaluacion();
+                break;
+            case "ObtenerCorrectas":
+                retorno = derivarObtenerRespuestas();
+                break;
+            case "ValorCheckboxRespuestas":
+                retorno = obtenerValorCheckboxRespuestas();
+                break;
+            case "ObtenerPuntajeTotal":
+                retorno = obtenerPuntajeTotalDeEvaluacion();
+                break;
+            case "ObtenerTituloAlAzar":
+                retorno = obtenerTituloAlAzar();
+                break;
+            default:
+                retorno = "Operación desconocida,;,400";
+                break;
+        }
+        return retorno;
+    }
+
+    /**
+     * Elimina una evaluación si existe.
+     * 
+     * @return Resultado de la operación y código de estado HTTP.
+     */
+    private String eliminarEvaluacion() {
+        String retorno = "";
+        if (this.getEvaluaciones().existeEvaluacion(mensaje)) { // El mensaje corresponde al título de la evaluación
+            try {
+                this.getEvaluaciones().eliminarEvaluacion(mensaje);
+                this.getHistoriales().eliminarHistoriales(mensaje); // En memoria y en persistencia elimina los historiales asociados a la evaluación
+                retorno = "Evaluación eliminada,;,200";
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(DerivarEvaluaciones.class.getName()).log(Level.SEVERE, null, ex);
+                retorno = "Error al eliminar la evaluación,;,500";
+            }
+        } else {
+            retorno = "Evaluación NO existe,;,500";
+        }
+        return retorno;
+    }
+
+    /**
+     * Verifica si una evaluación existe.
+     * 
+     * @return Resultado de la verificación y código de estado HTTP.
+     */
+    private String verificarExistencia() {
+        String retorno = "";
+        boolean existe = this.getEvaluaciones().existeEvaluacion(mensaje);
+        if(existe){
+            retorno = "Evaluación existe,;,200";
+        }else{
+            retorno = "Evaluación NO existe,;,500";
+        }
+        return retorno;
+    }
+
+    /**
+     * Lista todas las evaluaciones existentes.
+     * 
+     * 
+     * @return Cadena con los títulos de las evaluaciones y código de estado HTTP.
+     */
+    private String listarEvaluaciones() {
+        String listaEnString = "";
+        try {
+            List<String> listaTitulosEvaluaciones = this.getEvaluaciones().obtenerTítulosEvaluaciones();
+            for (String parte : listaTitulosEvaluaciones) {
+                listaEnString += parte + ";;;";
+            }
+            if (listaEnString.length() > 3) { // Elimino el ;;; sobrante
+                listaEnString = listaEnString.substring(0, listaEnString.length() - 3);
+            }
+            return listaEnString + ",;,200";
+        } catch (Exception e) {
+            return "Error al acceder a las evaluaciones,;,400";
+        }
+    }
+
+    /**
+     * Método que desemboca la creación de una nueva evaluación.
+     * 
+     * @return Resultado de la creación de la evaluación y código de estado
+     * HTTP.
+     */
+    private String altaEvaluacion() {
+        String retorno = "";
+        String[] stringPreguntas = tokenizarMensaje(mensaje);
+        if (this.getEvaluaciones().existeEvaluacion(stringPreguntas[0])) {
+            retorno = "Ya existe evaluación con ese título,;,400";
+        } else {
+            Preguntas preguntas = procesarPreguntas(stringPreguntas);
+            Integer cantidadDePreguntas = Integer.valueOf(stringPreguntas[stringPreguntas.length - 1]);
+            boolean verRespuestas = Boolean.parseBoolean(stringPreguntas[stringPreguntas.length - 2]); // Si está habilitado o no ver las respuestas correctas luego de realizar la evaluación
+            retorno = crearEvaluacion(stringPreguntas[0], preguntas, cantidadDePreguntas,
+                    verRespuestas);
+        }
+        return retorno;
+    }
+
 
     /**
      * Procesa las preguntas a partir del mensaje tokenizado.
@@ -211,67 +265,61 @@ public class DerivarEvaluaciones {
      */
     private Preguntas procesarPreguntas(String[] mensajeTokenizado) {
         Preguntas preguntas = new Preguntas();
-
-        for (int i = 1; i < mensajeTokenizado.length - 2; i++) { // Excluyendo el total
+        for (int i = 1; i < mensajeTokenizado.length - 2; i++) { // Excluyendo el total de preguntas
             String[] preguntaActual = mensajeTokenizado[i].split(",,,");
-            System.out.println("Procesando pregunta: " + Arrays.toString(preguntaActual));
-
-            Pregunta p = crearPregunta(preguntaActual);
-            if (p != null) {
-                preguntas.agregarPregunta(p);
+            Pregunta pregunta = crearPregunta(preguntaActual);
+            if (pregunta != null) {
+                preguntas.agregarPregunta(pregunta);
             }
         }
-
         return preguntas;
     }
 
     /**
      * Crea una pregunta a partir de los datos proporcionados.
      * 
-     * @param preguntaDatos Los datos de la pregunta.
+     * @param datosPregunta Los datos de la pregunta.
      * @return La pregunta creada o null si los datos son incorrectos.
      */
-    private Pregunta crearPregunta(String[] preguntaDatos) {
-        String enunciadoPregunta = preguntaDatos[0];
-        String tipoPregunta = preguntaDatos[1];
-        int puntajePregunta = Integer.parseInt(preguntaDatos[2]);
+    private Pregunta crearPregunta(String[] datosPregunta) {
         Pregunta pregunta = null;
+        String enunciado = datosPregunta[0];
+        String tipo = datosPregunta[1];
+        int puntaje = Integer.parseInt(datosPregunta[2]);
 
-        switch (tipoPregunta) {
+        switch (tipo) {
             case "Completar":
-                String[] respuestas = preguntaDatos[3].split(",");
-                pregunta = new CompletarEspacio(enunciadoPregunta, puntajePregunta, respuestas);
+                String[] respuestas = datosPregunta[3].split(",");
+                pregunta = new CompletarEspacio(enunciado, puntaje, respuestas);
                 break;
             case "Multiple":
-                if (preguntaDatos.length < 8) {
-                    System.out
-                            .println("Error: Pregunta de tipo Multiple mal formada: " + Arrays.toString(preguntaDatos));
-                    break;
+                if (datosPregunta.length < 8) {
+                    System.out.println("Error: Pregunta de tipo Multiple mal formada: " + Arrays.toString(datosPregunta));
+                }else{
+                    String[] opciones = {datosPregunta[3], datosPregunta[4], datosPregunta[5], datosPregunta[6] };
+                    String respuesta =  datosPregunta[7];
+                    pregunta = new MultipleOpcion(enunciado, puntaje, opciones, false, respuesta);
                 }
-                String[] opciones = { preguntaDatos[3], preguntaDatos[4], preguntaDatos[5], preguntaDatos[6] };
-                pregunta = new MultipleOpcion(enunciadoPregunta, puntajePregunta, opciones, false, preguntaDatos[7]);
                 break;
             case "VF":
-                if (preguntaDatos.length < 4) {
-                    System.out.println("Error: Pregunta de tipo VF mal formada: " + Arrays.toString(preguntaDatos));
-                    break;
+                if (datosPregunta.length < 4) {
+                    System.out.println("Error: Pregunta de tipo VF mal formada: " + Arrays.toString(datosPregunta));
+                }else{
+                    String[] opcionesVF = { "Verdadero", "Falso" };
+                    String respuesta = datosPregunta[3];
+                    pregunta = new MultipleOpcion(enunciado, puntaje, opcionesVF, true, respuesta);
                 }
-                String[] opcionesVF = { "Verdadero", "Falso" };
-                pregunta = new MultipleOpcion(enunciadoPregunta, puntajePregunta, opcionesVF, true, preguntaDatos[3]);
                 break;
             default:
-                System.out.println("Error: Tipo de pregunta desconocido: " + tipoPregunta);
+                System.out.println("Error: Tipo de pregunta desconocido: " + tipo);
                 break;
         }
-
         return pregunta;
     }
 
     /**
-     * Crea y persiste una nueva evaluación.
+     * Crea una nueva evaluación.
      * 
-     * @param evaluaciones        El objeto Evaluaciones donde se agregará la nueva
-     *                            evaluación.
      * @param titulo              El título de la evaluación.
      * @param preguntas           El objeto Preguntas con las preguntas a incluir.
      * @param cantidadDePreguntas La cantidad de preguntas en la evaluación.
@@ -279,32 +327,19 @@ public class DerivarEvaluaciones {
      * @return Resultado de la creación y persistencia de la evaluación y código de
      *         estado HTTP.
      */
-    private String crearYPersistirEvaluacion(Evaluaciones evaluaciones, String titulo, Preguntas preguntas,
-            Integer cantidadDePreguntas, boolean respuestasValidas) {
+    private String crearEvaluacion(String titulo, Preguntas preguntas, Integer cantidadDePreguntas, boolean respuestasValidas) {
+        String retorno = "";
         try {
             Evaluacion evaluacion = new Evaluacion(titulo, preguntas);
             evaluacion.setCantidadDePreguntas(cantidadDePreguntas);
             evaluacion.setRespuestasValidas(respuestasValidas);
-            evaluaciones.agregarEvaluacion(evaluacion);
-            evaluaciones.persistirEvaluaciones(evaluaciones.getEvaluaciones());
-            return "Evaluación creada,;,200";
+            this.getEvaluaciones().agregarEvaluacion(evaluacion); // En memoria y en persistencia
+            retorno = "Evaluación creada,;,200";
         } catch (FileNotFoundException ex) {
             Logger.getLogger(DerivarEvaluaciones.class.getName()).log(Level.SEVERE, null, ex);
-            return "Error al crear la evaluación,;,500";
+            retorno = "Error al crear la evaluación,;,500";
         }
-    }
-
-    /**
-     * 
-     * Busca la evaluación por su título y devuelve la pregunta en el índice
-     * especificado.
-     * 
-     * @return Una cadena con la pregunta y su tipo, junto con el código de estado
-     *         HTTP.
-     */
-    private String obtenerPregunta() {
-        String[] tokens = tokenizarMensaje(mensaje);
-        return obtenerPregunta(tokens[0], Integer.parseInt(tokens[1])); // título y número de pregunta
+        return retorno;
     }
 
     /**
@@ -315,56 +350,49 @@ public class DerivarEvaluaciones {
      * @return Resultado de la corrección y código de estado HTTP.
      */
     private String correccionEvaluacion() {
-        Historiales hs = new Historiales();
-        hs.actualizarHistoriales();
         String[] tokens = tokenizarMensaje(mensaje);
-        Evaluaciones evaluaciones = new Evaluaciones();
-        evaluaciones.actualizarListaEvaluaciones();
-        Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(tokens[1]);
+        Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(tokens[1]);
         int puntajeObtenido = correccion(evaluacion.getListaPreguntas());
 
-        if (hs.existeHistorial(tokens[1], tokens[0])) {
-            Historial h = hs.obtenerHistorial(tokens[1], tokens[0]);
-            h.setPuntaje(puntajeObtenido);
-            hs.persistirHistoriales();
+        if (this.getHistoriales().existeHistorial(tokens[1], tokens[0])) {
+            Historial historial = this.getHistoriales().obtenerHistorial(tokens[1], tokens[0]);
+            historial.setPuntaje(puntajeObtenido);
+            this.getHistoriales().persistirHistoriales();
         } else {
-            hs.agregarHistorial(new Historial(tokens[1], tokens[0], puntajeObtenido));
+            this.getHistoriales().agregarHistorial(new Historial(tokens[1], tokens[0], puntajeObtenido)); // En memoria y en persistencia
         }
-        return "Historial agregado con éxito,;,200";
+        return "Historial agregado o modificado con éxito,;,200";
     }
-
+    
     /**
      * 
      * Busca la evaluación por su título y devuelve la pregunta en el índice
      * especificado.
      * 
-     * @param evaluacionTitulo El título de la evaluación.
-     * @param indice           El índice de la pregunta dentro de la evaluación.
-     * 
      * @return Una cadena con la pregunta y su tipo, junto con el código de estado
      *         HTTP.
      */
-    private String obtenerPregunta(String evaluacionTitulo, int indice) {
+    private String obtenerPregunta() {
         String retorno = "";
-        Evaluaciones evaluaciones = new Evaluaciones();
-        evaluaciones.actualizarListaEvaluaciones();
-        Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(evaluacionTitulo);
-
-        if (indice < evaluacion.getListaPreguntas().getPreguntas().size()) {
+        String[] tokens = tokenizarMensaje(mensaje);
+        String titulo =  tokens[0]; // Título de la evaluación
+        int indice = Integer.parseInt(tokens[1]); // El índice de la pregunta dentro de la evaluación
+   
+        Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(titulo);
+        if (indice < evaluacion.getListaPreguntas().getPreguntas().size()) { // Si existe el número de pregunta
             Pregunta pregunta = evaluacion.getListaPreguntas().obtenerPregunta(indice);
             String tipoPregunta = pregunta.obtenerTipo();
-
-            if (tipoPregunta.equals("Multiple")) {
+            if (tipoPregunta.equals("Multiple")) { // Si e multiple opción
                 MultipleOpcion multiple = (MultipleOpcion) pregunta;
                 retorno = tipoPregunta + ";;;" + multiple.getEnunciado() + ";;;"
                         + multiple.getOpciones()[0] + ";;;" + multiple.getOpciones()[1] + ";;;"
                         + multiple.getOpciones()[2] + ";;;" + multiple.getOpciones()[3] + ";;;"
                         + multiple.getPuntaje() + ",;,200";
-            } else if (tipoPregunta.equals("VF")) {
+            } else if (tipoPregunta.equals("VF")) { // Si es verdadero o falso
                 MultipleOpcion vf = (MultipleOpcion) pregunta;
                 retorno = tipoPregunta + ";;;" + vf.getEnunciado() + ";;;"
                         + vf.getPuntaje() + ",;,200";
-            } else {
+            } else { // Si es completar espacios en blanco
                 CompletarEspacio completar = (CompletarEspacio) pregunta;
                 retorno = tipoPregunta + ";;;" + completar.getEnunciado() + ";;;"
                         + completar.getPuntaje() + ",;,200";
@@ -385,13 +413,10 @@ public class DerivarEvaluaciones {
      */
     private String derivarObtenerRespuestas() {
         String retorno = "";
-        Evaluaciones evaluaciones = new Evaluaciones();
-        evaluaciones.actualizarListaEvaluaciones();
 
         try {
-            Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(mensaje);
+            Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(mensaje);
             ArrayList<String> respuestasCorrectas = evaluacion.obtenerRespuestasCorrectas();
-
             for (String preguntaYRespuesta : respuestasCorrectas) {
                 retorno += preguntaYRespuesta + ";;;";
             }
@@ -399,7 +424,6 @@ public class DerivarEvaluaciones {
         } catch (Exception e) {
             retorno = ",;,400";
         }
-
         return retorno;
     }
 
@@ -413,17 +437,14 @@ public class DerivarEvaluaciones {
      */
     private String obtenerValorCheckboxRespuestas() {
         String retorno = "";
-        Evaluaciones evaluaciones = new Evaluaciones();
-        evaluaciones.actualizarListaEvaluaciones();
 
         try {
-            Evaluacion evaluacion = evaluaciones.obtenerEvaluacion(mensaje);
-            Boolean respuestasValidas = evaluacion.isRespuestasValidas();
-            retorno = String.valueOf(respuestasValidas) + ",;,200";
+            Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(mensaje);
+            Boolean habilitado = evaluacion.respuestasHabilitadas();
+            retorno = String.valueOf(habilitado) + ",;,200";
         } catch (Exception e) {
             retorno = ",;,400";
         }
-
         return retorno;
     }
 
@@ -468,19 +489,8 @@ public class DerivarEvaluaciones {
     private String obtenerPuntajeTotalDeEvaluacion() {
         String retorno = "";
         try {
-            // Crea una instancia de Evaluaciones y obtiene el puntaje total
-            Evaluaciones evaluaciones = new Evaluaciones();
-
-            // Verifica si el mensaje (título de la evaluación) es válido
-            if (mensaje == null || mensaje.trim().isEmpty()) {
-                throw new IllegalArgumentException("El título de la evaluación (mensaje) es nulo o vacío.");
-            }
-
-            // Obtiene el puntaje total de la evaluación correspondiente al mensaje
-            int puntajeTotal = evaluaciones.obtenerPuntajeTotal(mensaje);
+            int puntajeTotal = this.getEvaluaciones().obtenerPuntajeTotal(mensaje);
             String puntajeTotalEnString = String.valueOf(puntajeTotal);
-
-            // Construye el string de retorno con el puntaje total y el código de estado
             retorno = puntajeTotalEnString + ",;,200";
         } catch (IllegalArgumentException e) {
             // Manejo de errores cuando el título de la evaluación es inválido
@@ -502,18 +512,15 @@ public class DerivarEvaluaciones {
      */
     private String obtenerTituloAlAzar() {
         String retorno = "";
-        Evaluaciones evaluaciones = new Evaluaciones();
-        evaluaciones.actualizarListaEvaluaciones();
-
         // Verificamos si hay evaluaciones disponibles
-        if (evaluaciones.getEvaluaciones().isEmpty()) {
+        if (this.getEvaluaciones().getListaEvaluaciones().isEmpty()) {
             retorno = "No existen evaluaciones,;,500";
         } else {
             // Generamos un índice aleatorio basado en la cantidad de evaluaciones
             // disponibles
-            int randomIndex = (int) (Math.random() * evaluaciones.getEvaluaciones().size());
+            int randomIndex = (int) (Math.random() * this.getEvaluaciones().getListaEvaluaciones().size());
             // Obtenemos el título de la evaluación en el índice aleatorio
-            retorno = evaluaciones.getEvaluaciones().get(randomIndex).getTitulo();
+            retorno = this.getEvaluaciones().getListaEvaluaciones().get(randomIndex).getTitulo();
             retorno += ",;,200";
         }
         return retorno;

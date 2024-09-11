@@ -58,7 +58,7 @@ public class PersistirEvaluaciones {
                             }
                         }
                     }
-                    fw.write(String.valueOf(evaluacion.isRespuestasValidas()));
+                    fw.write(String.valueOf(evaluacion.respuestasHabilitadas()));
                     fw.write(";");
                     fw.write(String.valueOf(evaluacion.getCantidadDePreguntas()));
                     fw.write("\n");
