@@ -159,15 +159,11 @@ public class Historiales {
      * @param titulo El título de la evaluación cuyas historiales se desean
      *               eliminar.
      */
-    public void eliminarTodosLosHistorialesDeUnaEvaluacion(String titulo) {
+    public void eliminarHistoriales(String titulo) {
         try {
-            // Actualizar la lista de historiales antes de eliminar
-            this.actualizarHistoriales();
-
             // Usar un iterador para evitar problemas al modificar la lista mientras se
             // recorre
             Iterator<Historial> iterador = this.getListaHistorial().iterator();
-
             boolean historialEliminado = false;
 
             while (iterador.hasNext()) {
@@ -180,12 +176,10 @@ public class Historiales {
 
             // Persistir los cambios en los historiales
             this.persistirHistoriales();
-
             if (!historialEliminado) {
                 Logger.getLogger(Historiales.class.getName()).log(Level.INFO,
                         "No se encontraron historiales asociados a la evaluación: {0}", titulo);
             }
-
         } catch (Exception ex) {
             Logger.getLogger(Historiales.class.getName()).log(Level.SEVERE,
                     "Error inesperado al eliminar los historiales de la evaluación: " + titulo, ex);

@@ -35,7 +35,7 @@ public class Evaluaciones {
      * 
      * @return La lista de evaluaciones.
      */
-    public ArrayList<Evaluacion> getEvaluaciones() {
+    public ArrayList<Evaluacion> getListaEvaluaciones() {
         return listaEvaluaciones;
     }
 
@@ -58,6 +58,7 @@ public class Evaluaciones {
      */
     public void agregarEvaluacion(Evaluacion evaluacion) throws FileNotFoundException {
         listaEvaluaciones.add(evaluacion);
+        this.persistirEvaluaciones(this.getListaEvaluaciones());
     }
 
     /**
@@ -69,9 +70,7 @@ public class Evaluaciones {
      *         preguntas inválidas, devuelve 0.
      */
     public int obtenerPuntajeTotal(String titulo) {
-        this.actualizarListaEvaluaciones(); // Asegura que la lista de evaluaciones esté actualizada
         int puntajeTotal = 0;
-
         try {
             // Obtiene la evaluación basada en el título proporcionado
             Evaluacion evaluacion = this.obtenerEvaluacion(titulo);
@@ -205,7 +204,7 @@ public class Evaluaciones {
      */
     public void actualizarListaEvaluaciones() {
         PersistirEvaluaciones persistir = new PersistirEvaluaciones();
-        setListaEvaluaciones(persistir.cargarEvaluacionesDesdeArchivo().getEvaluaciones());
+        setListaEvaluaciones(persistir.cargarEvaluacionesDesdeArchivo().getListaEvaluaciones());
     }
 
     /**

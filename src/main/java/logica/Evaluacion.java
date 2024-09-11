@@ -105,7 +105,7 @@ public class Evaluacion {
      * @return true si las respuestas son válidas, false
      *         en caso contrario.
      */
-    public boolean isRespuestasValidas() {
+    public boolean respuestasHabilitadas() {
         return respuestasValidas;
     }
 
