@@ -1,5 +1,6 @@
-doblespreguntas;multiple1,,,1,,,Multiple,,,1,,,2,,,3,,,4,,,1;multiple4,,,3,,,Multiple,,,op1,,,op2,,,op3,,,op4,,,4;multiple op5,,,7,,,Multiple,,,opcion1,,,opcion2,,,opcion3,,,opcion4,,,3;v,,,6,,,VF,,,Falso;f,,,4,,,VF,,,Verdadero;true;5
-ejemplo;sfsdfds,,,2,,,Completar,,,dfdfd;zzzzz,,,0,,,Multiple,,,1,,,2,,,3,,,4,,,1;bbbb,,,2,,,Multiple,,,fff,,,fddfg,,,fg,,,fff,,,1;true;3
 unadeprueba;pregunta1,,,0,,,Completar,,,hola;pregunta2,,,0,,,Multiple,,,jeje,,,jeje,,,jeje,,,jeje,,,2;pregunta3,,,0,,,VF,,,Falso;true;3
 nuevaprueba;enunciado1 respuesta: r1,r2,,,2,,,Completar,,,r1,,,r2;enunciado 2, respuesta: op4,,,4,,,Multiple,,,op1,,,op2,,,op3,,,op4,,,4;enunciado 3, respuesta verdadero.,,,6,,,VF,,,Verdadero;true;3
 titulo de la ev;pregunta 1,,,1,,,Completar,,,respuesta 1;pregunta 2,,,2,,,Multiple,,,op1,,,op2,,,op3,,,op4,,,1;pregunta 3,,,4,,,VF,,,Verdadero;true;3
+nuevaevaluacion;preguntittaone respuesta r1,r2,,,1,,,Completar,,,r1,,,r2;preguntitta multiple resp op4,,,2,,,Multiple,,,op1,,,op2,,,op33,,,op4,,,4;pregunta3 falsa,,,5,,,VF,,,Falso;true;3
+nueva2;p1 r1,,,1,,,Completar,,,r1;p2 r1,,,3,,,Multiple,,,r1,,,r2,,,r3,,,r4,,,1;p3 f,,,5,,,VF,,,Falso;true;3
+prueba;respuesta r1,r2,,,1,,,Completar,,,r1,,,r2;respuesta f,,,2,,,VF,,,Falso;respuesta 4,,,5,,,VF,,,Falso;respuesta 4 ahora si,,,10,,,Multiple,,,1,,,2,,,3,,,4,,,4;true;4

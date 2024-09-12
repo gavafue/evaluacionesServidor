@@ -62,8 +62,25 @@ public class Evaluaciones {
      */
     public void eliminarEvaluacion(String titulo) throws FileNotFoundException {
         if (existeEvaluacion(titulo)) {
-            this.getListaEvaluaciones().remove(obtenerEvaluacion(titulo));
-            this.persistirEvaluaciones(this.getListaEvaluaciones());
+            listaEvaluaciones.remove(obtenerEvaluacion(titulo));
+            // Eliminar la evaluación del archivo "evaluaciones.txt"
+            try (BufferedReader br = new BufferedReader(new FileReader("evaluaciones.txt"))) {
+                List<String> lineas = new ArrayList<>();
+                String linea;
+                while ((linea = br.readLine()) != null) {
+                    if (!linea.startsWith(titulo + ";")) {
+                        lineas.add(linea);
+                    }
+                }
+                try (BufferedWriter bw = new BufferedWriter(new FileWriter("evaluaciones.txt"))) {
+                    for (String linea2 : lineas) {
+                        bw.write(linea2);
+                        bw.newLine();
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

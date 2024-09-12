@@ -58,7 +58,7 @@ public class PersistirEvaluaciones {
                             }
                         }
                     }
-                    fw.write(String.valueOf(evaluacion.respuestasHabilitadas()));
+                    fw.write(String.valueOf(evaluacion.getVerRespuestasHabilitado()));
                     fw.write(";");
                     fw.write(String.valueOf(evaluacion.getCantidadDePreguntas()));
                     fw.write("\n");
@@ -115,7 +115,7 @@ public class PersistirEvaluaciones {
                 for (int i = 1; i < arregloDePreguntas.length; i++) {
                     String[] datosPregunta = arregloDePreguntas[i].split(",,,");
 
-                    if (datosPregunta.length < 4) {
+                    if (datosPregunta.length < 4) { // no debería entrar pero entra
                         System.err.println("Datos de pregunta incompletos en la línea: " + linea);
                         continue;
                     }
@@ -172,7 +172,7 @@ public class PersistirEvaluaciones {
                     Evaluacion evaluacion = new Evaluacion(tituloEvaluacion, listaPreguntas, respuestasValidas);
                     evaluacion.setCantidadDePreguntas(cantidadPreguntas);
                     Boolean permiteVerCorrectas = Boolean.valueOf(arregloDePreguntas[arregloDePreguntas.length - 2]);
-                    evaluacion.setRespuestasValidas(permiteVerCorrectas);
+                    evaluacion.setVerRespuestasHabilitado(permiteVerCorrectas);
                     evaluaciones.agregarEvaluacion(evaluacion);
                 } catch (Exception e) {
                     System.err.println("Error al crear la evaluación: " + e.getMessage());
