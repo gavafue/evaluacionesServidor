@@ -10,7 +10,6 @@ package logica;
  */
 public class Historial {
 
-    // Atributos
     private String tituloEvaluacion; // Evaluación a la que corresponde el historial
     private String ciEstudiante; // Número de cédula de identidad del estudiante
     private int puntaje; // Puntaje obtenido por el estudiante
@@ -29,8 +28,6 @@ public class Historial {
         this.ciEstudiante = ciEstudiante;
         this.puntaje = puntaje;
     }
-
-    // Getters
 
     /**
      * Obtiene el título de la evaluación.

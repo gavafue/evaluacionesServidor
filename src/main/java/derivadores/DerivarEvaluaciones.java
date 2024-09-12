@@ -332,7 +332,7 @@ public class DerivarEvaluaciones {
         try {
             Evaluacion evaluacion = new Evaluacion(titulo, preguntas);
             evaluacion.setCantidadDePreguntas(cantidadDePreguntas);
-            evaluacion.setRespuestasValidas(respuestasValidas);
+            evaluacion.setVerRespuestasHabilitado(respuestasValidas);
             this.getEvaluaciones().agregarEvaluacion(evaluacion); // En memoria y en persistencia
             retorno = "Evaluación creada,;,200";
         } catch (FileNotFoundException ex) {
@@ -440,7 +440,7 @@ public class DerivarEvaluaciones {
 
         try {
             Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(mensaje);
-            Boolean habilitado = evaluacion.respuestasHabilitadas();
+            Boolean habilitado = evaluacion.getVerRespuestasHabilitado();
             retorno = String.valueOf(habilitado) + ",;,200";
         } catch (Exception e) {
             retorno = ",;,400";

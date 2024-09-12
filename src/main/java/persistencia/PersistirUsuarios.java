@@ -22,7 +22,7 @@ public class PersistirUsuarios {
      * 
      * @param hashUsuarios Un {@code HashMap} que contiene los usuarios a persistir.
      */
-    public void persistirListaDeUsuariosEnArchivo(HashMap<String, Usuario> hashUsuarios) {
+    public void persistirUsuariosDesdeArchivo(HashMap<String, Usuario> hashUsuarios) {
         try (FileWriter fw = new FileWriter("passwords.txt")) {
             for (Map.Entry<String, Usuario> entry : hashUsuarios.entrySet()) {
                 fw.write(entry.getKey() + ";" + entry.getValue().getContrasenia() + ";"
@@ -54,6 +54,6 @@ public class PersistirUsuarios {
             System.err.println("Error al leer el archivo de usuarios: " + e.getMessage());
             e.printStackTrace();
         }
-        return listaUsuarios.getListaUsuarios();
+        return listaUsuarios.getHashUsuarios();
     }
 }

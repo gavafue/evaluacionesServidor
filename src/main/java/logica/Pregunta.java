@@ -11,8 +11,7 @@ package logica;
  * 
  */
 public abstract class Pregunta {
-
-    // Atributos
+    
     private String enunciado; // Enunciado de la pregunta
     private int puntaje; // Puntaje asignado a la pregunta
 
@@ -26,8 +25,6 @@ public abstract class Pregunta {
         this.enunciado = enunciado;
         this.puntaje = puntaje;
     }
-
-    // Getters
 
     /**
      * Obtiene el enunciado de la pregunta.
@@ -46,8 +43,6 @@ public abstract class Pregunta {
     public int getPuntaje() {
         return puntaje;
     }
-
-    // Setters
 
     /**
      * Establece el enunciado de la pregunta.

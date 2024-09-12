@@ -1,39 +1,37 @@
 package logica;
 
 /**
- * La clase {@code Usuario} representa un usuario con un nombre de usuario,
- * contraseña y tipo de usuario.
+ * La clase {@code Usuario} representa un usuario con su id de usuario,
+ * contraseña y tipo.
  * 
  */
 public class Usuario {
 
     // Atributos
-    private String nombreUsuario; // Nombre de usuario del usuario
+    private String idUsuario; // Id de usuario, correspondiente a la CI en el caso del estudiante y predefinido para rol docente y administrativo.
     private String contrasenia; // Contraseña del usuario
     private String tipo; // Tipo de usuario (por ejemplo, admin, estudiante, etc.)
 
     /**
      * Constructor de la clase {@code Usuario}.
      * 
-     * @param nombreUsuario El nombre de usuario del usuario.
+     * @param idUsuario El id de usuario del usuario.
      * @param contrasenia   La contraseña del usuario.
      * @param tipo          El tipo de usuario.
      */
-    public Usuario(String nombreUsuario, String contrasenia, String tipo) {
-        this.nombreUsuario = nombreUsuario;
+    public Usuario(String idUsuario, String contrasenia, String tipo) {
+        this.idUsuario = idUsuario;
         this.contrasenia = contrasenia;
         this.tipo = tipo;
     }
 
-    // Getters
-
     /**
-     * Obtiene el nombre de usuario.
+     * Obtiene el id de usuario.
      * 
-     * @return El nombre de usuario.
+     * @return El id de usuario.
      */
-    public String getNombreUsuario() {
-        return nombreUsuario;
+    public String getIdUsuario() {
+        return idUsuario;
     }
 
     /**
@@ -54,15 +52,13 @@ public class Usuario {
         return tipo;
     }
 
-    // Setters
-
     /**
-     * Establece el nombre de usuario.
+     * Establece el id de usuario.
      * 
-     * @param nombreUsuario El nombre de usuario a asignar.
+     * @param idUsuario El id de usuario a asignar.
      */
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
+    public void setIdUsuario(String idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     /**

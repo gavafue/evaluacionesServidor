@@ -8,8 +8,7 @@ package logica;
  * 
  */
 public class MultipleOpcion extends Pregunta {
-
-    // Atributos
+    
     private String[] opciones; // Opciones disponibles para la pregunta
     private boolean esVerdaderoOFalso; // Indica si la pregunta es de tipo verdadero o falso
     private String respuestaCorrecta; // Respuesta correcta para la pregunta
@@ -30,8 +29,6 @@ public class MultipleOpcion extends Pregunta {
         this.esVerdaderoOFalso = esVerdaderoOFalso;
         this.respuestaCorrecta = respuestaCorrecta;
     }
-
-    // Getters
 
     /**
      * Obtiene las opciones disponibles para la pregunta.
@@ -60,8 +57,6 @@ public class MultipleOpcion extends Pregunta {
     public String getRespuestaCorrecta() {
         return respuestaCorrecta;
     }
-
-    // Setters
 
     /**
      * Establece las opciones disponibles para la pregunta.
@@ -99,7 +94,7 @@ public class MultipleOpcion extends Pregunta {
      */
     @Override
     public boolean esCorrecta(String respuesta) {
-        return respuesta.equals(respuestaCorrecta);
+        return respuesta.equals(this.getRespuestaCorrecta());
     }
 
     /**
@@ -110,6 +105,12 @@ public class MultipleOpcion extends Pregunta {
      */
     @Override
     public String obtenerTipo() {
-        return esVerdaderoOFalso ? "VF" : "Multiple";
+        String retorno = "";
+        if(this.getEsVerdaderoOFalso()){
+            retorno = "VF";
+        }else{
+            retorno = "Multiple";
+        }
+        return retorno;
     }
 }

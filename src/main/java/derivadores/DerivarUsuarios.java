@@ -270,7 +270,7 @@ public class DerivarUsuarios {
         String retorno = "";
 
         if (!this.derivarValidezNombreUsuario().contains("400")) {
-            if (this.getUsuarios().getListaUsuarios().containsKey(this.getMensaje())) {
+            if (this.getUsuarios().getHashUsuarios().containsKey(this.getMensaje())) {
                 retorno = "Usuario existe,;,200";
             } else {
                 retorno = "Usuario NO existe,;,400";

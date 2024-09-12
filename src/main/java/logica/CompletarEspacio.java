@@ -1,7 +1,5 @@
 package logica;
 
-import java.util.Arrays;
-
 /**
  * La clase CompletarEspacio representa un tipo de pregunta en la que el
  * estudiante
@@ -15,7 +13,6 @@ import java.util.Arrays;
  */
 public class CompletarEspacio extends Pregunta {
 
-    // Atributos
     private String[] respuestasCorrectas;
 
     /**
@@ -70,30 +67,20 @@ public class CompletarEspacio extends Pregunta {
                             // correctas
         String[] respuestas = respuesta.split(",");
 
-        System.out.println("COMPLETAR ESPACIOS:");
-        System.out.println(
-                "RESPUESTAS ESPERADAS: " + Arrays.toString(respuestasCorrectas) + " " + respuestasCorrectas.length);
-        System.out.println("RECIBIDAS: " + Arrays.toString(respuestas) + " " + respuestas.length);
-
         for (String respuestaX : respuestas) {
             encontrada = false;
-            for (String respuestaCorrecta : respuestasCorrectas) {
+            for (String respuestaCorrecta : this.getRespuestasCorrectas()) {
                 // Eliminar espacios al inicio y final, y comparar ignorando
                 // mayúsculas/minúsculas
                 if (respuestaCorrecta != null && respuestaX.trim().equalsIgnoreCase(respuestaCorrecta.trim())) {
                     encontrada = true;
-                    break; // Salir del bucle si se encuentra la coincidencia
                 }
             }
 
-            if (encontrada) {
-                System.out.println("La respuesta \"" + respuestaX.trim() + "\" es correcta.");
-            } else {
-                System.out.println("La respuesta \"" + respuestaX.trim() + "\" es incorrecta.");
+            if (!encontrada) {
                 todasCorrectas = false; // Marcar que no todas son correctas
             }
         }
-
         return todasCorrectas; // Retorna si todas las respuestas son correctas o no
     }
 
