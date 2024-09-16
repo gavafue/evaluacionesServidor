@@ -9,7 +9,6 @@ import java.util.LinkedList;
  */
 public class Preguntas {
 
-    // Atributos
     private LinkedList<Pregunta> preguntas; // Lista de preguntas
 
     /**
@@ -20,8 +19,6 @@ public class Preguntas {
         this.preguntas = new LinkedList<Pregunta>();
     }
 
-    // Getter
-
     /**
      * Obtiene la lista de preguntas.
      * 
@@ -30,8 +27,6 @@ public class Preguntas {
     public LinkedList<Pregunta> getPreguntas() {
         return preguntas;
     }
-
-    // Setter
 
     /**
      * Establece la lista de preguntas.

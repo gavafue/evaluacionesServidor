@@ -5,16 +5,13 @@ import java.util.HashMap;
 
 /**
  * La clase {@code Usuarios} gestiona un conjunto de usuarios, permitiendo
- * agregar,
- * eliminar, obtener y verificar usuarios, así como actualizar contraseñas y
- * persistir
- * la información de los usuarios en un archivo.
+ * agregar, eliminar, obtener y verificar usuarios, así como actualizar contraseñas y
+ * persistir la información de los usuarios en un archivo.
  * 
  */
 public class Usuarios {
-
-    // Atributos
-    private HashMap<String, Usuario> hashUsuarios; // Mapa que almacena los usuarios con su nombre de usuario como clave
+    
+    private HashMap<String, Usuario> hashUsuarios; // Mapa que almacena los usuarios con su id de usuario como clave
 
     /**
      * Constructor de la clase {@code Usuarios}.
@@ -25,33 +22,20 @@ public class Usuarios {
     }
 
     /**
-     * Actualiza la lista de usuarios cargando los datos desde un archivo.
-     */
-    public void actualizarListaDeUsuarios() {
-        PersistirUsuarios persistirUsuarios = new PersistirUsuarios();
-        HashMap<String, Usuario> listaDeUsuarios = persistirUsuarios.cargarUsuariosDesdeArchivo();
-        this.setListaUsuarios(listaDeUsuarios);
-    }
-
-    // Getter
-
-    /**
      * Obtiene el {@code HashMap} de usuarios.
      * 
      * @return El {@code HashMap} de usuarios.
      */
-    public HashMap<String, Usuario> getListaUsuarios() {
+    public HashMap<String, Usuario> getHashUsuarios() {
         return hashUsuarios;
     }
-
-    // Setter
 
     /**
      * Establece el {@code HashMap} de usuarios.
      * 
      * @param hashUsuarios El {@code HashMap} de usuarios a asignar.
      */
-    public void setListaUsuarios(HashMap<String, Usuario> hashUsuarios) {
+    public void setHashUsuarios(HashMap<String, Usuario> hashUsuarios) {
         this.hashUsuarios = hashUsuarios;
     }
 
@@ -62,7 +46,7 @@ public class Usuarios {
      * @param usuario El usuario a agregar.
      */
     public void agregarUsuario(Usuario usuario) {
-        this.getListaUsuarios().put(usuario.getNombreUsuario(), usuario);
+        this.getHashUsuarios().put(usuario.getIdUsuario(), usuario);
         this.perisistirUsuarios();
     }
 
@@ -73,7 +57,7 @@ public class Usuarios {
      * @param nombreUsuario El nombre del usuario a eliminar.
      */
     public void eliminarUsuario(String nombreUsuario) {
-        this.getListaUsuarios().remove(nombreUsuario);
+        this.getHashUsuarios().remove(nombreUsuario);
         this.perisistirUsuarios();
     }
 
@@ -84,7 +68,7 @@ public class Usuarios {
      * @return El objeto {@code Usuario} asociado al nombre dado.
      */
     public Usuario obtenerUsuario(String nombreUsuario) {
-        return this.getListaUsuarios().get(nombreUsuario);
+        return this.getHashUsuarios().get(nombreUsuario);
     }
 
     /**
@@ -94,7 +78,7 @@ public class Usuarios {
      * @return {@code true} si el usuario existe, {@code false} en caso contrario.
      */
     public boolean existeUsuario(String nombreUsuario) {
-        return getListaUsuarios().containsKey(nombreUsuario);
+        return getHashUsuarios().containsKey(nombreUsuario);
     }
 
     /**
@@ -107,8 +91,8 @@ public class Usuarios {
      *         {@code false} en caso contrario.
      */
     public boolean existeUsuarioLogin(String nombreUsuario, String password) {
-        return getListaUsuarios().containsKey(nombreUsuario)
-                && getListaUsuarios().get(nombreUsuario).getContrasenia().equals(password);
+        return getHashUsuarios().containsKey(nombreUsuario)
+                && getHashUsuarios().get(nombreUsuario).getContrasenia().equals(password);
     }
 
     /**
@@ -122,13 +106,21 @@ public class Usuarios {
         obtenerUsuario(nombre).setContrasenia(nuevaContrasenia);
         perisistirUsuarios();
     }
+    
+    /**
+     * Actualiza la colección de usuarios cargando los datos desde un archivo.
+     */
+    public void actualizarListaDeUsuarios() {
+        PersistirUsuarios persistirUsuarios = new PersistirUsuarios();
+        this.setHashUsuarios(persistirUsuarios.cargarUsuariosDesdeArchivo());
+    }
 
     /**
-     * Persiste la lista completa de usuarios en un archivo.
+     * Persiste la colección completa de usuarios en un archivo.
      * 
      */
     public void perisistirUsuarios() {
         PersistirUsuarios persistir = new PersistirUsuarios();
-        persistir.persistirListaDeUsuariosEnArchivo(hashUsuarios);
+        persistir.persistirUsuariosDesdeArchivo(this.getHashUsuarios());
     }
 }

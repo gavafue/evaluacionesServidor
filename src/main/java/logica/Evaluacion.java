@@ -9,16 +9,13 @@ import java.util.ArrayList;
  * cantidad de
  * preguntas y la validez de las respuestas.
  * 
- * 
- * 
  */
 public class Evaluacion {
 
-    // Atributos
     private String titulo;
     private Preguntas listaPreguntas;
     private int cantidadDePreguntas;
-    private boolean respuestasValidas;
+    private boolean verRespuestasHabilitado; // Si permite o no al estudiante ver las respuestas válidas
 
     /**
      * 
@@ -34,7 +31,6 @@ public class Evaluacion {
 
     /**
      * 
-     * 
      * Inicializa el título de la evaluación y establece la lista de preguntas
      * proporcionada.
      * 
@@ -45,7 +41,7 @@ public class Evaluacion {
     public Evaluacion(String titulo, Preguntas listaPreguntas) {
         this.titulo = titulo;
         this.listaPreguntas = listaPreguntas;
-        this.respuestasValidas = false;
+        this.verRespuestasHabilitado = false;
     }
 
     /**
@@ -63,13 +59,7 @@ public class Evaluacion {
     public Evaluacion(String titulo, Preguntas listaPreguntas, boolean respuestasValidas) {
         this.titulo = titulo;
         this.listaPreguntas = listaPreguntas;
-        this.respuestasValidas = respuestasValidas;
-    }
-
-    // Getters
-
-    public Evaluacion(String titulo2, Preguntas preguntas, Integer cantidadDePreguntas2, boolean respuestasValidas2) {
-        //TODO Auto-generated constructor stub
+        this.verRespuestasHabilitado = respuestasValidas;
     }
 
     /**
@@ -105,8 +95,8 @@ public class Evaluacion {
      * @return true si las respuestas son válidas, false
      *         en caso contrario.
      */
-    public boolean respuestasHabilitadas() {
-        return respuestasValidas;
+    public boolean getVerRespuestasHabilitado() {
+        return verRespuestasHabilitado;
     }
 
     // Setters
@@ -144,8 +134,8 @@ public class Evaluacion {
      * @param respuestasValidas true si las respuestas son válidas,
      *                          false en caso contrario.
      */
-    public void setRespuestasValidas(boolean respuestasValidas) {
-        this.respuestasValidas = respuestasValidas;
+    public void setVerRespuestasHabilitado(boolean respuestasValidas) {
+        this.verRespuestasHabilitado = respuestasValidas;
     }
 
     /**
@@ -166,17 +156,15 @@ public class Evaluacion {
         for (Pregunta pregunta : this.getListaPreguntas().getPreguntas()) {
             String enunciado = pregunta.getEnunciado();
             String respuesta = "";
-            if (pregunta instanceof CompletarEspacio) {
-                CompletarEspacio ce = (CompletarEspacio) pregunta;
-                String[] respuestas = ce.getRespuestasCorrectas();
-                respuesta = String.join("*", respuestas);
-            } else if (pregunta instanceof MultipleOpcion) {
-                MultipleOpcion mo = (MultipleOpcion) pregunta;
-                if (mo.getRespuestaCorrecta().matches("[1-4]")) {
-                    int indice = Integer.parseInt(mo.getRespuestaCorrecta()) - 1;
-                    respuesta = "Opcion " + mo.getRespuestaCorrecta() + ": " + mo.getOpciones()[indice];
-                } else {
-                    respuesta = mo.getRespuestaCorrecta();
+            if (pregunta instanceof CompletarEspacio completar) {
+                String[] respuestas = completar.getRespuestasCorrectas();
+                respuesta = String.join(",", respuestas);
+            } else if (pregunta instanceof MultipleOpcion multiple) {
+                if (multiple.getRespuestaCorrecta().matches("[1-4]")) {
+                    int indice = Integer.parseInt(multiple.getRespuestaCorrecta()) - 1;
+                    respuesta = "Opcion " + multiple.getRespuestaCorrecta() + ": " + multiple.getOpciones()[indice];
+                } else { // VF
+                    respuesta = multiple.getRespuestaCorrecta();
                 }
             }
             enunciadosConRespuestas.add(enunciado + ",,," + respuesta);

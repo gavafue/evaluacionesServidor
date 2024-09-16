@@ -15,8 +15,7 @@ import persistencia.PersistirHistoriales;
  * 
  */
 public class Historiales {
-
-    // Atributos
+    
     private LinkedList<Historial> listaHistorial; // Lista de historiales de evaluaciones
 
     /**
@@ -54,15 +53,6 @@ public class Historiales {
     public void agregarHistorial(Historial historial) {
         this.listaHistorial.add(historial);
         persistirHistoriales();
-    }
-
-    /**
-     * Persiste el puntaje obtenido por cada estudiante al realizar una evaluación
-     * en un archivo.
-     */
-    public void persistirHistoriales() {
-        PersistirHistoriales persistir = new PersistirHistoriales();
-        persistir.persistirHistorialesEnArchivo(listaHistorial);
     }
 
     /**
@@ -146,14 +136,6 @@ public class Historiales {
     }
 
     /**
-     * Actualiza en memoria la lista de historiales a partir de un archivo de texto.
-     */
-    public void actualizarHistoriales() {
-        PersistirHistoriales persistir = new PersistirHistoriales();
-        this.setListaHistorial(persistir.cargarHistorialesDesdeArchivo().getListaHistorial());
-    }
-
-    /**
      * Elimina todos los historiales asociados a una evaluación dada su título.
      * 
      * @param titulo El título de la evaluación cuyas historiales se desean
@@ -161,8 +143,6 @@ public class Historiales {
      */
     public void eliminarHistoriales(String titulo) {
         try {
-            // Usar un iterador para evitar problemas al modificar la lista mientras se
-            // recorre
             Iterator<Historial> iterador = this.getListaHistorial().iterator();
             boolean historialEliminado = false;
 
@@ -173,12 +153,11 @@ public class Historiales {
                     historialEliminado = true;
                 }
             }
-
-            // Persistir los cambios en los historiales
-            this.persistirHistoriales();
             if (!historialEliminado) {
                 Logger.getLogger(Historiales.class.getName()).log(Level.INFO,
                         "No se encontraron historiales asociados a la evaluación: {0}", titulo);
+            }else{  
+                this.persistirHistoriales();
             }
         } catch (Exception ex) {
             Logger.getLogger(Historiales.class.getName()).log(Level.SEVERE,
@@ -186,4 +165,22 @@ public class Historiales {
             throw new RuntimeException("Error inesperado al eliminar los historiales.", ex);
         }
     }
+    
+    /**
+     * Actualiza en memoria la lista de historiales a partir de un archivo de texto.
+     */
+    public void actualizarHistoriales() {
+        PersistirHistoriales persistir = new PersistirHistoriales();
+        this.setListaHistorial(persistir.cargarHistorialesDesdeArchivo().getListaHistorial());
+    }
+    
+    /**
+     * Persiste el puntaje obtenido por cada estudiante al realizar una evaluación
+     * en un archivo.
+     */
+    public void persistirHistoriales() {
+        PersistirHistoriales persistir = new PersistirHistoriales();
+        persistir.persistirHistorialesEnArchivo(listaHistorial);
+    }
+    
 }
