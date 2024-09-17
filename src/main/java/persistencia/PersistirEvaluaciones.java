@@ -114,6 +114,11 @@ public class PersistirEvaluaciones {
 
                 for (int i = 1; i < arregloDePreguntas.length; i++) {
                     String[] datosPregunta = arregloDePreguntas[i].split(",,,");
+
+                    if (datosPregunta.length < 4) {
+                        continue;
+                    }
+
                     try {
                         String enunciado = datosPregunta[0].trim();
                         int puntaje = Integer.parseInt(datosPregunta[1].trim());
