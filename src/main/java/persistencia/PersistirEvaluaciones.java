@@ -116,7 +116,6 @@ public class PersistirEvaluaciones {
                     String[] datosPregunta = arregloDePreguntas[i].split(",,,");
 
                     if (datosPregunta.length < 4) {
-                        System.err.println("Datos de pregunta incompletos en la línea: " + linea);
                         continue;
                     }
 
