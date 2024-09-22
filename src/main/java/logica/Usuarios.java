@@ -5,12 +5,13 @@ import java.util.HashMap;
 
 /**
  * La clase {@code Usuarios} gestiona un conjunto de usuarios, permitiendo
- * agregar, eliminar, obtener y verificar usuarios, así como actualizar contraseñas y
+ * agregar, eliminar, obtener y verificar usuarios, así como actualizar
+ * contraseñas y
  * persistir la información de los usuarios en un archivo.
  * 
  */
 public class Usuarios {
-    
+
     private HashMap<String, Usuario> hashUsuarios; // Mapa que almacena los usuarios con su id de usuario como clave
 
     /**
@@ -18,7 +19,7 @@ public class Usuarios {
      * Inicializa el {@code HashMap} de usuarios.
      */
     public Usuarios() {
-        this.hashUsuarios = new HashMap<String, Usuario>();
+        this.actualizarListaDeUsuarios();
     }
 
     /**
@@ -106,7 +107,7 @@ public class Usuarios {
         obtenerUsuario(nombre).setContrasenia(nuevaContrasenia);
         perisistirUsuarios();
     }
-    
+
     /**
      * Actualiza la colección de usuarios cargando los datos desde un archivo.
      */
