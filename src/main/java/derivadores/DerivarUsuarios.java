@@ -272,7 +272,7 @@ public class DerivarUsuarios {
 
         if (!this.derivarValidezNombreUsuario().contains("400")) {
             if (this.getUsuarios().getHashUsuarios().containsKey(this.getMensaje())) {
-                retorno = "Usuario existe,;,200";
+                retorno = "Usuario existente en el sistema,;,200";
             } else {
                 retorno = "Usuario NO existe,;,400";
             }
