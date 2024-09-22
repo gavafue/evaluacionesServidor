@@ -19,7 +19,7 @@ public class Usuarios {
      * Inicializa el {@code HashMap} de usuarios.
      */
     public Usuarios() {
-        this.actualizarListaDeUsuarios();
+        this.hashUsuarios = new HashMap<String, Usuario>();
     }
 
     /**
