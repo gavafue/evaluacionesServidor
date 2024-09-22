@@ -75,39 +75,40 @@ public class DerivarUsuarios {
     public String getOperacion() {
         return this.operacion;
     }
-    
+
     /**
      * Establece la nueva lista de usuarios.
      * 
      * @param usuarios a nueva lista a usar.
      */
-    public void setUsuarios(Usuarios usuarios){
+    public void setUsuarios(Usuarios usuarios) {
         this.usuarios = usuarios;
     }
-    
+
     /**
      * Obtiene la lista de usuarios del sistema.
      * 
      * @return lista de usuarios.
      */
-    public Usuarios getUsuarios(){
+    public Usuarios getUsuarios() {
         return usuarios;
     }
 
     /**
      * Valida que el usuario y contraseña no sean vacíos.
-     * @param usuario el usuario.
+     * 
+     * @param usuario     el usuario.
      * @param contrasenia la contraseña del usuario.
      * @return true si son válidos y false en caso contrario.
      */
-    public boolean validarDatos(String usuario, String contrasenia){
+    public boolean validarDatos(String usuario, String contrasenia) {
         boolean esValido = false;
-        if((!usuario.isBlank())&&(!contrasenia.isBlank())){
+        if ((!usuario.isBlank()) && (!contrasenia.isBlank())) {
             esValido = true;
         }
         return esValido;
     }
-    
+
     /**
      * Método principal que gestiona la derivación de las operaciones con usuarios
      * según el valor de la operación configurada.
@@ -150,7 +151,7 @@ public class DerivarUsuarios {
      * existe y, si no existe, lo crea con el rol de "estudiante".
      *
      * @return Una cadena con el resultado de la operación y el código de estado
-     * HTTP correspondiente.
+     *         HTTP correspondiente.
      */
     public String derivarCrearUsuario() { // Llegado este punto sabemos que el mensaje no es vacío.
         String retorno = "";
@@ -189,7 +190,7 @@ public class DerivarUsuarios {
      * para realizar el login.
      *
      * @return El resultado de la operación de login con el código de estado
-     * HTTP correspondiente.
+     *         HTTP correspondiente.
      */
     public String derivarLogin() {
         String retorno = "";
@@ -226,7 +227,7 @@ public class DerivarUsuarios {
      * usuario si el usuario existe.
      *
      * @return El resultado de la operación con el código de estado HTTP
-     * correspondiente.
+     *         correspondiente.
      */
     public String derivarCambioPassword() {
         String retorno = "";
@@ -294,11 +295,24 @@ public class DerivarUsuarios {
         String retorno = "";
 
         if (!this.getMensaje().isBlank() && this.getMensaje().length() == 8) {
-            retorno = "Formato de CI correcto,;,200";
+            boolean esNumerico = true;
+            for (int i = 0; i < this.getMensaje().length(); i++) {
+                if (!Character.isDigit(this.getMensaje().charAt(i))) {
+                    esNumerico = false;
+                    break;
+                }
+            }
+
+            if (esNumerico) {
+                retorno = "Formato de CI correcto,;,200";
+            } else {
+                retorno = "Cédula en formato incorrecto. [Deben ser 8 dígitos numéricos exactos],;,400";
+            }
         } else {
-            retorno = "Cédula en formato incorrecto. [Deben ser 8 dígitos exactos],;,400";
+            retorno = "Cédula en formato incorrecto. [Deben ser 8 dígitos numéricos exactos],;,400";
         }
 
         return retorno;
+
     }
 }
