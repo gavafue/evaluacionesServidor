@@ -32,7 +32,7 @@ public class DerivarEvaluacionesTest {
 
         String resultado = derivarEvaluaciones.derivarEvaluaciones();
 
-        assertEquals("Evaluación agregada correctamente,;,200", resultado);
+        assertEquals("Evaluación creada,;,200", resultado);
     }
 
     @Test
