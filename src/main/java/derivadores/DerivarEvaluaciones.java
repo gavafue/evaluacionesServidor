@@ -222,17 +222,27 @@ public class DerivarEvaluaciones {
      */
     private String listarEvaluaciones() {
         String listaEnString = "";
+
         try {
             List<String> listaTitulosEvaluaciones = this.getEvaluaciones().obtenerTítulosEvaluaciones();
+
+            // Comprobación si la lista está vacía
+            if (listaTitulosEvaluaciones.isEmpty()) {
+                return "Evaluación NO existe,;,500"; // Retorno si no hay evaluaciones
+            }
+
             for (String parte : listaTitulosEvaluaciones) {
                 listaEnString += parte + ";;;";
             }
-            if (listaEnString.length() > 3) { // Elimino el ;;; sobrante
+
+            // Elimino el ;;; sobrante
+            if (listaEnString.length() > 3) {
                 listaEnString = listaEnString.substring(0, listaEnString.length() - 3);
             }
-            return listaEnString + ",;,200";
+
+            return listaEnString + ",;,200"; // Retorno si hay evaluaciones
         } catch (Exception e) {
-            return "Error al acceder a las evaluaciones,;,400";
+            return "Error al acceder a las evaluaciones,;,400"; // Retorno en caso de error
         }
     }
 
@@ -498,12 +508,17 @@ public class DerivarEvaluaciones {
      *         en el formato "puntajeTotal,;,codigoEstado".
      */
     private String obtenerPuntajeTotalDeEvaluacion() {
-        String retorno = "";
-        try {
+        String retorno; // Variable para almacenar el resultado
 
-            int puntajeTotal = this.getEvaluaciones().obtenerPuntajeTotal(mensaje);
-            String puntajeTotalEnString = String.valueOf(puntajeTotal);
-            retorno = puntajeTotalEnString + ",;,200";
+        try {
+            // Verifica si la evaluación existe antes de intentar obtener el puntaje
+            if (!this.getEvaluaciones().existeEvaluacion(mensaje)) {
+                retorno = "Evaluación NO existe,;,500"; // Mensaje de error para evaluación no existente
+            } else {
+                int puntajeTotal = this.getEvaluaciones().obtenerPuntajeTotal(mensaje);
+                String puntajeTotalEnString = String.valueOf(puntajeTotal);
+                retorno = puntajeTotalEnString + ",;,200"; // Mensaje de éxito con puntaje
+            }
         } catch (IllegalArgumentException e) {
             // Manejo de errores cuando el título de la evaluación es inválido
             System.err.println("Error al obtener el puntaje total de la evaluación: " + e.getMessage());
@@ -511,10 +526,10 @@ public class DerivarEvaluaciones {
         } catch (Exception e) {
             // Manejo de cualquier otra excepción inesperada
             System.err.println("Error inesperado al obtener el puntaje total de la evaluación: " + e.getMessage());
-            retorno = "Error inesperado: " + e.getMessage() + ",;,500"; // Código de estado 500 para error interno del
-                                                                        // servidor
+            retorno = "Error inesperado: " + e.getMessage() + ",;,500"; // Código de estado 500 para error interno
         }
-        return retorno;
+
+        return retorno; // Retorna el resultado al final
     }
 
     /**
