@@ -23,7 +23,7 @@ public class DerivarEvaluacionesTest {
     @Test
     public void testAltaEvaluacionExitosa() throws FileNotFoundException {
         DerivarEvaluaciones derivarEvaluaciones = new DerivarEvaluaciones("Alta",
-                "NuevaEvaluacion;;;preg1,,,1,,,Completar,,,resp1;preg2,,,3,,,Multiple,,,one,,,two,,,three,,,four,,,1;preg3,,,5,,,VF,,,Verdadero;true;3");
+                "NuevaEvaluacion;;;kk,,,Completar,,,2,,,kk;;;kk,,,Completar,,,1,,,kk;;;kk,,,Completar,,,2,,,kk;;;false;;;3");
 
         // Asegurarse de que no exista la evaluación previamente
         if (derivarEvaluaciones.getEvaluaciones().existeEvaluacion("NuevaEvaluacion")) {
@@ -33,6 +33,7 @@ public class DerivarEvaluacionesTest {
         String resultado = derivarEvaluaciones.derivarEvaluaciones();
 
         assertEquals("Evaluación creada,;,200", resultado);
+        derivarEvaluaciones.getEvaluaciones().eliminarEvaluacion("NuevaEvaluacion");
     }
 
     @Test
@@ -54,7 +55,7 @@ public class DerivarEvaluacionesTest {
     }
 
     @Test
-    public void testAltaEvaluacionYaExistente() {
+    public void testAltaEvaluacionYaExistente() throws FileNotFoundException {
         DerivarEvaluaciones derivarEvaluaciones = new DerivarEvaluaciones("Alta",
                 "EvaluacionExistente;;;Pregunta1,,,Multiple,,,1,,,OpcionA,,,OpcionB,,,OpcionC,,,OpcionD,,,Respuesta;;;1;;;true");
         try {
@@ -67,6 +68,7 @@ public class DerivarEvaluacionesTest {
         String resultado = derivarEvaluaciones.derivarEvaluaciones();
 
         assertEquals("Ya existe evaluación con ese título,;,400", resultado);
+        derivarEvaluaciones.getEvaluaciones().eliminarEvaluacion("EvaluacionExistente");
     }
 
     @Test
@@ -98,11 +100,13 @@ public class DerivarEvaluacionesTest {
         preguntas.agregarPregunta(p6);
         if (!derivarEvaluaciones.getEvaluaciones().existeEvaluacion("EvaluacionExistente")) {
             derivarEvaluaciones.getEvaluaciones().agregarEvaluacion(new Evaluacion("EvaluacionExistente", preguntas));
+        } else {
+            derivarEvaluaciones.getEvaluaciones().obtenerEvaluacion("EvaluacionExistente").setListaPreguntas(preguntas);
         }
 
         String resultado = derivarEvaluaciones.derivarEvaluaciones();
 
-        assertEquals("París;;;Amazonas;;;Oceanía;;;Rusia;;;Índico;;;Sahara;;;,;,200", resultado); // Asegúrate de que el valor esperado sea correcto.
+        assertEquals("¿Cuál es la capital de Francia?,,,París;;;¿Cuál es el río más largo del mundo?,,,Amazonas;;;¿Qué continente es Australia?,,,Oceanía;;;¿Cuál es el país más grande del mundo?,,,Rusia;;;¿Qué océano está al este de África?,,,Índico;;;Completa: El desierto más grande del mundo es el ____.,,,Sahara;;;,;,200", resultado); // Asegúrate de que el valor esperado sea correcto.
         derivarEvaluaciones.getEvaluaciones().eliminarEvaluacion("EvaluacionExistente");
     }
 
@@ -144,11 +148,14 @@ public class DerivarEvaluacionesTest {
         preguntas.agregarPregunta(p6);
         if (!derivarEvaluaciones.getEvaluaciones().existeEvaluacion("EvaluacionExistente")) {
             derivarEvaluaciones.getEvaluaciones().agregarEvaluacion(new Evaluacion("EvaluacionExistente", preguntas));
+        } else {
+            derivarEvaluaciones.getEvaluaciones().obtenerEvaluacion("EvaluacionExistente").setListaPreguntas(preguntas);
         }
 
         String resultado = derivarEvaluaciones.derivarEvaluaciones();
 
         assertEquals("6,;,200", resultado); // Ajusta el valor esperado según la lógica de tu aplicación.
+        derivarEvaluaciones.getEvaluaciones().eliminarEvaluacion("EvaluacionExistente");
     }
 
     @Test
