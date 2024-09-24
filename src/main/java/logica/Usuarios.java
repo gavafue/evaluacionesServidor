@@ -48,7 +48,8 @@ public class Usuarios {
     public void agregarUsuario(Usuario usuario) {
         // Verificar si el ID del usuario ya existe
         if (this.getHashUsuarios().containsKey(usuario.getIdUsuario())) {
-            throw new IllegalArgumentException("Un usuario con el nombre \"" + usuario.getIdUsuario() + "\" ya existe en el sistema.");
+            throw new IllegalArgumentException(
+                    "Un usuario con el nombre \"" + usuario.getIdUsuario() + "\" ya existe en el sistema.");
         }
 
         // Si no existe, agregar el usuario
@@ -82,7 +83,7 @@ public class Usuarios {
      *
      * @param nombreUsuario El nombre del usuario a verificar.
      * @return {@code true} si el usuario existe, {@code false} en caso
-     * contrario.
+     *         contrario.
      */
     public boolean existeUsuario(String nombreUsuario) {
         return getHashUsuarios().containsKey(nombreUsuario);
@@ -93,9 +94,9 @@ public class Usuarios {
      * proporcionados. Se utiliza para la autenticación de usuarios.
      *
      * @param nombreUsuario El nombre del usuario a verificar.
-     * @param password La contraseña del usuario.
+     * @param password      La contraseña del usuario.
      * @return {@code true} si el usuario existe y la contraseña es correcta,
-     * {@code false} en caso contrario.
+     *         {@code false} en caso contrario.
      */
     public boolean existeUsuarioLogin(String nombreUsuario, String password) {
         return getHashUsuarios().containsKey(nombreUsuario)
@@ -106,7 +107,8 @@ public class Usuarios {
      * Actualiza la contraseña de un usuario identificado por su nombre de
      * usuario.
      *
-     * @param nombre El nombre del usuario cuya contraseña se va a actualizar.
+     * @param nombre           El nombre del usuario cuya contraseña se va a
+     *                         actualizar.
      * @param nuevaContrasenia La nueva contraseña para el usuario.
      */
     public void actualizarContrasenia(String nombre, String nuevaContrasenia) {

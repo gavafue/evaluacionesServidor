@@ -5,10 +5,6 @@
 
 import logica.CompletarEspacio;
 import logica.MultipleOpcion;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +18,7 @@ public class PreguntaTest {
     public void testCrearPreguntaMultipleOpcion() {
         // Datos proporcionados para la prueba
         String enunciado = "¿Cuál es la capital de Italia?";
-        String[] opciones = {"Roma", "Londres", "Berlín"};
+        String[] opciones = { "Roma", "Londres", "Berlín" };
         String respuestaCorrecta = "Roma";
 
         // Crear una instancia de MultipleOpcion
@@ -40,19 +36,19 @@ public class PreguntaTest {
     public void testCrearPreguntaCompletarEspacio() {
         // Datos proporcionados para la prueba
         String enunciado = "La capital de España es _____.";
-        String[] respuestasCorrectas = {"Madrid"};
+        String[] respuestasCorrectas = { "Madrid" };
 
         // Crear una instancia de CompletarEspacio
         CompletarEspacio pregunta = new CompletarEspacio(enunciado, 1, respuestasCorrectas);
 
         // Verificar que la pregunta se almacena correctamente
         assertEquals(enunciado, pregunta.getEnunciado(), "El enunciado de la pregunta no es correcto.");
-        assertEquals(respuestasCorrectas.length, pregunta.getRespuestasCorrectas().length, "El número de respuestas correctas no es correcto.");
+        assertEquals(respuestasCorrectas.length, pregunta.getRespuestasCorrectas().length,
+                "El número de respuestas correctas no es correcto.");
         for (int i = 0; i < respuestasCorrectas.length; i++) {
-            assertEquals(respuestasCorrectas[i], pregunta.getRespuestasCorrectas()[i], "Respuesta correcta en la posición " + i + " no es correcta.");
+            assertEquals(respuestasCorrectas[i], pregunta.getRespuestasCorrectas()[i],
+                    "Respuesta correcta en la posición " + i + " no es correcta.");
         }
     }
-   
-}
-    
 
+}
