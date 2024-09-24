@@ -1,16 +1,10 @@
 
-import derivadores.DerivarEvaluaciones;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.ArrayList;
 import java.util.List;
 import logica.*;
 import java.io.IOException;
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import persistencia.PersistirEvaluaciones;
 
 /**
