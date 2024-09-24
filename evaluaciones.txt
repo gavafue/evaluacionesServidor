@@ -4,3 +4,4 @@ nuevaevaluacion;preguntittaone respuesta r1,r2,,,1,,,Completar,,,r1,,,r2;pregunt
 nueva2;p1 r1,,,1,,,Completar,,,r1;p2 r1,,,3,,,Multiple,,,r1,,,r2,,,r3,,,r4,,,1;p3 f,,,5,,,VF,,,Falso;true;3
 prueba;respuesta r1,r2,,,1,,,Completar,,,r1,,,r2;respuesta f,,,2,,,VF,,,Falso;respuesta 4,,,5,,,VF,,,Falso;respuesta 4 ahora si,,,10,,,Multiple,,,1,,,2,,,3,,,4,,,4;true;4
 Nuevita;preg1,,,1,,,Completar,,,resp1;preg2,,,3,,,Multiple,,,one,,,two,,,three,,,four,,,1;preg3,,,5,,,VF,,,Verdadero;true;3
+para probar completar;respuesta: r1,r2,,,1,,,Completar,,,r1,,,r2;respuesta r1,,,2,,,Completar,,,r1;respuesta resp1,resp2,,,4,,,Completar,,,resp1,,,resp2;true;3

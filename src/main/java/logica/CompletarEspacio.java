@@ -1,5 +1,7 @@
 package logica;
 
+import java.util.Arrays;
+
 /**
  * La clase CompletarEspacio representa un tipo de pregunta en la que el
  * estudiante
@@ -62,27 +64,22 @@ public class CompletarEspacio extends Pregunta {
      */
     @Override
     public boolean esCorrecta(String respuesta) {
+        String[] respuestasUsuario = respuesta.split(",");
+        String[] respuestas = this.getRespuestasCorrectas();
+        
         boolean todasCorrectas = true;
-        boolean encontrada; // Indica si una respuesta del estudiante se encuentra en las respuestas
-                            // correctas
-        String[] respuestas = respuesta.split(",");
-
-        for (String respuestaX : respuestas) {
-            encontrada = false;
-            for (String respuestaCorrecta : this.getRespuestasCorrectas()) {
-                // Eliminar espacios al inicio y final, y comparar ignorando
-                // mayúsculas/minúsculas
-                if (respuestaCorrecta != null && respuestaX.trim().equalsIgnoreCase(respuestaCorrecta.trim())) {
-                    encontrada = true;
-                }
+        if(respuestas[1] == null){ // Si no son dos respuestas
+            if(!respuestasUsuario[0].equals(respuestas[0])||respuestasUsuario.length>1){ // Comparo solo primer campo y verifico que no haya dado una segunda respuesta
+                todasCorrectas = false;
             }
-
-            if (!encontrada) {
-                todasCorrectas = false; // Marcar que no todas son correctas
+        }else{
+            if(!Arrays.equals(respuestasUsuario, respuestas)){
+                todasCorrectas = false;
             }
         }
-        return todasCorrectas; // Retorna si todas las respuestas son correctas o no
+        return todasCorrectas;
     }
+
 
     /**
      * Obtiene el tipo de pregunta.
