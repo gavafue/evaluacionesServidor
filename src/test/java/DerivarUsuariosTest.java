@@ -40,6 +40,18 @@ public class DerivarUsuariosTest {
     }
 
     @Test
+    public void testDerivarUsuariosOperacionAltaUsuarioExistente() {
+        DerivarUsuarios derivador = new DerivarUsuarios("Alta", "77777777;;;pass1");
+
+        derivador.getUsuarios().agregarUsuario(new Usuario("77777777", "pass1", "estudiante"));
+
+        String resultado = derivador.derivarUsuarios();
+        assertEquals("El documento ya tiene un usuario registrado,;,400", resultado);
+
+        derivador.getUsuarios().eliminarUsuario("77777777");
+    }
+
+    @Test
     public void testDerivarUsuariosOperacionLoginCorrecto() {
         DerivarUsuarios derivador = new DerivarUsuarios("Login", "77777777;;;pass1");
         if (!derivador.getUsuarios().existeUsuario("77777777")) {
@@ -63,7 +75,7 @@ public class DerivarUsuariosTest {
         derivador.getUsuarios().eliminarUsuario("77777777");
     }
 
-    @Test
+   @Test
     public void testDerivarCambioPasswordCorrecto() {
         DerivarUsuarios derivador = new DerivarUsuarios("CambioPassword", "77777777;;;newpass");
         if (!derivador.getUsuarios().existeUsuario("77777777")) {
@@ -77,9 +89,20 @@ public class DerivarUsuariosTest {
     }
 
     @Test
+    public void testDerivarCambioPasswordNuevaVacia() {
+        DerivarUsuarios derivador = new DerivarUsuarios("CambioPassword", "77777777;;; ");
+        if (!derivador.getUsuarios().existeUsuario("77777777")) {
+            derivador.getUsuarios().agregarUsuario(new Usuario("77777777", "oldpass", "estudiante"));
+        }
+
+        String resultado = derivador.derivarUsuarios();
+        assertEquals("Usuario y/o contraseña vacíos,;,400", resultado);
+        derivador.getUsuarios().eliminarUsuario("77777777");
+    }
+
+    @Test
     public void testDerivarCambioPasswordUsuarioNoExiste() {
         DerivarUsuarios derivador = new DerivarUsuarios("CambioPassword", "77777777;;;newpass");
-
         if (derivador.getUsuarios().existeUsuario("77777777")) {
             derivador.getUsuarios().eliminarUsuario("77777777");
         }
