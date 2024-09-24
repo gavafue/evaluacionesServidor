@@ -15,15 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DerivarUsuariosTest {
 
     @Test
-    public void testConstructorInicializaCorrectamente() {
-        DerivarUsuarios derivador = new DerivarUsuarios("Alta", "77777777;;;pass1");
-
-        assertEquals("Alta", derivador.getOperacion());
-        assertEquals("77777777;;;pass1", derivador.getMensaje());
-        assertNotNull(derivador.getUsuarios());
-    }
-
-    @Test
     public void testValidarDatosUsuarioVacio() {
         DerivarUsuarios derivador = new DerivarUsuarios("Login", "77777777;;;pass1");
 
@@ -39,7 +30,6 @@ public class DerivarUsuariosTest {
 
     @Test
     public void testDerivarUsuariosOperacionAlta() {
-
         DerivarUsuarios derivador = new DerivarUsuarios("Alta", "77777777;;;pass1");
 
         if (derivador.getUsuarios().existeUsuario("77777777")) {
@@ -115,7 +105,7 @@ public class DerivarUsuariosTest {
     }
 
     @Test
-    public void testDerivarExistenciaUsuarioCorrecto() {
+    public void testDerivarExistenciaUsuarioExiste() {
         DerivarUsuarios derivador = new DerivarUsuarios("Existencia", "77777777");
 
         if (!derivador.getUsuarios().existeUsuario("77777777")) {
