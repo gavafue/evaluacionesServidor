@@ -96,7 +96,7 @@ public class DerivarEvaluaciones {
     public Evaluaciones getEvaluaciones() {
         return evaluaciones;
     }
-    
+
     /**
      * Establece la colección de historiales.
      * 
@@ -114,7 +114,7 @@ public class DerivarEvaluaciones {
     public Historiales getHistoriales() {
         return historiales;
     }
-    
+
     /**
      * Divide el mensaje en partes usando el delimitador ';;;' y devuelve el
      * resultado.
@@ -126,7 +126,7 @@ public class DerivarEvaluaciones {
         String[] mensajeTokenizado = mensaje.split(";;;");
         return mensajeTokenizado;
     }
-    
+
     /**
      * Método para derivar las operaciones sobre Evaluaciones.
      * Realiza la operación indicada en base al valor de operacion y
@@ -185,7 +185,8 @@ public class DerivarEvaluaciones {
         if (this.getEvaluaciones().existeEvaluacion(mensaje)) { // El mensaje corresponde al título de la evaluación
             try {
                 this.getEvaluaciones().eliminarEvaluacion(mensaje);
-                this.getHistoriales().eliminarHistoriales(mensaje); // En memoria y en persistencia elimina los historiales asociados a la evaluación
+                this.getHistoriales().eliminarHistoriales(mensaje); // En memoria y en persistencia elimina los
+                                                                    // historiales asociados a la evaluación
                 retorno = "Evaluación eliminada,;,200";
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(DerivarEvaluaciones.class.getName()).log(Level.SEVERE, null, ex);
@@ -205,9 +206,9 @@ public class DerivarEvaluaciones {
     private String verificarExistencia() {
         String retorno = "";
         boolean existe = this.getEvaluaciones().existeEvaluacion(mensaje);
-        if(existe){
+        if (existe) {
             retorno = "Evaluación existe,;,200";
-        }else{
+        } else {
             retorno = "Evaluación NO existe,;,500";
         }
         return retorno;
@@ -221,17 +222,27 @@ public class DerivarEvaluaciones {
      */
     private String listarEvaluaciones() {
         String listaEnString = "";
+
         try {
             List<String> listaTitulosEvaluaciones = this.getEvaluaciones().obtenerTítulosEvaluaciones();
+
+            // Comprobación si la lista está vacía
+            if (listaTitulosEvaluaciones.isEmpty()) {
+                return "Evaluación NO existe,;,500"; // Retorno si no hay evaluaciones
+            }
+
             for (String parte : listaTitulosEvaluaciones) {
                 listaEnString += parte + ";;;";
             }
-            if (listaEnString.length() > 3) { // Elimino el ;;; sobrante
+
+            // Elimino el ;;; sobrante
+            if (listaEnString.length() > 3) {
                 listaEnString = listaEnString.substring(0, listaEnString.length() - 3);
             }
-            return listaEnString + ",;,200";
+
+            return listaEnString + ",;,200"; // Retorno si hay evaluaciones
         } catch (Exception e) {
-            return "Error al acceder a las evaluaciones,;,400";
+            return "Error al acceder a las evaluaciones,;,400"; // Retorno en caso de error
         }
     }
 
@@ -239,7 +250,7 @@ public class DerivarEvaluaciones {
      * Método que desemboca la creación de una nueva evaluación.
      * 
      * @return Resultado de la creación de la evaluación y código de estado
-     * HTTP.
+     *         HTTP.
      */
     private String altaEvaluacion() {
         String retorno = "";
@@ -249,13 +260,19 @@ public class DerivarEvaluaciones {
         } else {
             Preguntas preguntas = procesarPreguntas(stringPreguntas);
             Integer cantidadDePreguntas = Integer.valueOf(stringPreguntas[stringPreguntas.length - 1]);
-            boolean verRespuestas = Boolean.parseBoolean(stringPreguntas[stringPreguntas.length - 2]); // Si está habilitado o no ver las respuestas correctas luego de realizar la evaluación
+            boolean verRespuestas = Boolean.parseBoolean(stringPreguntas[stringPreguntas.length - 2]); // Si está
+                                                                                                       // habilitado o
+                                                                                                       // no ver las
+                                                                                                       // respuestas
+                                                                                                       // correctas
+                                                                                                       // luego de
+                                                                                                       // realizar la
+                                                                                                       // evaluación
             retorno = crearEvaluacion(stringPreguntas[0], preguntas, cantidadDePreguntas,
                     verRespuestas);
         }
         return retorno;
     }
-
 
     /**
      * Procesa las preguntas a partir del mensaje tokenizado.
@@ -294,17 +311,18 @@ public class DerivarEvaluaciones {
                 break;
             case "Multiple":
                 if (datosPregunta.length < 8) {
-                    System.out.println("Error: Pregunta de tipo Multiple mal formada: " + Arrays.toString(datosPregunta));
-                }else{
-                    String[] opciones = {datosPregunta[3], datosPregunta[4], datosPregunta[5], datosPregunta[6] };
-                    String respuesta =  datosPregunta[7];
+                    System.out
+                            .println("Error: Pregunta de tipo Multiple mal formada: " + Arrays.toString(datosPregunta));
+                } else {
+                    String[] opciones = { datosPregunta[3], datosPregunta[4], datosPregunta[5], datosPregunta[6] };
+                    String respuesta = datosPregunta[7];
                     pregunta = new MultipleOpcion(enunciado, puntaje, opciones, false, respuesta);
                 }
                 break;
             case "VF":
                 if (datosPregunta.length < 4) {
                     System.out.println("Error: Pregunta de tipo VF mal formada: " + Arrays.toString(datosPregunta));
-                }else{
+                } else {
                     String[] opcionesVF = { "Verdadero", "Falso" };
                     String respuesta = datosPregunta[3];
                     pregunta = new MultipleOpcion(enunciado, puntaje, opcionesVF, true, respuesta);
@@ -327,7 +345,8 @@ public class DerivarEvaluaciones {
      * @return Resultado de la creación y persistencia de la evaluación y código de
      *         estado HTTP.
      */
-    private String crearEvaluacion(String titulo, Preguntas preguntas, Integer cantidadDePreguntas, boolean respuestasValidas) {
+    private String crearEvaluacion(String titulo, Preguntas preguntas, Integer cantidadDePreguntas,
+            boolean respuestasValidas) {
         String retorno = "";
         try {
             Evaluacion evaluacion = new Evaluacion(titulo, preguntas);
@@ -359,11 +378,13 @@ public class DerivarEvaluaciones {
             historial.setPuntaje(puntajeObtenido);
             this.getHistoriales().persistirHistoriales();
         } else {
-            this.getHistoriales().agregarHistorial(new Historial(tokens[1], tokens[0], puntajeObtenido)); // En memoria y en persistencia
+            this.getHistoriales().agregarHistorial(new Historial(tokens[1], tokens[0], puntajeObtenido)); // En memoria
+                                                                                                          // y en
+                                                                                                          // persistencia
         }
         return "Historial agregado o modificado con éxito,;,200";
     }
-    
+
     /**
      * 
      * Busca la evaluación por su título y devuelve la pregunta en el índice
@@ -375,9 +396,9 @@ public class DerivarEvaluaciones {
     private String obtenerPregunta() {
         String retorno = "";
         String[] tokens = tokenizarMensaje(mensaje);
-        String titulo =  tokens[0]; // Título de la evaluación
+        String titulo = tokens[0]; // Título de la evaluación
         int indice = Integer.parseInt(tokens[1]); // El índice de la pregunta dentro de la evaluación
-   
+
         Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(titulo);
         if (indice < evaluacion.getListaPreguntas().getPreguntas().size()) { // Si existe el número de pregunta
             Pregunta pregunta = evaluacion.getListaPreguntas().obtenerPregunta(indice);
@@ -487,11 +508,17 @@ public class DerivarEvaluaciones {
      *         en el formato "puntajeTotal,;,codigoEstado".
      */
     private String obtenerPuntajeTotalDeEvaluacion() {
-        String retorno = "";
+        String retorno; // Variable para almacenar el resultado
+
         try {
-            int puntajeTotal = this.getEvaluaciones().obtenerPuntajeTotal(mensaje);
-            String puntajeTotalEnString = String.valueOf(puntajeTotal);
-            retorno = puntajeTotalEnString + ",;,200";
+            // Verifica si la evaluación existe antes de intentar obtener el puntaje
+            if (!this.getEvaluaciones().existeEvaluacion(mensaje)) {
+                retorno = "Evaluación NO existe,;,500"; // Mensaje de error para evaluación no existente
+            } else {
+                int puntajeTotal = this.getEvaluaciones().obtenerPuntajeTotal(mensaje);
+                String puntajeTotalEnString = String.valueOf(puntajeTotal);
+                retorno = puntajeTotalEnString + ",;,200"; // Mensaje de éxito con puntaje
+            }
         } catch (IllegalArgumentException e) {
             // Manejo de errores cuando el título de la evaluación es inválido
             System.err.println("Error al obtener el puntaje total de la evaluación: " + e.getMessage());
@@ -499,10 +526,10 @@ public class DerivarEvaluaciones {
         } catch (Exception e) {
             // Manejo de cualquier otra excepción inesperada
             System.err.println("Error inesperado al obtener el puntaje total de la evaluación: " + e.getMessage());
-            retorno = "Error inesperado: " + e.getMessage() + ",;,500"; // Código de estado 500 para error interno del
-                                                                        // servidor
+            retorno = "Error inesperado: " + e.getMessage() + ",;,500"; // Código de estado 500 para error interno
         }
-        return retorno;
+
+        return retorno; // Retorna el resultado al final
     }
 
     /**

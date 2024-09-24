@@ -6,17 +6,16 @@ import java.util.HashMap;
 /**
  * La clase {@code Usuarios} gestiona un conjunto de usuarios, permitiendo
  * agregar, eliminar, obtener y verificar usuarios, así como actualizar
- * contraseñas y
- * persistir la información de los usuarios en un archivo.
- * 
+ * contraseñas y persistir la información de los usuarios en un archivo.
+ *
  */
 public class Usuarios {
 
     private HashMap<String, Usuario> hashUsuarios; // Mapa que almacena los usuarios con su id de usuario como clave
 
     /**
-     * Constructor de la clase {@code Usuarios}.
-     * Inicializa el {@code HashMap} de usuarios.
+     * Constructor de la clase {@code Usuarios}. Inicializa el {@code HashMap}
+     * de usuarios.
      */
     public Usuarios() {
         this.hashUsuarios = new HashMap<String, Usuario>();
@@ -24,7 +23,7 @@ public class Usuarios {
 
     /**
      * Obtiene el {@code HashMap} de usuarios.
-     * 
+     *
      * @return El {@code HashMap} de usuarios.
      */
     public HashMap<String, Usuario> getHashUsuarios() {
@@ -33,7 +32,7 @@ public class Usuarios {
 
     /**
      * Establece el {@code HashMap} de usuarios.
-     * 
+     *
      * @param hashUsuarios El {@code HashMap} de usuarios a asignar.
      */
     public void setHashUsuarios(HashMap<String, Usuario> hashUsuarios) {
@@ -47,6 +46,13 @@ public class Usuarios {
      * @param usuario El usuario a agregar.
      */
     public void agregarUsuario(Usuario usuario) {
+        // Verificar si el ID del usuario ya existe
+        if (this.getHashUsuarios().containsKey(usuario.getIdUsuario())) {
+            throw new IllegalArgumentException(
+                    "Un usuario con el nombre \"" + usuario.getIdUsuario() + "\" ya existe en el sistema.");
+        }
+
+        // Si no existe, agregar el usuario
         this.getHashUsuarios().put(usuario.getIdUsuario(), usuario);
         this.perisistirUsuarios();
     }
@@ -64,7 +70,7 @@ public class Usuarios {
 
     /**
      * Obtiene un objeto {@code Usuario} dado su nombre de usuario.
-     * 
+     *
      * @param nombreUsuario El nombre del usuario.
      * @return El objeto {@code Usuario} asociado al nombre dado.
      */
@@ -74,18 +80,19 @@ public class Usuarios {
 
     /**
      * Verifica si existe un usuario con el nombre dado.
-     * 
+     *
      * @param nombreUsuario El nombre del usuario a verificar.
-     * @return {@code true} si el usuario existe, {@code false} en caso contrario.
+     * @return {@code true} si el usuario existe, {@code false} en caso
+     *         contrario.
      */
     public boolean existeUsuario(String nombreUsuario) {
         return getHashUsuarios().containsKey(nombreUsuario);
     }
 
     /**
-     * Verifica si existe un usuario con el nombre y la contraseña proporcionados.
-     * Se utiliza para la autenticación de usuarios.
-     * 
+     * Verifica si existe un usuario con el nombre y la contraseña
+     * proporcionados. Se utiliza para la autenticación de usuarios.
+     *
      * @param nombreUsuario El nombre del usuario a verificar.
      * @param password      La contraseña del usuario.
      * @return {@code true} si el usuario existe y la contraseña es correcta,
@@ -97,8 +104,9 @@ public class Usuarios {
     }
 
     /**
-     * Actualiza la contraseña de un usuario identificado por su nombre de usuario.
-     * 
+     * Actualiza la contraseña de un usuario identificado por su nombre de
+     * usuario.
+     *
      * @param nombre           El nombre del usuario cuya contraseña se va a
      *                         actualizar.
      * @param nuevaContrasenia La nueva contraseña para el usuario.
@@ -118,7 +126,7 @@ public class Usuarios {
 
     /**
      * Persiste la colección completa de usuarios en un archivo.
-     * 
+     *
      */
     public void perisistirUsuarios() {
         PersistirUsuarios persistir = new PersistirUsuarios();
