@@ -1,8 +1,7 @@
-Evaluacion;11111111;0
-nuevaprueba;11111111;12
-titulo de la ev;11111111;7
-nuevaevaluacion;11111111;8
-prueba;11111111;0
-nueva2;11111111;3
-Nuevita;11111111;9
-para probar completar;22222222;0
+titulo de la ev;11111111;6;res;1;Verdadero
+Nuevita;11111111;8;dfddd;1;Verdadero
+para probar completar;11111111;0;eee;dddd;sfds
+para probar completar;22222222;0;qq;wq;wqww
+Evaluación larga;11111111;25;fdfdsf;1;Falso;dfdfs;1
+Evaluación larga;22222222;7;bbbbb;4;Falso;bbbbb;4
+nueva2;11111111;3;a;1;Verdadero

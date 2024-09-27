@@ -171,4 +171,13 @@ public class Evaluacion {
         }
         return enunciadosConRespuestas;
     }
+    
+    /**
+     * Método que permite obtener el enunciado de una pregunta dado su indice.
+     * @param indice de la pregunta.
+     * @return enunciado de la pregunta en el indice correspondiente.
+     */
+    public String obtenerEnunciadoPregunta(int indice){
+        return this.getListaPreguntas().obtenerPregunta(indice).getEnunciado();
+    }
 }

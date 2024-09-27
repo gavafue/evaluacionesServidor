@@ -20,7 +20,7 @@ public class PersistirHistoriales {
 
     /**
      * Carga los historiales desde un archivo de texto.
-     * 
+     *
      * @return Una instancia de {@code Historiales} con los datos cargados.
      */
     public Historiales cargarHistorialesDesdeArchivo() {
@@ -29,8 +29,20 @@ public class PersistirHistoriales {
             while (s.hasNextLine()) {
                 String linea = s.nextLine();
                 String[] historial = linea.split(";");
-                listaHistorial
-                        .agregarHistorial(new Historial(historial[0], historial[1], Integer.parseInt(historial[2])));
+
+                // Extraemos los datos principales del historial
+                String idEstudiante = historial[0];
+                String nombreEvaluacion = historial[1];
+                int puntaje = Integer.parseInt(historial[2]);
+
+                // Las respuestas están a partir de historial[3] hasta el final
+                String[] respuestas = new String[historial.length - 3];
+                for (int i = 0; i < respuestas.length; i++) {
+                    respuestas[i] = historial[i + 3];  // Copiamos las respuestas
+                }
+
+                // Creamos el objeto Historial con las respuestas
+                listaHistorial.agregarHistorial(new Historial(idEstudiante, nombreEvaluacion, puntaje, respuestas));
             }
         } catch (IOException e) {
             System.err.println("Error al leer el archivo de historiales: " + e.getMessage());
@@ -39,16 +51,27 @@ public class PersistirHistoriales {
     }
 
     /**
-     * Persiste el puntaje obtenido por cada estudiante al realizar una evaluación.
-     * 
+     * Persiste el puntaje obtenido por cada estudiante al realizar una
+     * evaluación.
+     *
      * @param listaHistorial Una lista de historiales a persistir.
      */
     public void persistirHistorialesEnArchivo(LinkedList<Historial> listaHistorial) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("historiales.txt"))) {
             for (Historial historial : listaHistorial) {
+                // Escribimos los datos principales del historial
                 writer.write(historial.getTituloEvaluacion() + ";" + historial.getCiEstudiante() + ";"
                         + historial.getPuntaje());
-                writer.newLine();
+
+                // Añadimos las respuestas del estudiante al final, separadas por ;
+                String[] respuestas = historial.getRespuestas();
+                if (respuestas != null && respuestas.length > 0) {
+                    for (String respuesta : respuestas) {
+                        writer.write(";" + respuesta); // Escribimos cada respuesta separada por ';'
+                    }
+                }
+
+                writer.newLine(); // Nueva línea después de cada historial
             }
         } catch (IOException e) {
             System.err.println("Error al escribir el archivo de historiales: " + e.getMessage());

@@ -11,6 +11,7 @@ import logica.Preguntas;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -157,7 +158,10 @@ public class DerivarEvaluaciones {
                 retorno = correccionEvaluacion();
                 break;
             case "ObtenerCorrectas":
-                retorno = derivarObtenerRespuestas();
+                retorno = derivarObtenerRespuestasCorrectas();
+                break;
+            case "ObtenerRespuestas":
+                retorno = derivarObtenerRespuestasEstudiante();
                 break;
             case "ValorCheckboxRespuestas":
                 retorno = obtenerValorCheckboxRespuestas();
@@ -372,13 +376,21 @@ public class DerivarEvaluaciones {
         String[] tokens = tokenizarMensaje(mensaje);
         Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(tokens[1]);
         int puntajeObtenido = correccion(evaluacion.getListaPreguntas());
+        int size = tokens.length - 2; // excluimos los últimos 2 elementos
+        String[] respuestas = new String[size];
 
+        // Copiamos los elementos desde tokens[2] hasta tokens[tokens.length - 2]
+        for (int i = 0; i < size; i++) {
+            respuestas[i] = tokens[i + 2]; // 'i + 2' para empezar desde tokens[2]
+        }
+        
         if (this.getHistoriales().existeHistorial(tokens[1], tokens[0])) {
             Historial historial = this.getHistoriales().obtenerHistorial(tokens[1], tokens[0]);
             historial.setPuntaje(puntajeObtenido);
+            historial.setRespuestas(respuestas);
             this.getHistoriales().persistirHistoriales();
         } else {
-            this.getHistoriales().agregarHistorial(new Historial(tokens[1], tokens[0], puntajeObtenido)); // En memoria
+            this.getHistoriales().agregarHistorial(new Historial(tokens[1], tokens[0], puntajeObtenido, respuestas)); // En memoria
                                                                                                           // y en
                                                                                                           // persistencia
         }
@@ -432,7 +444,7 @@ public class DerivarEvaluaciones {
      * 
      * @return Una cadena con las respuestas correctas y el código de estado HTTP.
      */
-    private String derivarObtenerRespuestas() {
+    private String derivarObtenerRespuestasCorrectas() {
         String retorno = "";
 
         try {
@@ -444,6 +456,44 @@ public class DerivarEvaluaciones {
             retorno += ",;,200";
         } catch (Exception e) {
             retorno = ",;,400";
+        }
+        return retorno;
+    }
+    
+    /**
+     * Método que retorna las respuestas dadas por un estudiante al realizar una evaluación.
+     * @return respuestas del estudiantante.
+     */
+    private String derivarObtenerRespuestasEstudiante() {
+        String retorno = "";
+        String[] datos = this.tokenizarMensaje(mensaje);
+        String tituloEvaluacion = datos[0];
+        String ciEstudiante = datos[1];
+        boolean existe = false;
+      
+        // Obtener el historial de la lista
+        Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(tituloEvaluacion);
+        LinkedList<Historial> historialesEvaluacion = this.getHistoriales().obtenerHistoriales(tituloEvaluacion);
+        
+        for (Historial historial : historialesEvaluacion) {
+            // Verificamos si el CI del estudiante coincide
+            if (historial.getCiEstudiante().equals(ciEstudiante)) {
+                existe = true;
+                // Concatenamos las respuestas separadas por ",,,"
+                String[] respuestas = historial.getRespuestas();
+                for (int i = 0; i < respuestas.length; i++) {
+                    retorno += evaluacion.obtenerEnunciadoPregunta(i) + ",,," + respuestas[i] + ";;;";
+                }
+                // Elimino el ;;; sobrante
+                if (retorno.length() > 3) {
+                    retorno = retorno.substring(0, retorno.length() - 3);
+                }
+            }
+        }
+        if (existe == true) {
+            retorno += ",;,200";
+        } else {
+            retorno = "NO existen respuestas,;,500";
         }
         return retorno;
     }

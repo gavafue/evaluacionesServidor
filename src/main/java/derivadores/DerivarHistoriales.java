@@ -140,7 +140,6 @@ public class DerivarHistoriales {
 
     /**
      *
-     *
      * Este método busca los historiales del estudiante identificado por el
      * valor del mensaje. Si existen historiales para el estudiante, devuelve
      * una cadena con la información sobre los historiales, incluyendo el número
@@ -148,7 +147,7 @@ public class DerivarHistoriales {
      * devuelve un mensaje de error.
      *
      * @return Una cadena con los historiales del estudiante, incluyendo su
-     * número de identificación y puntaje, o un mensaje de error si no existen
+     * número de identificación, puntaje y respuestas dadas, o un mensaje de error si no existen
      * historiales. El formato de la cadena incluye también un código de estado
      * HTTP que indica el éxito o fallo de la operación.
      */
@@ -158,12 +157,13 @@ public class DerivarHistoriales {
             LinkedList<Historial> hls = this.getHistoriales().obtenerHistoriales(mensaje);
             for (int i = 0; i < hls.size(); i++) {
                 Historial historial = hls.get(i);
-                retorno += historial.getCiEstudiante() + ",,," + historial.getPuntaje() + ";;;";
+                retorno += historial.getCiEstudiante() + ",,," + historial.getPuntaje();
+                retorno += ";;;"; // Para separar cada historial
             }
-            retorno = retorno.substring(0, retorno.length() - 3); // Eliminar los últimos ",,," sobrantes.
-            retorno += ",;,200";
+            retorno = retorno.substring(0, retorno.length() - 3); // Eliminar los últimos ";;;" sobrantes
+            retorno += ",;,200"; // Código de éxito
         } else {
-            retorno = "NO existen historiales,;,500";
+            retorno = "NO existen historiales,;,500"; // Código de error
         }
         return retorno;
     }
