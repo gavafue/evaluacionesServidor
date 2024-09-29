@@ -157,6 +157,9 @@ public class DerivarEvaluaciones {
             case "Correccion":
                 retorno = correccionEvaluacion();
                 break;
+            case "CompararRespuestas":
+                retorno = compararRespuestas();
+                break;
             case "ObtenerCorrectas":
                 retorno = derivarObtenerRespuestasCorrectas();
                 break;
@@ -264,14 +267,8 @@ public class DerivarEvaluaciones {
         } else {
             Preguntas preguntas = procesarPreguntas(stringPreguntas);
             Integer cantidadDePreguntas = Integer.valueOf(stringPreguntas[stringPreguntas.length - 1]);
-            boolean verRespuestas = Boolean.parseBoolean(stringPreguntas[stringPreguntas.length - 2]); // Si está
-                                                                                                       // habilitado o
-                                                                                                       // no ver las
-                                                                                                       // respuestas
-                                                                                                       // correctas
-                                                                                                       // luego de
-                                                                                                       // realizar la
-                                                                                                       // evaluación
+            boolean verRespuestas = Boolean.parseBoolean(stringPreguntas[stringPreguntas.length - 2]);
+            /// Si esta realizar la evaluación
             retorno = crearEvaluacion(stringPreguntas[0], preguntas, cantidadDePreguntas,
                     verRespuestas);
         }
@@ -396,6 +393,52 @@ public class DerivarEvaluaciones {
         }
         return "Historial agregado o modificado con éxito,;,200";
     }
+    
+    /**
+     * Metodo que compara las preguntas correctas con las proporcionadas por el estudiante
+     * Devuelve una cadena del tipo
+     * Correcto,,,Correcto,,,Incorrecto,;,200
+     * O el mensaje de error correspondiente
+     * @return
+     */
+    private String compararRespuestas() {
+        String retorno="";
+        String[] tokens = tokenizarMensaje(mensaje);
+        Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(tokens[0]);
+        ArrayList<String> respuestasCorrectas = evaluacion.obtenerSoloRespuestas();        
+        respuestasCorrectas.forEach(System.out::println);
+        LinkedList<Historial> historialesEvaluacion = this.getHistoriales().obtenerHistoriales(tokens[0]);
+        boolean existe = false;
+        ArrayList<String> resultados = new ArrayList<>();  // Lista para almacenar "Correcto" o "Incorrecto"
+
+        for (Historial historial : historialesEvaluacion) {
+            if (historial.getCiEstudiante().equals(tokens[1])) {
+                existe = true;
+                String[] respuestas = historial.getRespuestas();
+                // Verificar si las listas tienen la misma cantidad de respuestas
+                if (respuestasCorrectas.size() != respuestas.length) {
+                    retorno= "La cantidad de respuestas no coincide,;,500";
+                }
+
+                for (int i = 0; i < respuestas.length; i++) {
+                    System.out.println("Respuesta Estudiante:"+respuestas[i]);
+                    if (respuestas[i].trim().equalsIgnoreCase(respuestasCorrectas.get(i).trim())) {
+                        resultados.add("Correcto");
+                    } else {
+                        resultados.add("Incorrecto");
+                    }
+                }               
+            }
+        }
+
+        if (!existe) {
+            retorno= "NO existen respuestas,;,500";
+        }
+
+        // Se convierte la lista a un string separando por ,,,
+        retorno = String.join(",,,", resultados);
+        return retorno + ",;,200";
+    }
 
     /**
      * 
@@ -496,8 +539,8 @@ public class DerivarEvaluaciones {
             retorno = "NO existen respuestas,;,500";
         }
         return retorno;
-    }
-
+    }   
+    
     /**
      * 
      * 
@@ -550,7 +593,7 @@ public class DerivarEvaluaciones {
         }
         return puntaje;
     }
-
+    
     /**
      * Obtiene el puntaje total de la evaluación correspondiente al mensaje.
      *

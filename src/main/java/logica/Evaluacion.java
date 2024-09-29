@@ -171,6 +171,27 @@ public class Evaluacion {
         }
         return enunciadosConRespuestas;
     }
+        
+    /**
+     * Obtiene la lista de respuestas correctas tal cual fue definido por el docente
+     * sin enunciados
+     * 
+     * @return lista de cadenas del tipo: respuesta,,,respuesta,,,respuesta
+     */
+    public ArrayList<String> obtenerSoloRespuestas() {
+        ArrayList<String> soloRespuestas = new ArrayList<>();
+        for (Pregunta pregunta : this.getListaPreguntas().getPreguntas()) {
+            String respuesta = "";
+            if (pregunta instanceof CompletarEspacio completar) {
+                String[] respuestas = completar.getRespuestasCorrectas();
+                respuesta = String.join(",", respuestas);
+            } else if (pregunta instanceof MultipleOpcion multiple) {
+                respuesta = multiple.getRespuestaCorrecta();
+            }
+            soloRespuestas.add(respuesta);
+        }        
+        return soloRespuestas;
+    }
     
     /**
      * Método que permite obtener el enunciado de una pregunta dado su indice.
