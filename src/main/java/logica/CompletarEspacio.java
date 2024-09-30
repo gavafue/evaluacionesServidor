@@ -65,9 +65,9 @@ public class CompletarEspacio extends Pregunta {
     @Override
     public boolean esCorrecta(String respuesta) {
         String[] respuestasUsuario = respuesta.split(",");
-        String[] respuestas = this.getRespuestasCorrectas();
-        
+        String[] respuestas = this.getRespuestasCorrectas();        
         boolean todasCorrectas = true;
+        
         if(respuestas[1] == null){ // Si no son dos respuestas
             if(!respuestasUsuario[0].equals(respuestas[0])||respuestasUsuario.length>1){ // Comparo solo primer campo y verifico que no haya dado una segunda respuesta
                 todasCorrectas = false;

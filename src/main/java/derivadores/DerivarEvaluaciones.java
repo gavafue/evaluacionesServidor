@@ -402,43 +402,53 @@ public class DerivarEvaluaciones {
      * @return
      */
     private String compararRespuestas() {
-        String retorno="";
+        String retorno = "";
         String[] tokens = tokenizarMensaje(mensaje);
         Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(tokens[0]);
-        ArrayList<String> respuestasCorrectas = evaluacion.obtenerSoloRespuestas();        
-        respuestasCorrectas.forEach(System.out::println);
+        ArrayList<String> respuestasCorrectas = evaluacion.obtenerSoloRespuestas();
+        respuestasCorrectas.forEach(System.out::println);//Para controlar lo almacenado
         LinkedList<Historial> historialesEvaluacion = this.getHistoriales().obtenerHistoriales(tokens[0]);
         boolean existe = false;
         ArrayList<String> resultados = new ArrayList<>();  // Lista para almacenar "Correcto" o "Incorrecto"
-
         for (Historial historial : historialesEvaluacion) {
             if (historial.getCiEstudiante().equals(tokens[1])) {
                 existe = true;
                 String[] respuestas = historial.getRespuestas();
-                // Verificar si las listas tienen la misma cantidad de respuestas
                 if (respuestasCorrectas.size() != respuestas.length) {
-                    retorno= "La cantidad de respuestas no coincide,;,500";
+                    return "La cantidad de respuestas no coincide,;,500";
                 }
-
                 for (int i = 0; i < respuestas.length; i++) {
-                    System.out.println("Respuesta Estudiante:"+respuestas[i]);
-                    if (respuestas[i].trim().equalsIgnoreCase(respuestasCorrectas.get(i).trim())) {
+                    System.out.println("Respuesta Estudiante:" + respuestas[i]);
+                    // Eliminar espacios en ambas respuestas si contienen comas
+                    if (respuestasCorrectas.get(i).contains(",") || respuestas[i].contains(",")) {
+                        respuestasCorrectas.set(i, respuestasCorrectas.get(i).replaceAll(" ", ""));
+                        respuestas[i] = respuestas[i].replaceAll(" ", "");
+                    }
+                    // Si la respuesta correcta contiene ',null', compar solo la palabra antes de la coma
+                    if (respuestasCorrectas.get(i).endsWith(",null")&& !respuestas[i].contains(",")) {                        
+                        String respuestaSinNull = respuestasCorrectas.get(i).split(",")[0];
+                        if (respuestaSinNull.equalsIgnoreCase(respuestas[i].trim())) {
+                            resultados.add("Correcto");
+                        } else {
+                            resultados.add("Incorrecto");
+                        }
+                    } else if (respuestas[i].trim().equalsIgnoreCase(respuestasCorrectas.get(i).trim())) {
+                        // Si no contiene ',null', se compara directamente
                         resultados.add("Correcto");
                     } else {
                         resultados.add("Incorrecto");
                     }
-                }               
+                }
             }
         }
-
         if (!existe) {
-            retorno= "NO existen respuestas,;,500";
+            return "NO existen respuestas,;,500";
         }
-
-        // Se convierte la lista a un string separando por ,,,
+        // Se convierte la lista de resultados en un string
         retorno = String.join(",,,", resultados);
         return retorno + ",;,200";
     }
+
 
     /**
      * 
@@ -512,12 +522,10 @@ public class DerivarEvaluaciones {
         String[] datos = this.tokenizarMensaje(mensaje);
         String tituloEvaluacion = datos[0];
         String ciEstudiante = datos[1];
-        boolean existe = false;
-      
+        boolean existe = false;      
         // Obtener el historial de la lista
         Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(tituloEvaluacion);
-        LinkedList<Historial> historialesEvaluacion = this.getHistoriales().obtenerHistoriales(tituloEvaluacion);
-        
+        LinkedList<Historial> historialesEvaluacion = this.getHistoriales().obtenerHistoriales(tituloEvaluacion);        
         for (Historial historial : historialesEvaluacion) {
             // Verificamos si el CI del estudiante coincide
             if (historial.getCiEstudiante().equals(ciEstudiante)) {
@@ -551,7 +559,6 @@ public class DerivarEvaluaciones {
      */
     private String obtenerValorCheckboxRespuestas() {
         String retorno = "";
-
         try {
             Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(mensaje);
             Boolean habilitado = evaluacion.getVerRespuestasHabilitado();

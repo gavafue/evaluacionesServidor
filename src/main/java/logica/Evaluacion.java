@@ -184,7 +184,7 @@ public class Evaluacion {
             String respuesta = "";
             if (pregunta instanceof CompletarEspacio completar) {
                 String[] respuestas = completar.getRespuestasCorrectas();
-                respuesta = String.join(",", respuestas);
+                respuesta = String.join(",", respuestas);                  
             } else if (pregunta instanceof MultipleOpcion multiple) {
                 respuesta = multiple.getRespuestaCorrecta();
             }
