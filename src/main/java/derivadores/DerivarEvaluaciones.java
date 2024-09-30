@@ -175,6 +175,9 @@ public class DerivarEvaluaciones {
             case "ObtenerTituloAlAzar":
                 retorno = obtenerTituloAlAzar();
                 break;
+            case "CalcularPorcentaje":
+                retorno = calcularPorcentajeRespuestasCorrectas();
+                break;
             default:
                 retorno = "Operación desconocida,;,400";
                 break;
@@ -380,36 +383,64 @@ public class DerivarEvaluaciones {
         for (int i = 0; i < size; i++) {
             respuestas[i] = tokens[i + 2]; // 'i + 2' para empezar desde tokens[2]
         }
-        
+
         if (this.getHistoriales().existeHistorial(tokens[1], tokens[0])) {
             Historial historial = this.getHistoriales().obtenerHistorial(tokens[1], tokens[0]);
             historial.setPuntaje(puntajeObtenido);
             historial.setRespuestas(respuestas);
             this.getHistoriales().persistirHistoriales();
         } else {
-            this.getHistoriales().agregarHistorial(new Historial(tokens[1], tokens[0], puntajeObtenido, respuestas)); // En memoria
-                                                                                                          // y en
-                                                                                                          // persistencia
+            this.getHistoriales().agregarHistorial(new Historial(tokens[1], tokens[0], puntajeObtenido, respuestas)); // En
+                                                                                                                      // memoria
+            // y en
+            // persistencia
         }
         return "Historial agregado o modificado con éxito,;,200";
     }
-    
+
     /**
-     * Metodo que compara las preguntas correctas con las proporcionadas por el estudiante
-     * Devuelve una cadena del tipo
-     * Correcto,,,Correcto,,,Incorrecto,;,200
-     * O el mensaje de error correspondiente
-     * @return
+     * Compara las respuestas correctas de una evaluación con las respuestas
+     * proporcionadas por el estudiante
+     * y devuelve una cadena indicando si cada respuesta es "Correcto" o
+     * "Incorrecto". Si las respuestas
+     * no coinciden en número o el estudiante no tiene historial, devuelve un
+     * mensaje de error.
+     * 
+     * La cadena devuelta tiene el siguiente formato:
+     * - Si la comparación es exitosa: "Correcto,,,Correcto,,,Incorrecto,;,200"
+     * - Si hay un error: "La cantidad de respuestas no coincide,;,500" o "NO
+     * existen respuestas,;,500"
+     * 
+     * El método sigue los siguientes pasos:
+     * 1. Obtiene las respuestas correctas de la evaluación.
+     * 2. Obtiene el historial del estudiante con base en su identificación (CI).
+     * 3. Compara las respuestas del historial con las respuestas correctas.
+     * 4. Devuelve los resultados de la comparación en una cadena.
+     * 
+     * Datos que recibe el método:
+     * - titulo;;;22222222,;,Evaluaciones,;,CompararRespuestas"
+     * - La primera parte ("Evaluacion de prueba de null en completar espacios") es
+     * el identificador de la evaluación.
+     * - "22222222" es el número de identificación del estudiante (CI).
+     * - "Evaluaciones" indica la acción a realizar, en este caso trabajar con
+     * evaluaciones.
+     * - "CompararRespuestas" es el comando que activa este método de comparación de
+     * respuestas.
+     * 
+     * @return Una cadena que indica el resultado de la comparación, en formato
+     *         "Correcto,,,Incorrecto,;,200"
+     *         o un mensaje de error con código correspondiente.
      */
+
     private String compararRespuestas() {
         String retorno = "";
         String[] tokens = tokenizarMensaje(mensaje);
         Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(tokens[0]);
         ArrayList<String> respuestasCorrectas = evaluacion.obtenerSoloRespuestas();
-        respuestasCorrectas.forEach(System.out::println);//Para controlar lo almacenado
+        respuestasCorrectas.forEach(System.out::println);// Para controlar lo almacenado
         LinkedList<Historial> historialesEvaluacion = this.getHistoriales().obtenerHistoriales(tokens[0]);
         boolean existe = false;
-        ArrayList<String> resultados = new ArrayList<>();  // Lista para almacenar "Correcto" o "Incorrecto"
+        ArrayList<String> resultados = new ArrayList<>(); // Lista para almacenar "Correcto" o "Incorrecto"
         for (Historial historial : historialesEvaluacion) {
             if (historial.getCiEstudiante().equals(tokens[1])) {
                 existe = true;
@@ -424,8 +455,9 @@ public class DerivarEvaluaciones {
                         respuestasCorrectas.set(i, respuestasCorrectas.get(i).replaceAll(" ", ""));
                         respuestas[i] = respuestas[i].replaceAll(" ", "");
                     }
-                    // Si la respuesta correcta contiene ',null', compar solo la palabra antes de la coma
-                    if (respuestasCorrectas.get(i).endsWith(",null")&& !respuestas[i].contains(",")) {                        
+                    // Si la respuesta correcta contiene ',null', compar solo la palabra antes de la
+                    // coma
+                    if (respuestasCorrectas.get(i).endsWith(",null") && !respuestas[i].contains(",")) {
                         String respuestaSinNull = respuestasCorrectas.get(i).split(",")[0];
                         if (respuestaSinNull.equalsIgnoreCase(respuestas[i].trim())) {
                             resultados.add("Correcto");
@@ -448,7 +480,6 @@ public class DerivarEvaluaciones {
         retorno = String.join(",,,", resultados);
         return retorno + ",;,200";
     }
-
 
     /**
      * 
@@ -512,9 +543,11 @@ public class DerivarEvaluaciones {
         }
         return retorno;
     }
-    
+
     /**
-     * Método que retorna las respuestas dadas por un estudiante al realizar una evaluación.
+     * Método que retorna las respuestas dadas por un estudiante al realizar una
+     * evaluación.
+     * 
      * @return respuestas del estudiantante.
      */
     private String derivarObtenerRespuestasEstudiante() {
@@ -522,10 +555,10 @@ public class DerivarEvaluaciones {
         String[] datos = this.tokenizarMensaje(mensaje);
         String tituloEvaluacion = datos[0];
         String ciEstudiante = datos[1];
-        boolean existe = false;      
+        boolean existe = false;
         // Obtener el historial de la lista
         Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(tituloEvaluacion);
-        LinkedList<Historial> historialesEvaluacion = this.getHistoriales().obtenerHistoriales(tituloEvaluacion);        
+        LinkedList<Historial> historialesEvaluacion = this.getHistoriales().obtenerHistoriales(tituloEvaluacion);
         for (Historial historial : historialesEvaluacion) {
             // Verificamos si el CI del estudiante coincide
             if (historial.getCiEstudiante().equals(ciEstudiante)) {
@@ -547,8 +580,8 @@ public class DerivarEvaluaciones {
             retorno = "NO existen respuestas,;,500";
         }
         return retorno;
-    }   
-    
+    }
+
     /**
      * 
      * 
@@ -600,7 +633,7 @@ public class DerivarEvaluaciones {
         }
         return puntaje;
     }
-    
+
     /**
      * Obtiene el puntaje total de la evaluación correspondiente al mensaje.
      *
@@ -652,4 +685,52 @@ public class DerivarEvaluaciones {
         }
         return retorno;
     }
+
+    /**
+     * Llama al método compararRespuestas y calcula el porcentaje de respuestas
+     * correctas,
+     * redondeando al entero más cercano. Devuelve el porcentaje en formato de
+     * cadena.
+     * 
+     * El porcentaje se calcula en base a la cantidad de respuestas correctas
+     * comparadas
+     * con el total de respuestas proporcionadas. Si hay un error (por ejemplo, si
+     * las
+     * respuestas no coinciden en cantidad), devuelve un mensaje de error.
+     * 
+     * @return Una cadena con el porcentaje de respuestas correctas, redondeado al
+     *         entero más cercano,
+     *         o un mensaje de error si ocurre algún problema.
+     */
+    private String calcularPorcentajeRespuestasCorrectas() {
+        // Llama al método compararRespuestas para obtener el resultado
+        String resultado = compararRespuestas();
+        String[] indicadores = resultado.split(",;,");
+
+        // Si el resultado contiene un mensaje de error, devuelve el error como cadena
+        if (resultado.contains("500")) {
+            return "La cantidad de respuestas no coincide,;,500";
+        }
+
+        // Divide la cadena de respuestas en base a los separadores ";;;" y ",,,"
+        String[] respuestas = indicadores[0].split(",,,");
+
+        // Cuenta las respuestas correctas
+        int correctas = 0;
+        for (String respuesta : respuestas) {
+            if (respuesta.equals("Correcto")) {
+                correctas++;
+            }
+        }
+
+        // Calcula el porcentaje de respuestas correctas
+        int totalRespuestas = respuestas.length;
+
+        // Redondea el porcentaje al entero más cercano
+        int porcentaje = Math.round((correctas * 100f) / totalRespuestas);
+
+        // Devuelve el porcentaje en formato de cadena
+        return porcentaje + ",;,200";
+    }
+
 }

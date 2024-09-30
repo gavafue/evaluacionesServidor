@@ -5,3 +5,5 @@ para probar completar;22222222;0;qq;wq;wqww
 Evaluación larga;11111111;25;fdfdsf;1;Falso;dfdfs;1
 Evaluación larga;22222222;7;bbbbb;4;Falso;bbbbb;4
 nueva2;11111111;3;a;1;Verdadero
+Evaluacion de prueba de null en completar espacios;22222222;2;hola,null;null , null;null,null
+Evaluacion de prueba de null en completar espacios;11111111;0;hola;hola , hola;hola,hola
