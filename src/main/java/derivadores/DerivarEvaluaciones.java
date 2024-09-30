@@ -415,70 +415,57 @@ public class DerivarEvaluaciones {
      * 1. Obtiene las respuestas correctas de la evaluación.
      * 2. Obtiene el historial del estudiante con base en su identificación (CI).
      * 3. Compara las respuestas del historial con las respuestas correctas.
-     * 4. Devuelve los resultados de la comparación en una cadena.
-     * 
-     * Datos que recibe el método:
-     * - titulo;;;22222222,;,Evaluaciones,;,CompararRespuestas"
-     * - La primera parte ("Evaluacion de prueba de null en completar espacios") es
-     * el identificador de la evaluación.
-     * - "22222222" es el número de identificación del estudiante (CI).
-     * - "Evaluaciones" indica la acción a realizar, en este caso trabajar con
-     * evaluaciones.
-     * - "CompararRespuestas" es el comando que activa este método de comparación de
-     * respuestas.
-     * 
+     * 4. Devuelve los resultados de la comparación en una
+     * cadena.
+     *
+     * Datos que recibe el método: -
+     * titulo;;;22222222,;,Evaluaciones,;,CompararRespuestas" - La primera parte
+     * ("Evaluacion de prueba de null en completar espacios") es el
+     * identificador de la evaluación. - "22222222" es el número de
+     * identificación del estudiante (CI). - "Evaluaciones" indica la acción a
+     * realizar, en este caso trabajar con evaluaciones. - "CompararRespuestas"
+     * es el comando que activa este método de comparación de respuestas.
+     *
      * @return Una cadena que indica el resultado de la comparación, en formato
-     *         "Correcto,,,Incorrecto,;,200"
-     *         o un mensaje de error con código correspondiente.
+     * "Correcto,,,Incorrecto,;,200" o un mensaje de error con código
+     * correspondiente.
      */
-
     private String compararRespuestas() {
         String retorno = "";
         String[] tokens = tokenizarMensaje(mensaje);
+
         Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(tokens[0]);
-        ArrayList<String> respuestasCorrectas = evaluacion.obtenerSoloRespuestas();
-        respuestasCorrectas.forEach(System.out::println);// Para controlar lo almacenado
+        Preguntas preguntas = evaluacion.getListaPreguntas();
         LinkedList<Historial> historialesEvaluacion = this.getHistoriales().obtenerHistoriales(tokens[0]);
-        boolean existe = false;
         ArrayList<String> resultados = new ArrayList<>(); // Lista para almacenar "Correcto" o "Incorrecto"
+
+        boolean existe = false;
+
         for (Historial historial : historialesEvaluacion) {
             if (historial.getCiEstudiante().equals(tokens[1])) {
                 existe = true;
                 String[] respuestas = historial.getRespuestas();
-                if (respuestasCorrectas.size() != respuestas.length) {
-                    return "La cantidad de respuestas no coincide,;,500";
-                }
-                for (int i = 0; i < respuestas.length; i++) {
-                    System.out.println("Respuesta Estudiante:" + respuestas[i]);
-                    // Eliminar espacios en ambas respuestas si contienen comas
-                    if (respuestasCorrectas.get(i).contains(",") || respuestas[i].contains(",")) {
-                        respuestasCorrectas.set(i, respuestasCorrectas.get(i).replaceAll(" ", ""));
-                        respuestas[i] = respuestas[i].replaceAll(" ", "");
-                    }
-                    // Si la respuesta correcta contiene ',null', compar solo la palabra antes de la
-                    // coma
-                    if (respuestasCorrectas.get(i).endsWith(",null") && !respuestas[i].contains(",")) {
-                        String respuestaSinNull = respuestasCorrectas.get(i).split(",")[0];
-                        if (respuestaSinNull.equalsIgnoreCase(respuestas[i].trim())) {
+                if (preguntas.getPreguntas().size() != respuestas.length) {
+                    retorno = "La cantidad de respuestas no coincide,;,500";
+                } else {
+                    for (int i = 0; i < preguntas.getPreguntas().size(); i++) {
+                        if (preguntas.obtenerPregunta(i).esCorrecta(respuestas[i])) {
                             resultados.add("Correcto");
                         } else {
                             resultados.add("Incorrecto");
                         }
-                    } else if (respuestas[i].trim().equalsIgnoreCase(respuestasCorrectas.get(i).trim())) {
-                        // Si no contiene ',null', se compara directamente
-                        resultados.add("Correcto");
-                    } else {
-                        resultados.add("Incorrecto");
                     }
                 }
             }
         }
         if (!existe) {
-            return "NO existen respuestas,;,500";
+            retorno = "NO existen respuestas,;,500";
+        } else {
+            // Se convierte la lista de resultados en un string
+            retorno = String.join(",,,", resultados);
+            retorno += ",;,200";
         }
-        // Se convierte la lista de resultados en un string
-        retorno = String.join(",,,", resultados);
-        return retorno + ",;,200";
+        return retorno;
     }
 
     /**
