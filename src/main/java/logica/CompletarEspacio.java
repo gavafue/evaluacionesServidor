@@ -65,20 +65,29 @@ public class CompletarEspacio extends Pregunta {
     @Override
     public boolean esCorrecta(String respuesta) {
         String[] respuestasUsuario = respuesta.split(",");
-        String[] respuestas = this.getRespuestasCorrectas();        
+        String[] respuestas = this.getRespuestasCorrectas();
         boolean todasCorrectas = true;
-        
-        if(respuestas[1] == null){ // Si no son dos respuestas
-            if(!respuestasUsuario[0].equals(respuestas[0])||respuestasUsuario.length>1){ // Comparo solo primer campo y verifico que no haya dado una segunda respuesta
+
+        // Eliminar espacios en blanco de las respuestas correctas
+        for (int i = 0; i < respuestas.length; i++) {
+            respuestas[i] = respuestas[i].trim();
+        }
+
+        if (respuestas.length < 2) { // Si no son dos respuestas
+            if (!respuestasUsuario[0].trim().equals(respuestas[0]) || respuestasUsuario.length > 1) {
                 todasCorrectas = false;
             }
-        }else{
-            if(!Arrays.equals(respuestasUsuario, respuestas)){
+        } else {
+            if (respuestasUsuario.length < 2
+                    || !respuestasUsuario[0].trim().equals(respuestas[0])
+                    || !respuestasUsuario[1].trim().equals(respuestas[1])
+                    || respuestasUsuario.length > 2) {
                 todasCorrectas = false;
             }
         }
         return todasCorrectas;
     }
+
 
 
     /**
