@@ -9,3 +9,4 @@ Evaluación larga;Una _ techo. respuesta casa,,,1,,,Completar,,,casa;La opcion 4
 Evaluacion de prueba de null en completar espacios;hola como estas,,,1,,,Completar,,,hola,,, null;null , null,,,1,,,Completar,,,null ,,, null;null,null,,,1,,,Completar,,,null,,,null;true;3
 Prueba de NULL;Respuesta: hola, null,,,1,,,Completar,,,hola,,, null;Respuesta: buenas,null,,,1,,,Completar,,,buenas,,, null;Respuesta buenas, buenas,,,1,,,Completar,,,buenas,,, buenas;Respuesta hola,todo,,,1,,,Completar,,,hola,,,todo;Respuesta null, hola,,,1,,,Completar,,,null,,, hola;true;5
 prueba de null 2;hola _ estas,,,1,,,Completar,,,como;bien y _,,,1,,,Completar,,,vos;probando,,,1,,,Completar,,,probando;true;3
+prueba despues de refactorizar;prueba -holis-,,,1,,,Completar,,,holis;prueba,,,1,,,Multiple,,,esta,,,1,,,2,,,3,,,1;verdad,,,1,,,VF,,,Verdadero;true;3

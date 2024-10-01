@@ -373,29 +373,63 @@ public class DerivarEvaluaciones {
      * @return Resultado de la corrección y código de estado HTTP.
      */
     private String correccionEvaluacion() {
-        String[] tokens = tokenizarMensaje(mensaje);
-        Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(tokens[1]);
-        int puntajeObtenido = correccion(evaluacion.getListaPreguntas());
-        int size = tokens.length - 2; // excluimos los últimos 2 elementos
-        String[] respuestas = new String[size];
+        try {
+            // Verificar que el mensaje no sea nulo o vacío
+            if (mensaje == null || mensaje.trim().isEmpty()) {
+                throw new IllegalArgumentException("El mensaje proporcionado está vacío o es nulo.");
+            }
 
-        // Copiamos los elementos desde tokens[2] hasta tokens[tokens.length - 2]
-        for (int i = 0; i < size; i++) {
-            respuestas[i] = tokens[i + 2]; // 'i + 2' para empezar desde tokens[2]
-        }
+            // Tokenizar el mensaje
+            String[] tokens = tokenizarMensaje(mensaje);
 
-        if (this.getHistoriales().existeHistorial(tokens[1], tokens[0])) {
-            Historial historial = this.getHistoriales().obtenerHistorial(tokens[1], tokens[0]);
-            historial.setPuntaje(puntajeObtenido);
-            historial.setRespuestas(respuestas);
-            this.getHistoriales().persistirHistoriales();
-        } else {
-            this.getHistoriales().agregarHistorial(new Historial(tokens[1], tokens[0], puntajeObtenido, respuestas)); // En
-                                                                                                                      // memoria
-            // y en
-            // persistencia
+            // Verificar que se hayan recibido suficientes tokens
+            if (tokens.length < 3) {
+                throw new IllegalArgumentException("El formato del mensaje es incorrecto, faltan tokens.");
+            }
+
+            // Obtener la evaluación con el ID proporcionado en tokens[1]
+            Evaluacion evaluacion = this.getEvaluaciones().obtenerEvaluacion(tokens[1]);
+            if (evaluacion == null) {
+                throw new IllegalArgumentException(
+                        "No se encontró una evaluación con el ID proporcionado: " + tokens[1]);
+            }
+
+            // Corregir las respuestas y calcular el puntaje obtenido
+            int puntajeObtenido = correccion(evaluacion.getListaPreguntas());
+
+            // Excluir los últimos dos elementos para obtener el tamaño correcto de las
+            // respuestas
+            int size = tokens.length - 2;
+            String[] respuestas = new String[size];
+
+            // Copiar las respuestas desde tokens[2] hasta tokens[tokens.length - 2]
+            for (int i = 0; i < size; i++) {
+                respuestas[i] = tokens[i + 2]; // 'i + 2' para empezar desde tokens[2]
+            }
+
+            // Verificar si ya existe un historial para el estudiante en la evaluación dada
+            if (this.getHistoriales().existeHistorial(tokens[1], tokens[0])) {
+                // Si existe, obtener el historial y actualizarlo
+                Historial historial = this.getHistoriales().obtenerHistorial(tokens[1], tokens[0]);
+                historial.setPuntaje(puntajeObtenido);
+                historial.setRespuestas(respuestas);
+                this.getHistoriales().persistirHistoriales(); // Persistir los cambios
+            } else {
+                // Si no existe, crear un nuevo historial y agregarlo
+                Historial nuevoHistorial = new Historial(tokens[1], tokens[0], puntajeObtenido, respuestas);
+                this.getHistoriales().agregarHistorial(nuevoHistorial); // Agregar en memoria y persistencia
+            }
+
+            return "Historial agregado o modificado con éxito,;,200";
+        } catch (IllegalArgumentException e) {
+            // Manejo de errores específicos de argumentos inválidos
+            System.err.println("Error: " + e.getMessage());
+            return "Error en los datos proporcionados: " + e.getMessage() + ",;,400";
+        } catch (Exception e) {
+            // Capturar cualquier otro error inesperado
+            System.err.println("Error inesperado: " + e.getMessage());
+            return "Error inesperado al procesar la corrección: " + e.getMessage() + ",;,500";
         }
-        return "Historial agregado o modificado con éxito,;,200";
     }
 
     /**
@@ -427,8 +461,8 @@ public class DerivarEvaluaciones {
      * es el comando que activa este método de comparación de respuestas.
      *
      * @return Una cadena que indica el resultado de la comparación, en formato
-     * "Correcto,,,Incorrecto,;,200" o un mensaje de error con código
-     * correspondiente.
+     *         "Correcto,,,Incorrecto,;,200" o un mensaje de error con código
+     *         correspondiente.
      */
     private String compararRespuestas() {
         String retorno = "";
