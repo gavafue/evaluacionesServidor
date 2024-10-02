@@ -128,9 +128,29 @@ public class PersistirEvaluaciones {
 
                         switch (tipoPregunta) {
                             case "Completar":
+                                // Se crea un arreglo para almacenar las respuestas filtradas.
                                 String[] respuestasFiltradas = new String[2];
-                                respuestasFiltradas[0] = datosPregunta.length >= 4 ? datosPregunta[3].trim() : null;
-                                respuestasFiltradas[1] = datosPregunta.length >= 5 ? datosPregunta[4].trim() : null;
+
+                                // Valor predeterminado que indica que el string está vacío.
+                                String valorPorDefecto = "xF_45&3";
+
+                                // Verificamos si la longitud de datosPregunta es 4. Si es así, se asigna la
+                                // respuesta
+                                // proporcionada; de lo contrario, se asigna el valor predeterminado que
+                                // representa un string vacío.
+                                respuestasFiltradas[0] = datosPregunta.length >= 4 ? datosPregunta[3].trim()
+                                        : valorPorDefecto;
+
+                                // Verificamos si la longitud de datosPregunta es 5. Si es así, se asigna la
+                                // respuesta
+                                // proporcionada; de lo contrario, se asigna el valor predeterminado que
+                                // representa un string vacío.
+                                respuestasFiltradas[1] = datosPregunta.length >= 5 ? datosPregunta[4].trim()
+                                        : valorPorDefecto;
+
+                                // Creamos una nueva instancia de CompletarEspacio con el enunciado, el puntaje
+                                // y las
+                                // respuestas filtradas obtenidas anteriormente.
                                 pregunta = new CompletarEspacio(enunciado, puntaje, respuestasFiltradas);
                                 break;
                             case "Multiple":

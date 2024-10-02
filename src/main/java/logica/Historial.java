@@ -10,9 +10,25 @@ package logica;
  */
 public class Historial {
 
-    private String tituloEvaluacion; // Evaluación a la que corresponde el historial
-    private String ciEstudiante; // Número de cédula de identidad del estudiante
-    private int puntaje; // Puntaje obtenido por el estudiante
+    /**
+     *  Evaluación a la que corresponde el historial
+     */
+    private String tituloEvaluacion; 
+    
+    /**
+     * Númro de cédula de identidad del estudiante
+     */
+    private String ciEstudiante;
+    
+    /**
+     * Puntaje obtenido por el estudiante
+     */
+    private int puntaje;
+    
+    /**
+     * Respuestas dadas por el estudiante
+     */
+    private String[] respuestas; 
 
     /**
      * Constructor de la clase Historial.
@@ -22,11 +38,13 @@ public class Historial {
      * @param ciEstudiante     El número de cédula de identidad del estudiante.
      * @param puntaje          El puntaje obtenido por el estudiante en la
      *                         evaluación.
+     * @param respuestas       Respuestas dadas por el estudiante.
      */
-    public Historial(String tituloEvaluacion, String ciEstudiante, int puntaje) {
+    public Historial(String tituloEvaluacion, String ciEstudiante, int puntaje, String[] respuestas) {
         this.tituloEvaluacion = tituloEvaluacion;
         this.ciEstudiante = ciEstudiante;
         this.puntaje = puntaje;
+        this.respuestas = respuestas;
     }
 
     /**
@@ -54,6 +72,15 @@ public class Historial {
      */
     public int getPuntaje() {
         return puntaje;
+    }
+    
+    /**
+     * Obtiene las respuestas dadas por el estudiante.
+     * 
+     * @return Las respuestas del estudiante.
+     */
+    public String[] getRespuestas(){
+        return respuestas;
     }
 
     // Setters
@@ -83,5 +110,14 @@ public class Historial {
      */
     public void setPuntaje(int puntaje) {
         this.puntaje = puntaje;
+    }
+    
+    /**
+     * Establece las respuestas dadas por el estudiante.
+     * 
+     * @param respuestas Respuestas dadas por el estudiante.
+     */
+    public void setRespuestas(String[] respuestas){
+        this.respuestas = respuestas;
     }
 }

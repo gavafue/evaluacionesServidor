@@ -5,3 +5,8 @@ nueva2;p1 r1,,,1,,,Completar,,,r1;p2 r1,,,3,,,Multiple,,,r1,,,r2,,,r3,,,r4,,,1;p
 prueba;respuesta r1,r2,,,1,,,Completar,,,r1,,,r2;respuesta f,,,2,,,VF,,,Falso;respuesta 4,,,5,,,VF,,,Falso;respuesta 4 ahora si,,,10,,,Multiple,,,1,,,2,,,3,,,4,,,4;true;4
 Nuevita;preg1,,,1,,,Completar,,,resp1;preg2,,,3,,,Multiple,,,one,,,two,,,three,,,four,,,1;preg3,,,5,,,VF,,,Verdadero;true;3
 para probar completar;respuesta: r1,r2,,,1,,,Completar,,,r1,,,r2;respuesta r1,,,2,,,Completar,,,r1;respuesta resp1,resp2,,,4,,,Completar,,,resp1,,,resp2;true;3
+Evaluación larga;Una _ techo. respuesta casa,,,1,,,Completar,,,casa;La opcion 4 es correcta,,,2,,,Multiple,,,no es correcta,,,tampoco lo es,,,menos,,,es correcta,,,4;Esta pregunta es falsa,,,5,,,VF,,,Falso;Esta es una pregunta de tipo _ muy _. respuesta: completar,dificil,,,10,,,Completar,,,completar,,,dificil;La op1 es correcta,,,20,,,Multiple,,,es,,,no es,,,tampoco es,,,menos es,,,1;true;5
+Evaluacion de prueba de null en completar espacios;hola como estas,,,1,,,Completar,,,hola,,, null;null , null,,,1,,,Completar,,,null ,,, null;null,null,,,1,,,Completar,,,null,,,null;true;3
+Prueba de NULL;Respuesta: hola, null,,,1,,,Completar,,,hola,,, null;Respuesta: buenas,null,,,1,,,Completar,,,buenas,,, null;Respuesta buenas, buenas,,,1,,,Completar,,,buenas,,, buenas;Respuesta hola,todo,,,1,,,Completar,,,hola,,,todo;Respuesta null, hola,,,1,,,Completar,,,null,,, hola;true;5
+prueba de null 2;hola _ estas,,,1,,,Completar,,,como;bien y _,,,1,,,Completar,,,vos;probando,,,1,,,Completar,,,probando;true;3
+prueba despues de refactorizar;prueba -holis-,,,1,,,Completar,,,holis;prueba,,,1,,,Multiple,,,esta,,,1,,,2,,,3,,,1;verdad,,,1,,,VF,,,Verdadero;true;3
