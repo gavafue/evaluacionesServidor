@@ -76,43 +76,36 @@ public class CompletarEspacio extends Pregunta {
         // Valor por defecto si solo hay una respuesta correcta
         String valorPorDefecto = "xF_45&3";
 
-        // Si solo hay una respuesta correcta, añadimos el valor por defecto como la
-        // segunda respuesta
-        if (respuestasCorrectas.length == 1) {
-            respuestasCorrectas = new String[] { respuestasCorrectas[0], valorPorDefecto };
-        }
-
         // Aseguramos que las respuestas correctas no tengan espacios en blanco
         for (int i = 0; i < respuestasCorrectas.length; i++) {
             respuestasCorrectas[i] = respuestasCorrectas[i].trim();
+            if (!respuestasCorrectas[i].equals(valorPorDefecto)) {
+                respuestasCorrectas[i] = respuestasCorrectas[i].toLowerCase();
+            }
         }
 
         // Eliminar espacios en blanco en las respuestas del usuario
         for (int i = 0; i < respuestasUsuario.length; i++) {
-            respuestasUsuario[i] = respuestasUsuario[i].trim();
+            respuestasUsuario[i] = respuestasUsuario[i].trim().toLowerCase();
         }
 
         // Verificamos si el número de respuestas proporcionadas es válido (1 o 2)
         if (respuestasUsuario.length < 1 || respuestasUsuario.length > 2) {
             todasCorrectas = false; // Si hay más de dos respuestas o ninguna, es incorrecto
         } else {
-            // Caso donde el usuario dio una sola respuesta pero se esperan dos respuestas
-            // correctas
-            if (respuestasCorrectas.length == 2 && respuestasUsuario.length == 1) {
-                todasCorrectas = false; // Si el usuario solo responde una pero se esperan dos, es incorrecto
+
+            if (respuestasUsuario.length == 1 && respuestasCorrectas[1].equals(valorPorDefecto)) {
+                todasCorrectas = respuestasUsuario[0].equals(respuestasCorrectas[0]);
+            } else if (respuestasUsuario.length == 1 && !respuestasCorrectas[1].equals(valorPorDefecto)) {
+                todasCorrectas = false;
             }
             // Caso donde el usuario dio dos respuestas y se esperan dos respuestas
             // correctas
-            else if (respuestasCorrectas.length == 2 && respuestasUsuario.length == 2) {
+            else if (respuestasUsuario.length == 2) {
                 if (!respuestasUsuario[0].equals(respuestasCorrectas[0]) ||
                         !respuestasUsuario[1].equals(respuestasCorrectas[1])) {
                     todasCorrectas = false; // Si alguna de las dos respuestas no coincide, es incorrecto
                 }
-            }
-            // Caso donde el usuario dio una sola respuesta y solo hay una respuesta
-            // correcta
-            else if (respuestasCorrectas.length == 2 && respuestasUsuario.length == 1) {
-                todasCorrectas = respuestasUsuario[0].equals(respuestasCorrectas[0]);
             }
         }
 
