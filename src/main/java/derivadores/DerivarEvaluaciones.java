@@ -238,7 +238,7 @@ public class DerivarEvaluaciones {
 
             // Comprobación si la lista está vacía
             if (listaTitulosEvaluaciones.isEmpty()) {
-                return "Evaluación NO existe,;,500"; // Retorno si no hay evaluaciones
+                return "No existen evaluaciones,;,500"; // Retorno si no hay evaluaciones
             }
 
             for (String parte : listaTitulosEvaluaciones) {
