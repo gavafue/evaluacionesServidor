@@ -1,0 +1,6 @@
+Comandos en Linux;11111111;8;cat;1;Verdadero;Falso;renombrar,fichero;1
+Comandos en Linux;22222222;18;mv;1;Falso;Verdadero;renombrar,archivo;1
+Comandos en Linux;33333333;0;bash;3;Verdadero;Falso;xF_45&3;3
+Manejo de CHMOD;33333333;11;permisos;4;Falso;Falso;2;Verdadero
+Manejo de Ficheros;33333333;1;visualizar;xF_45&3;xF_45&3;1;Verdadero;Verdadero
+Manejo de CHMOD;11111111;2;permisos;2;Verdadero;Verdadero;1;Verdadero
