@@ -36,7 +36,14 @@ mvn exec:java
 
 ---
 
-## 👨‍💻 Autor
+## 👥 Equipo de Desarrollo (Taller 2 - INET)
 
-* **Gabriel Vázquez** — *Profesor de Informática (INET) & Full Stack Developer*
-* [LinkedIn](https://www.linkedin.com/in/gavafue) · [CVUy](https://export.cvuy.uy/cv/?1ef08a58a0c81bcd4d399b62513ffa9a)
+Servidor backend desarrollado en equipo para la cátedra **Taller 2** del **Profesorado de Informática (INET - CFE)**:
+
+| Colaborador | Perfil GitHub | Aportes Clave |
+| :--- | :--- | :--- |
+| **Gabriel Vázquez** | [@gavafue](https://github.com/gavafue) | Arquitectura TCP multihilo, concurrencia y persistencia |
+| **Gonzalo Manuel Vázquez Fuentes** | [@gonzalovaz1](https://github.com/gonzalovaz1) | Protocolo de comandos, parseo de mensajes y pruebas de estrés |
+| **Ana Julia Rodríguez** | [@anajuliavr](https://github.com/anajuliavr) | Modelado de datos de usuarios, almacenamiento y seguridad |
+| **Juan Carlos Acuña** | [@jucaacuna](https://github.com/jucaacuna) | Procesamiento de evaluaciones y bancos de preguntas |
+| **Prof. Santiago** | [@profesantiago64](https://github.com/profesantiago64) | Algoritmos de calificación, sincronización y manejo de excepciones |
